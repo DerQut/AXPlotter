@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "contentview.h"
+#include "axmenubar.h"
 #include <QApplication>
 #include <QMenuBar>
 
@@ -8,18 +9,16 @@
 int main(int argc, char *argv[])
 {
     QApplication mainApp(argc, argv);
-    MainWindow mainWindow;
-    mainWindow.setWindowTitle("AX Plotter");
+    MainWindow* mainWindow = new MainWindow();
+    mainWindow->setWindowTitle("AX Plotter");
 
-    QMenuBar* menubar = new QMenuBar(&mainWindow);
+    AXMenuBar* menubar = new AXMenuBar(mainWindow);
 
-    menubar->addAction("File");
+    mainWindow->setMenuBar(menubar);
 
-    mainWindow.setMenuBar(menubar);
+    mainWindow->setCentralWidget(new ContentView());
 
-    mainWindow.setCentralWidget(new ContentView());
-
-    mainWindow.show();
+    mainWindow->show();
 
     return mainApp.exec();
 }
