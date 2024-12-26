@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2024-12-24T23:17:40
+# Project created by QtCreator 2024-12-24T22:48:27
 #
 #-------------------------------------------------
 
@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    contentview.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    contentview.h
 
 FORMS    += mainwindow.ui

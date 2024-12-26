@@ -1,11 +1,18 @@
 #include "mainwindow.h"
+#include "contentview.h"
 #include <QApplication>
+
+// Created by Marcel Cholodecki on 2024.12.24
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    QApplication mainApp(argc, argv);
+    MainWindow mainWindow;
+    mainWindow.setWindowTitle("AX Plotter");
 
-    return a.exec();
+    mainWindow.setCentralWidget(new ContentView());
+
+    mainWindow.show();
+
+    return mainApp.exec();
 }
