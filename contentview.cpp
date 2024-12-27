@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 
 #include "contentview.h"
+#include "sidebarview.h"
 
 ContentView::ContentView(QWidget *parent) :
     QWidget(parent)
@@ -13,15 +14,16 @@ ContentView::ContentView(QWidget *parent) :
     mainHStack->setMargin(0);
     mainHStack->setSpacing(0);
 
-    QWidget *leftRect = new QWidget(this);
-    leftRect->setStyleSheet("background-color: red;");
-    leftRect->setContentsMargins(0, 0, 0, 0);
+    SideBarView *sideBarView = new SideBarView(this);
+    sideBarView->setFixedWidth(200);
+    sideBarView->setFixedHeight(400);
 
     QWidget *rightRect = new QWidget(this);
     rightRect->setStyleSheet("background-color: blue;");
     rightRect->setContentsMargins(0, 0, 0, 0);
+    rightRect->setFixedWidth(400);
 
-    mainHStack->addWidget(leftRect);
+    mainHStack->addWidget(sideBarView);
     mainHStack->addWidget(rightRect);
 
     this->setLayout(mainHStack);

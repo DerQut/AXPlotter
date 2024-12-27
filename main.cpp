@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     mainWindow->setCentralWidget(new ContentView());
 
     mainWindow->show();
+    printf("Window size: %d x %d\n", mainWindow->width(), mainWindow->height());
 
     return mainApp.exec();
 }

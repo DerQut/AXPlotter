@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     contentview.cpp \
-    axmenubar.cpp
+    axmenubar.cpp \
+    sidebarview.cpp
 
 HEADERS  += mainwindow.h \
     contentview.h \
-    axmenubar.h
+    axmenubar.h \
+    sidebarview.h
 
 FORMS    += mainwindow.ui
