@@ -16,7 +16,6 @@ ContentView::ContentView(QWidget *parent) :
 
     SideBarView *sideBarView = new SideBarView(this);
     sideBarView->setFixedWidth(200);
-    sideBarView->setFixedHeight(400);
 
     QWidget *rightRect = new QWidget(this);
     rightRect->setStyleSheet("background-color: blue;");
