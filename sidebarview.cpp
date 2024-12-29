@@ -11,13 +11,13 @@
 SideBarView::SideBarView(ContentView *parent) :
     QWidget(parent)
 {
-    this->setContentsMargins(0, 0, 0, 0);
+    this->setContentsMargins(1, 1, 1, 1);
 
     QStackedLayout* mainZStack = new QStackedLayout();
     mainZStack->setStackingMode(QStackedLayout::StackAll);
 
     QWidget* background = new QWidget();
-    background->setStyleSheet("background-color: qlineargradient( x1:0 y1:0, x2:0 y2:1, stop:0 #888888, stop:1 #454545);");
+    background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #6375d7, stop:1 #7ba2e6);");
 
     QVBoxLayout* mainVStack = new QVBoxLayout();
 

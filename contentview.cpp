@@ -15,12 +15,12 @@ ContentView::ContentView(QWidget *parent) :
     mainHStack->setSpacing(0);
 
     SideBarView *sideBarView = new SideBarView(this);
-    sideBarView->setFixedWidth(200);
+    sideBarView->setFixedWidth(210);
 
     QWidget *rightRect = new QWidget(this);
-    rightRect->setStyleSheet("background-color: blue;");
+    rightRect->setStyleSheet("background-color: white;");
     rightRect->setContentsMargins(0, 0, 0, 0);
-    rightRect->setFixedWidth(400);
+    //rightRect->setFixedWidth(400);
 
     mainHStack->addWidget(sideBarView);
     mainHStack->addWidget(rightRect);
