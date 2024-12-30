@@ -2,8 +2,10 @@
 #define AXMENUBAR_H
 
 #include <QWidget>
+#include <QString>
 #include <QMenuBar>
-#include <QComboBox>
+#include <QButtonGroup>
+#include <QCheckBox>
 
 #include "contentview.h"
 
@@ -15,13 +17,29 @@ public:
     ContentView* contentView;
 
 private:
-    QComboBox* themePicker;
 
 signals:
 
 public slots:
     void showFileMenu();
     void showThemeMenu();
+
+};
+
+class AXMBViewMenu : public QMenu
+{
+    Q_OBJECT
+public:
+    explicit AXMBViewMenu(const QString &title, AXMenuBar* parent = 0);
+    AXMenuBar* axMenuBar;
+
+private:
+    QCheckBox* lunaCheck;
+    QCheckBox* zuneCheck;
+
+signals:
+
+public slots:
 
 };
 

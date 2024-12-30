@@ -15,7 +15,8 @@ private:
 signals:
 
 public slots:
-    void setBackgroundColors();
+    void setLunaTheme(int shouldSet);
+    void setZuneTheme(int shouldSet);
 
 };
 

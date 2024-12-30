@@ -1,38 +1,24 @@
 #include "axmenubar.h"
 #include "contentview.h"
+#include "sidebarview.h"
 
 #include <QWidget>
 #include <QAction>
 #include <QString>
 #include <QWidgetAction>
-#include <QComboBox>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QButtonGroup>
+#include <QCheckBox>
 
 AXMenuBar::AXMenuBar(ContentView* parent) :
     QMenuBar(parent)
 {
     contentView = parent;
-    themePicker = new QComboBox(this);
 
-    themePicker->addItem("Luna");
-    themePicker->addItem("Zune");
-
-    QMenu* viewMenu = this->addMenu("&View");
+    AXMBViewMenu* viewMenu = new AXMBViewMenu("&View", this);
+    this->addMenu(viewMenu);
     //viewMenu->addAction("Theme", contentView->sideBarView, SLOT(setBackgroundColors()));
-
-    QHBoxLayout* themePickerHStack = new QHBoxLayout(this);
-    themePickerHStack->addWidget(new QLabel("Theme:"));
-    themePickerHStack->addWidget(themePicker);
-
-    QWidget* themePickerDummyWidget = new QWidget();
-    themePickerDummyWidget->setLayout(themePickerHStack);
-
-    QWidgetAction* selectTheme = new QWidgetAction(this);
-
-    selectTheme->setDefaultWidget(themePickerDummyWidget);
-
-    viewMenu->addAction(selectTheme);
 }
 
 void AXMenuBar::showFileMenu()
@@ -44,3 +30,38 @@ void AXMenuBar::showThemeMenu()
 {
     printf("Theme\r\n");
 }
+
+AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
+    QMenu(title, parent)
+{
+    axMenuBar = parent;
+
+    QButtonGroup* themeGroup = new QButtonGroup(this);
+    themeGroup->setExclusive(1);
+
+    lunaCheck = new QCheckBox("&Luna", this);
+    zuneCheck = new QCheckBox("&Zune", this);
+
+    themeGroup->addButton(lunaCheck, 0);
+    themeGroup->addButton(zuneCheck, 1);
+    lunaCheck->setChecked(1);
+
+    QVBoxLayout* themeVStack = new QVBoxLayout(this);
+    themeVStack->setSpacing(0);
+    themeVStack->addWidget(lunaCheck);
+    themeVStack->addWidget(zuneCheck);
+
+    QWidget* themeDummyWidget = new QWidget(this);
+    themeDummyWidget->setLayout(themeVStack);
+    themeDummyWidget->setContentsMargins(0, 0, 0, 0);
+
+    QMenu* themeSubMenu = this->addMenu("&Theme");
+
+    QWidgetAction* selectTheme = new QWidgetAction(this);
+    selectTheme->setDefaultWidget(themeDummyWidget);
+    themeSubMenu->addAction(selectTheme);
+
+    connect(lunaCheck, SIGNAL(stateChanged(int)), this->axMenuBar->contentView->sideBarView, SLOT(setLunaTheme(int)));
+    connect(zuneCheck, SIGNAL(stateChanged(int)), this->axMenuBar->contentView->sideBarView, SLOT(setZuneTheme(int)));
+}
+

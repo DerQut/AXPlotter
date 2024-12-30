@@ -34,7 +34,14 @@ SideBarView::SideBarView(QWidget *parent) :
     this->setLayout(mainZStack);
 }
 
-void SideBarView::setBackgroundColors()
+void SideBarView::setZuneTheme(int shouldSet)
 {
+    if (!shouldSet) {return;};
     background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #454545, stop:1 #808080);");
+}
+
+void SideBarView::setLunaTheme(int shouldSet)
+{
+    if (!shouldSet) {return;};
+    background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #6375d7, stop:1 #7ba2e6);");
 }
