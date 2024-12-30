@@ -21,8 +21,6 @@ private:
 signals:
 
 public slots:
-    void showFileMenu();
-    void showThemeMenu();
 
 };
 

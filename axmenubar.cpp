@@ -21,15 +21,6 @@ AXMenuBar::AXMenuBar(ContentView* parent) :
     //viewMenu->addAction("Theme", contentView->sideBarView, SLOT(setBackgroundColors()));
 }
 
-void AXMenuBar::showFileMenu()
-{
-    printf("Read\r\n");
-}
-
-void AXMenuBar::showThemeMenu()
-{
-    printf("Theme\r\n");
-}
 
 AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
     QMenu(title, parent)
