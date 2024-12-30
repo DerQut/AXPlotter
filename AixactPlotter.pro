@@ -16,11 +16,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     contentview.cpp \
     axmenubar.cpp \
-    sidebarview.cpp
+    sidebarview.cpp \
+    axtoolbar.cpp
 
 HEADERS  += mainwindow.h \
     contentview.h \
     axmenubar.h \
-    sidebarview.h
+    sidebarview.h \
+    axtoolbar.h
 
 FORMS    += mainwindow.ui

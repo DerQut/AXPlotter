@@ -6,9 +6,8 @@
 #include <QApplication>
 
 #include "sidebarview.h"
-#include "contentview.h"
 
-SideBarView::SideBarView(ContentView *parent) :
+SideBarView::SideBarView(QWidget *parent) :
     QWidget(parent)
 {
     this->setContentsMargins(1, 1, 1, 1);
@@ -16,7 +15,8 @@ SideBarView::SideBarView(ContentView *parent) :
     QStackedLayout* mainZStack = new QStackedLayout();
     mainZStack->setStackingMode(QStackedLayout::StackAll);
 
-    QWidget* background = new QWidget();
+    // Creating the background gradient, stylized after the Luna theme built into Windows XP
+    background = new QWidget();
     background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #6375d7, stop:1 #7ba2e6);");
 
     QVBoxLayout* mainVStack = new QVBoxLayout();
@@ -32,4 +32,9 @@ SideBarView::SideBarView(ContentView *parent) :
     mainZStack->addWidget(dummyZStackWidget);
 
     this->setLayout(mainZStack);
+}
+
+void SideBarView::setBackgroundColors()
+{
+    background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #454545, stop:1 #808080);");
 }

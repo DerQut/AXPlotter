@@ -14,7 +14,7 @@ ContentView::ContentView(QWidget *parent) :
     mainHStack->setMargin(0);
     mainHStack->setSpacing(0);
 
-    SideBarView *sideBarView = new SideBarView(this);
+    sideBarView = new SideBarView(this);
     sideBarView->setFixedWidth(210);
 
     QWidget *rightRect = new QWidget(this);

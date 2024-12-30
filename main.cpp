@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "contentview.h"
 #include "axmenubar.h"
+#include "axtoolbar.h"
 
 #include <QApplication>
 #include <QWidget>
@@ -17,20 +18,16 @@ int main(int argc, char *argv[])
     MainWindow* mainWindow = new MainWindow();
     mainWindow->setWindowTitle("AX Plotter");
 
-    QPalette::ColorGroup group = QPalette::Active;
-    QPalette::ColorRole role = QPalette::Base;
+    ContentView* contentView = new ContentView();
+    mainWindow->setCentralWidget(contentView);
 
-    QPalette palette = QApplication::palette();
-    qDebug() << "palette before:" << palette.color(group, role).name();
-
-    AXMenuBar* menubar = new AXMenuBar(mainWindow);
-
+    AXMenuBar* menubar = new AXMenuBar(contentView);
     mainWindow->setMenuBar(menubar);
 
-    mainWindow->setCentralWidget(new ContentView());
+    AXToolBar* toolbar = new AXToolBar(contentView);
+    mainWindow->addToolBar(toolbar);
 
     mainWindow->show();
-    printf("Window size: %d x %d\n", mainWindow->width(), mainWindow->height());
 
     return mainApp.exec();
 }
