@@ -16,9 +16,17 @@ AXMenuBar::AXMenuBar(ContentView* parent) :
 {
     contentView = parent;
 
+    QMenu* fileMenu = new QMenu("&File", this);
+    this->addMenu(fileMenu);
+
+    QMenu* editMenu = new QMenu("&Edit", this);
+    this->addMenu(editMenu);
+
     AXMBViewMenu* viewMenu = new AXMBViewMenu("&View", this);
     this->addMenu(viewMenu);
-    //viewMenu->addAction("Theme", contentView->sideBarView, SLOT(setBackgroundColors()));
+
+    QMenu* helpMenu = new QMenu("&Help", this);
+    this->addMenu(helpMenu);
 }
 
 

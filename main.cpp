@@ -27,6 +27,9 @@ int main(int argc, char *argv[])
     AXToolBar* toolbar = new AXToolBar(contentView);
     mainWindow->addToolBar(toolbar);
 
+    // Disabling the visibility of the toolbar until the general UI is figured out
+    toolbar->setVisible(false);
+
     mainWindow->show();
 
     return mainApp.exec();
