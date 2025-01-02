@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "themefile.h"
+
 class SideBarView : public QWidget
 {
     Q_OBJECT
@@ -17,6 +19,7 @@ signals:
 public slots:
     void setDefaultTheme(int shouldSet);
     void setDarkTheme(int shouldSet);
+    void setTheme(Theme theme);
 
 };
 

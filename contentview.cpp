@@ -5,7 +5,10 @@
 #include "contentview.h"
 #include "sidebarview.h"
 
-ContentView::ContentView(QWidget *parent) :
+#include "themefile.h"
+
+
+ContentView::ContentView(QWidget* parent) :
     QWidget(parent)
 {
     this->setContentsMargins(0, 0, 0, 0);
@@ -16,6 +19,7 @@ ContentView::ContentView(QWidget *parent) :
 
     sideBarView = new SideBarView(this);
     sideBarView->setFixedWidth(210);
+    sideBarView->setTheme(getTheme("theme.cfg"));
 
     QWidget *rightRect = new QWidget(this);
     rightRect->setStyleSheet("background-color: white;");

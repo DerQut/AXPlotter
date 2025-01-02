@@ -6,6 +6,7 @@
 #include <QApplication>
 
 #include "sidebarview.h"
+#include "themefile.h"
 
 SideBarView::SideBarView(QWidget *parent) :
     QWidget(parent)
@@ -44,4 +45,15 @@ void SideBarView::setDefaultTheme(int shouldSet)
 {
     if (!shouldSet) {return;};
     background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #6375d7, stop:1 #7ba2e6);");
+}
+
+void SideBarView::setTheme(Theme theme) {
+    switch (theme) {
+        case DEFAULT:
+            this->setDefaultTheme(1);
+            break;
+        case DARK:
+            this->setDarkTheme(1);
+            break;
+    }
 }
