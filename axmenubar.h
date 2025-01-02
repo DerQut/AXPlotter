@@ -32,8 +32,8 @@ public:
     AXMenuBar* axMenuBar;
 
 private:
-    QCheckBox* lunaCheck;
-    QCheckBox* zuneCheck;
+    QCheckBox* defaultThemeCheck;
+    QCheckBox* darkThemeCheck;
 
 signals:
 

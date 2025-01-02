@@ -38,17 +38,17 @@ AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
     QButtonGroup* themeGroup = new QButtonGroup(this);
     themeGroup->setExclusive(1);
 
-    lunaCheck = new QCheckBox("&Luna", this);
-    zuneCheck = new QCheckBox("&Zune", this);
+    defaultThemeCheck = new QCheckBox("&Default", this);
+    darkThemeCheck = new QCheckBox("&Dark", this);
 
-    themeGroup->addButton(lunaCheck, 0);
-    themeGroup->addButton(zuneCheck, 1);
-    lunaCheck->setChecked(1);
+    themeGroup->addButton(defaultThemeCheck, 0);
+    themeGroup->addButton(darkThemeCheck, 1);
+    defaultThemeCheck->setChecked(1);
 
     QVBoxLayout* themeVStack = new QVBoxLayout(this);
     themeVStack->setSpacing(0);
-    themeVStack->addWidget(lunaCheck);
-    themeVStack->addWidget(zuneCheck);
+    themeVStack->addWidget(defaultThemeCheck);
+    themeVStack->addWidget(darkThemeCheck);
 
     QWidget* themeDummyWidget = new QWidget(this);
     themeDummyWidget->setLayout(themeVStack);
@@ -60,7 +60,7 @@ AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
     selectTheme->setDefaultWidget(themeDummyWidget);
     themeSubMenu->addAction(selectTheme);
 
-    connect(lunaCheck, SIGNAL(stateChanged(int)), this->axMenuBar->contentView->sideBarView, SLOT(setLunaTheme(int)));
-    connect(zuneCheck, SIGNAL(stateChanged(int)), this->axMenuBar->contentView->sideBarView, SLOT(setZuneTheme(int)));
+    connect(defaultThemeCheck, SIGNAL(stateChanged(int)), this->axMenuBar->contentView->sideBarView, SLOT(setDefaultTheme(int)));
+    connect(darkThemeCheck, SIGNAL(stateChanged(int)), this->axMenuBar->contentView->sideBarView, SLOT(setDarkTheme(int)));
 }
 
