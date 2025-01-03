@@ -1,5 +1,3 @@
-#include <string>
-
 #ifndef THEMEFILE_H
 #define THEMEFILE_H
 
@@ -8,6 +6,8 @@ enum Theme {
     DARK
 };
 
-Theme getTheme(const char *fileName);
+Theme getTheme(const char* fileName);
+
+void saveTheme(const char* fileName, Theme theme);
 
 #endif // THEMEFILE_H

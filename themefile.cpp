@@ -18,10 +18,7 @@ Theme getTheme(const char* fileName) {
 
     if (!file.is_open()) {
         qDebug() << "Creating file";
-        ofstream fallbackFile;
-        fallbackFile.open(fileName);
-        fallbackFile << "DEFAULT";
-        fallbackFile.close();
+        saveTheme(fileName, DEFAULT);
         return DEFAULT;
     }
 
@@ -34,3 +31,32 @@ Theme getTheme(const char* fileName) {
 
     return DEFAULT;
 }
+
+void saveTheme(const char* fileName, Theme theme) {
+
+    string line;
+
+    switch (theme) {
+    case DEFAULT:
+        line = "DEFAULT";
+        break;
+    case DARK:
+        line = "DARK";
+        break;
+    }
+
+    // Opening the given file
+    ofstream file;
+    file.open(fileName);
+
+    if (!file.is_open()) {
+        qDebug() << "Error writing to file";
+        return;
+    }
+
+    file << line;
+    file.close();
+
+    qDebug() << "Theme " << QString::fromStdString(line) << " saved.";
+}
+
