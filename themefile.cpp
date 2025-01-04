@@ -8,6 +8,26 @@
 
 using namespace std;
 
+Theme themeFromString(string themeName) {
+    if (themeName == "DEFAULT") return DEFAULT;
+    if (themeName == "DARK") return DARK;
+
+    return DEFAULT;
+}
+
+string stringFromTheme(Theme theme) {
+    switch(theme) {
+    case(DEFAULT):
+        return "DEFAULT";
+        break;
+    case(DARK):
+        return "DARK";
+        break;
+    default:
+        return "DEFAULT";
+    }
+}
+
 Theme getTheme(const char* fileName) {
 
     string line;
@@ -29,10 +49,7 @@ Theme getTheme(const char* fileName) {
     qDebug() << "File read succesfully: " << QString::fromStdString(line);
 
     // Parsing std::string to Theme
-    if (line == "DARK")
-        return DARK;
-
-    return DEFAULT;
+    return themeFromString(line);
 }
 
 void saveTheme(const char* fileName, Theme theme) {
@@ -40,14 +57,7 @@ void saveTheme(const char* fileName, Theme theme) {
     string line;
 
     // Parsing Theme to std::string
-    switch (theme) {
-    case DEFAULT:
-        line = "DEFAULT";
-        break;
-    case DARK:
-        line = "DARK";
-        break;
-    }
+    line = stringFromTheme(theme);
 
     // Opening the given file
     ofstream file;

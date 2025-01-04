@@ -51,11 +51,11 @@ void SideBarView::setDefaultTheme(int shouldSet)
 
 void SideBarView::setTheme(Theme theme) {
     switch (theme) {
-        case DEFAULT:
-            this->setDefaultTheme(1);
-            break;
-        case DARK:
-            this->setDarkTheme(1);
-            break;
+    case DEFAULT:
+        this->setDefaultTheme(1);
+        break;
+    case DARK:
+        this->setDarkTheme(1);
+        break;
     }
 }

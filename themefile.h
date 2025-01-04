@@ -1,12 +1,17 @@
 #ifndef THEMEFILE_H
 #define THEMEFILE_H
 
+#include <string>
+
 enum Theme {
     DEFAULT,
     DARK
 };
 
 Theme getTheme(const char* fileName);
+
+Theme themeFromString(std::string themeName);
+std::string charFromTheme(Theme theme);
 
 void saveTheme(const char* fileName, Theme theme);
 
