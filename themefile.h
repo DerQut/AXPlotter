@@ -1,6 +1,8 @@
 #ifndef THEMEFILE_H
 #define THEMEFILE_H
 
+#pragma once
+
 #include <string>
 
 enum Theme {

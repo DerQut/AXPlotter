@@ -16,9 +16,8 @@ SideBarView::SideBarView(QWidget *parent) :
     QStackedLayout* mainZStack = new QStackedLayout();
     mainZStack->setStackingMode(QStackedLayout::StackAll);
 
-    // Creating the background gradient, stylized after the Luna theme built into Windows XP
+    // Creating the widget to host the background gradient
     background = new QWidget();
-    background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #6375d7, stop:1 #7ba2e6);");
 
     QVBoxLayout* mainVStack = new QVBoxLayout();
 

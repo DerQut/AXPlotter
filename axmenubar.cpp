@@ -1,6 +1,7 @@
 #include "axmenubar.h"
 #include "contentview.h"
 #include "sidebarview.h"
+#include "themefile.h"
 
 #include <QWidget>
 #include <QAction>
@@ -43,7 +44,9 @@ AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
 
     themeGroup->addButton(defaultThemeCheck, 0);
     themeGroup->addButton(darkThemeCheck, 1);
+
     defaultThemeCheck->setChecked(1);
+    darkThemeCheck->setChecked(getTheme("theme.cfg") == DARK);
 
     QVBoxLayout* themeVStack = new QVBoxLayout(this);
     themeVStack->setSpacing(0);
