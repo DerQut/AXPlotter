@@ -22,7 +22,9 @@ SideBarView::SideBarView(QWidget *parent) :
     QVBoxLayout* mainVStack = new QVBoxLayout();
 
     QLabel* titleLabel = new QLabel("AX Plotter");
-    mainVStack->addWidget(titleLabel);
+
+    mainVStack->addWidget(new SideBarEntryView(titleLabel, this));
+
     mainVStack->addStretch();
 
     QWidget* dummyZStackWidget = new QWidget();

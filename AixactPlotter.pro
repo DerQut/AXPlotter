@@ -19,7 +19,7 @@ SOURCES += main.cpp\
     sidebarview.cpp \
     axtoolbar.cpp \
     themefile.cpp \
-    sidebarviewentry.cpp
+    sidebarentryview.cpp
 
 HEADERS  += mainwindow.h \
     contentview.h \
