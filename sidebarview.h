@@ -25,4 +25,20 @@ public slots:
 
 };
 
+class SideBarViewEntry : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit SideBarViewEntry(SideBarView *parent = 0);
+
+private:
+    bool isExpanded;
+
+signals:
+
+public slots:
+    void toggleExpanded();
+
+};
+
 #endif // SIDEBARVIEW_H

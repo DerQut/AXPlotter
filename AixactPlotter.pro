@@ -26,7 +26,6 @@ HEADERS  += mainwindow.h \
     axmenubar.h \
     sidebarview.h \
     axtoolbar.h \
-    themefile.h \
-    sidebarviewentry.h
+    themefile.h
 
 FORMS    += mainwindow.ui
