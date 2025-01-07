@@ -48,11 +48,11 @@ public slots:
 };
 
 
-class FileEntryView : public QWidget
+class FileExpandableWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FileEntryView(SideBarEntryView* parent = 0);
+    explicit FileExpandableWidget(SideBarEntryView* parent = 0);
 private:
     SideBarEntryView* sideBarEntryView;
 

@@ -21,9 +21,7 @@ SideBarView::SideBarView(QWidget *parent) :
 
     QVBoxLayout* mainVStack = new QVBoxLayout();
 
-    QLabel* titleLabel = new QLabel("AX Plotter");
-
-    mainVStack->addWidget(new SideBarEntryView(new FileEntryView(), this));
+    mainVStack->addWidget(new SideBarEntryView(new FileExpandableWidget(), this));
 
     mainVStack->addStretch();
 
