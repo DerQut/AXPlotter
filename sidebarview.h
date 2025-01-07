@@ -7,6 +7,7 @@
 
 #include "themefile.h"
 
+
 class SideBarView : public QWidget
 {
     Q_OBJECT
@@ -25,6 +26,7 @@ public slots:
 
 };
 
+
 class SideBarEntryView : public QWidget
 {
     Q_OBJECT
@@ -42,6 +44,21 @@ public slots:
     void toggleExpanded();
     void expand();
     void retract();
+
+};
+
+
+class FileEntryView : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit FileEntryView(SideBarEntryView* parent = 0);
+private:
+    SideBarEntryView* sideBarEntryView;
+
+signals:
+
+public slots:
 
 };
 

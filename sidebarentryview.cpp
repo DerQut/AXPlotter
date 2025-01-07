@@ -12,8 +12,10 @@ SideBarEntryView::SideBarEntryView(QWidget *expandableWidget, SideBarView *paren
     this->isExpanded = true;
 
     QVBoxLayout* mainVStack = new QVBoxLayout(this);
+    mainVStack->setSpacing(0);
 
     QPushButton* button = new QPushButton(this);
+    button->setContentsMargins(0, 0, 0, 0);
     mainVStack->addWidget(button);
 
     mainVStack->addWidget(this->expandableWidget);
