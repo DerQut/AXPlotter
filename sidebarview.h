@@ -31,7 +31,7 @@ class SideBarEntryView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SideBarEntryView(QWidget* expandableWidget, SideBarView* parent = 0);
+    explicit SideBarEntryView(ExpandableWidget* expandableWidget, SideBarView* parent = 0);
 
 private:
     SideBarView* sideBarView;
@@ -48,16 +48,29 @@ public slots:
 };
 
 
+class ExpandableWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit ExpandableWidget(SideBarEntryView* parent = 0);
+private:
+    SideBarEntryView* sideBarEntryView;
+    int defaultHeight;
+signals:
+public slots:
+    void expand();
+    void retract();
+
+};
+
+
 class FileExpandableWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit FileExpandableWidget(SideBarEntryView* parent = 0);
 private:
-    SideBarEntryView* sideBarEntryView;
-
 signals:
-
 public slots:
 
 };

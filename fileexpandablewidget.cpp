@@ -1,14 +1,13 @@
 #include <QWidget>
 #include <QStackedLayout>
 #include <QVBoxLayout>
+#include <QDebug>
 
 #include "sidebarview.h"
 
 FileExpandableWidget::FileExpandableWidget(SideBarEntryView *parent) :
-    QWidget(parent)
+    ExpandableWidget(parent)
 {
-    this->sideBarEntryView = parent;
-
     QStackedLayout* mainZStack = new QStackedLayout(this);
 
     QWidget* background = new QWidget(this);
@@ -30,4 +29,5 @@ FileExpandableWidget::FileExpandableWidget(SideBarEntryView *parent) :
 
     this->setLayout(mainZStack);
     this->setContentsMargins(0, 0, 0, 0);
+
 }

@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     axtoolbar.cpp \
     themefile.cpp \
     sidebarentryview.cpp \
-    fileexpandablewidget.cpp
+    fileexpandablewidget.cpp \
+    expandablewidget.cpp
 
 HEADERS  += mainwindow.h \
     contentview.h \
