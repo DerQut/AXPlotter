@@ -7,13 +7,18 @@
 
 #include "themefile.h"
 
+
+class ContentView;
+
+
 class SideBarView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SideBarView(QWidget *parent = 0);
+    explicit SideBarView(ContentView *parent = 0);
 
 private:
+    ContentView* contentView;
     QWidget* background;
 
 signals:

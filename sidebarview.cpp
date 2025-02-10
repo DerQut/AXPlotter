@@ -6,11 +6,13 @@
 #include <QApplication>
 
 #include "sidebarview.h"
+#include "contentview.h"
 #include "themefile.h"
 
-SideBarView::SideBarView(QWidget *parent) :
+SideBarView::SideBarView(ContentView *parent) :
     QWidget(parent)
 {
+    this->contentView = parent;
     this->setContentsMargins(2, 0, 2, 2);
 
     QStackedLayout* mainZStack = new QStackedLayout();
