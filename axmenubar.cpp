@@ -1,6 +1,3 @@
-#include "axviews.h"
-#include "themefile.h"
-
 #include <QWidget>
 #include <QAction>
 #include <QString>
@@ -9,6 +6,11 @@
 #include <QLabel>
 #include <QButtonGroup>
 #include <QCheckBox>
+
+#include "axmenubar.h"
+#include "contentview.h"
+#include "sidebarview.h"
+#include "themefile.h"
 
 AXMenuBar::AXMenuBar(ContentView* parent) :
     QMenuBar(parent)

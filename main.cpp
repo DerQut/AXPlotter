@@ -1,5 +1,7 @@
 #include "mainwindow.h"
-#include "axviews.h"
+#include "contentview.h"
+#include "axtoolbar.h"
+#include "axmenubar.h"
 
 #include <QApplication>
 #include <QWidget>

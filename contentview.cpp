@@ -2,7 +2,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-#include "axviews.h"
+#include "contentview.h"
+#include "sidebarview.h"
 
 #include "themefile.h"
 

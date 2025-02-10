@@ -22,6 +22,9 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     themefile.h \
-    axviews.h
+    contentview.h \
+    axtoolbar.h \
+    sidebarview.h \
+    axmenubar.h
 
 FORMS    += mainwindow.ui

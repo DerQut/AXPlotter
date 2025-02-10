@@ -5,7 +5,7 @@
 #include <QGradient>
 #include <QApplication>
 
-#include "axviews.h"
+#include "sidebarview.h"
 #include "themefile.h"
 
 SideBarView::SideBarView(QWidget *parent) :
