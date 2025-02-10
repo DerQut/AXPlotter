@@ -7,8 +7,7 @@
 #include <QPushButton>
 #include <QSize>
 
-#include "axtoolbar.h"
-#include "contentview.h"
+#include "axviews.h"
 
 AXToolBar::AXToolBar(ContentView *parent) :
     QToolBar(parent)

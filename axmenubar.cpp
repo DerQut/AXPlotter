@@ -1,6 +1,4 @@
-#include "axmenubar.h"
-#include "contentview.h"
-#include "sidebarview.h"
+#include "axviews.h"
 #include "themefile.h"
 
 #include <QWidget>

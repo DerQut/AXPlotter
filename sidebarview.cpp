@@ -5,7 +5,7 @@
 #include <QGradient>
 #include <QApplication>
 
-#include "sidebarview.h"
+#include "axviews.h"
 #include "themefile.h"
 
 SideBarView::SideBarView(QWidget *parent) :
@@ -20,8 +20,6 @@ SideBarView::SideBarView(QWidget *parent) :
     background = new QWidget();
 
     QVBoxLayout* mainVStack = new QVBoxLayout();
-
-    mainVStack->addWidget(new SideBarEntryView(new FileExpandableWidget(), this));
 
     mainVStack->addStretch();
 

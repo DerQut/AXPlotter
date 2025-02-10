@@ -18,16 +18,10 @@ SOURCES += main.cpp\
     axmenubar.cpp \
     sidebarview.cpp \
     axtoolbar.cpp \
-    themefile.cpp \
-    sidebarentryview.cpp \
-    fileexpandablewidget.cpp \
-    expandablewidget.cpp
+    themefile.cpp
 
 HEADERS  += mainwindow.h \
-    contentview.h \
-    axmenubar.h \
-    sidebarview.h \
-    axtoolbar.h \
-    themefile.h
+    themefile.h \
+    axviews.h
 
 FORMS    += mainwindow.ui
