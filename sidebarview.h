@@ -25,6 +25,7 @@ signals:
 
 public slots:
     void setDefaultTheme(int shouldSet);
+    void setClassicTheme(int shouldSet);
     void setDarkTheme(int shouldSet);
     void setTheme(Theme theme);
 

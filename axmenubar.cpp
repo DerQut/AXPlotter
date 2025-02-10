@@ -39,11 +39,13 @@ AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
     QButtonGroup* themeGroup = new QButtonGroup(this);
     themeGroup->setExclusive(1);
 
-    defaultThemeCheck = new QCheckBox("&Default", this);
-    darkThemeCheck = new QCheckBox("&Dark", this);
+    defaultThemeCheck = new QCheckBox("Default", this);
+    darkThemeCheck = new QCheckBox("Dark", this);
+    classicThemeCheck = new QCheckBox("Classic", this);
 
     themeGroup->addButton(defaultThemeCheck, 0);
     themeGroup->addButton(darkThemeCheck, 1);
+    themeGroup->addButton(classicThemeCheck, 2);
 
     defaultThemeCheck->setChecked(1);
     darkThemeCheck->setChecked(getTheme("theme.cfg") == DARK);
@@ -52,6 +54,7 @@ AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
     themeVStack->setSpacing(0);
     themeVStack->addWidget(defaultThemeCheck);
     themeVStack->addWidget(darkThemeCheck);
+    themeVStack->addWidget(classicThemeCheck);
 
     QWidget* themeDummyWidget = new QWidget(this);
     themeDummyWidget->setLayout(themeVStack);
@@ -65,5 +68,6 @@ AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
 
     connect(defaultThemeCheck, SIGNAL(stateChanged(int)), this->axMenuBar->contentView->sideBarView, SLOT(setDefaultTheme(int)));
     connect(darkThemeCheck, SIGNAL(stateChanged(int)), this->axMenuBar->contentView->sideBarView, SLOT(setDarkTheme(int)));
+    connect(classicThemeCheck, SIGNAL(stateChanged(int)), this->axMenuBar->contentView->sideBarView, SLOT(setClassicTheme(int)));
 }
 

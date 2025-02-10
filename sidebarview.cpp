@@ -48,13 +48,22 @@ void SideBarView::setDefaultTheme(int shouldSet)
     saveTheme("theme.cfg", DEFAULT);
 }
 
+void SideBarView::setClassicTheme(int shouldSet)
+{
+    if (!shouldSet) {return;};
+    background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #ffffff, stop:1 #ffffff);");
+    saveTheme("theme.cfg", DEFAULT);
+}
+
 void SideBarView::setTheme(Theme theme) {
     switch (theme) {
-    case DEFAULT:
-        this->setDefaultTheme(1);
+    case CLASSIC:
+        this->setClassicTheme(1);
         break;
     case DARK:
         this->setDarkTheme(1);
         break;
+    default:
+        this->setDefaultTheme(1);
     }
 }

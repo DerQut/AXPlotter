@@ -37,6 +37,7 @@ public:
 private:
     QCheckBox* defaultThemeCheck;
     QCheckBox* darkThemeCheck;
+    QCheckBox* classicThemeCheck;
 
 signals:
 

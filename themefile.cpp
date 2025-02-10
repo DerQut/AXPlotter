@@ -9,16 +9,20 @@
 using namespace std;
 
 Theme themeFromString(string themeName) {
-    if (themeName == "DEFAULT") return DEFAULT;
+    if (themeName == "CLASSIC") return CLASSIC;
     if (themeName == "DARK") return DARK;
+    if (themeName == "GREEN") return GREEN;
 
     return DEFAULT;
 }
 
 string stringFromTheme(Theme theme) {
     switch(theme) {
-    case(DEFAULT):
-        return "DEFAULT";
+    case(CLASSIC):
+        return "CLASSIC";
+        break;
+    case(GREEN):
+        return "GREEN";
         break;
     case(DARK):
         return "DARK";

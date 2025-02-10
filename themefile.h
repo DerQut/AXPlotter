@@ -7,6 +7,8 @@
 
 enum Theme {
     DEFAULT,
+    CLASSIC,
+    GREEN,
     DARK
 };
 
