@@ -34,23 +34,20 @@ SideBarView::SideBarView(ContentView *parent) :
     this->setLayout(mainZStack);
 }
 
-void SideBarView::setDarkTheme(int shouldSet)
+void SideBarView::setDarkTheme()
 {
-    if (!shouldSet) {return;};
     background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #454545, stop:1 #808080);");
     saveTheme("theme.cfg", DARK);
 }
 
-void SideBarView::setDefaultTheme(int shouldSet)
+void SideBarView::setDefaultTheme()
 {
-    if (!shouldSet) {return;};
     background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #6375d7, stop:1 #7ba2e6);");
     saveTheme("theme.cfg", DEFAULT);
 }
 
-void SideBarView::setClassicTheme(int shouldSet)
+void SideBarView::setClassicTheme()
 {
-    if (!shouldSet) {return;};
     background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #d2d0c9, stop:1 #d2d0c9);");
     saveTheme("theme.cfg", CLASSIC);
 }
@@ -58,12 +55,12 @@ void SideBarView::setClassicTheme(int shouldSet)
 void SideBarView::setTheme(Theme theme) {
     switch (theme) {
     case CLASSIC:
-        this->setClassicTheme(1);
+        this->setClassicTheme();
         break;
     case DARK:
-        this->setDarkTheme(1);
+        this->setDarkTheme();
         break;
     default:
-        this->setDefaultTheme(1);
+        this->setDefaultTheme();
     }
 }

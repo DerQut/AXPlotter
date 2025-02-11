@@ -31,3 +31,7 @@ ContentView::ContentView(QWidget* parent) :
 
     this->setLayout(mainHStack);
 }
+
+void ContentView::setTheme(int idClicked) {
+    this->sideBarView->setTheme((Theme) idClicked);
+}

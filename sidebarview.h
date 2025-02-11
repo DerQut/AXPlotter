@@ -16,6 +16,9 @@ class SideBarView : public QWidget
     Q_OBJECT
 public:
     explicit SideBarView(ContentView *parent = 0);
+    void setDefaultTheme();
+    void setClassicTheme();
+    void setDarkTheme();
 
 private:
     ContentView* contentView;
@@ -24,9 +27,6 @@ private:
 signals:
 
 public slots:
-    void setDefaultTheme(int shouldSet);
-    void setClassicTheme(int shouldSet);
-    void setDarkTheme(int shouldSet);
     void setTheme(Theme theme);
 
 };
