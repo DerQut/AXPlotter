@@ -7,7 +7,7 @@
 #include <QString>
 #include <QMenuBar>
 #include <QButtonGroup>
-#include <QCheckBox>
+#include <QRadioButton>
 
 class ContentView;
 
@@ -35,9 +35,9 @@ public:
     AXMenuBar* axMenuBar;
 
 private:
-    QCheckBox* defaultThemeCheck;
-    QCheckBox* darkThemeCheck;
-    QCheckBox* classicThemeCheck;
+    QRadioButton* defaultThemeButton;
+    QRadioButton* darkThemeButton;
+    QRadioButton* classicThemeButton;
 
 signals:
 

@@ -5,7 +5,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QButtonGroup>
-#include <QCheckBox>
+#include <QRadioButton>
 
 #include "axmenubar.h"
 #include "contentview.h"
@@ -42,29 +42,29 @@ AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
     themeGroup->setExclusive(1);
 
     // Creating QCheckBox instances for the Theme picker
-    defaultThemeCheck = new QCheckBox("Default", this);
-    darkThemeCheck = new QCheckBox("Dark", this);
-    classicThemeCheck = new QCheckBox("Classic", this);
+    defaultThemeButton = new QRadioButton("Default", this);
+    darkThemeButton = new QRadioButton("Dark", this);
+    classicThemeButton = new QRadioButton("Classic", this);
 
     /*
-     * Adding the created QCheckBox instances to the QButtonGroup instance
+     * Adding the created QRadioButton instances to the QButtonGroup instance
      * using the Theme enum as the button ID
     */
-    themeGroup->addButton(defaultThemeCheck, DEFAULT);
-    themeGroup->addButton(darkThemeCheck, DARK);
-    themeGroup->addButton(classicThemeCheck, CLASSIC);
+    themeGroup->addButton(defaultThemeButton, DEFAULT);
+    themeGroup->addButton(darkThemeButton, DARK);
+    themeGroup->addButton(classicThemeButton, CLASSIC);
 
     // Checking the appropriate check box at startup
-    defaultThemeCheck->setChecked(1);
-    darkThemeCheck->setChecked(getTheme("theme.cfg") == DARK);
-    classicThemeCheck->setChecked(getTheme("theme.cfg") == CLASSIC);
+    defaultThemeButton->setChecked(1);
+    darkThemeButton->setChecked(getTheme("theme.cfg") == DARK);
+    classicThemeButton->setChecked(getTheme("theme.cfg") == CLASSIC);
 
     // Creating a QVBoxLayout instance to host the buttons inside the theme sub-menu
     QVBoxLayout* themeVStack = new QVBoxLayout(this);
     themeVStack->setSpacing(0);
-    themeVStack->addWidget(defaultThemeCheck);
-    themeVStack->addWidget(darkThemeCheck);
-    themeVStack->addWidget(classicThemeCheck);
+    themeVStack->addWidget(defaultThemeButton);
+    themeVStack->addWidget(darkThemeButton);
+    themeVStack->addWidget(classicThemeButton);
 
     QWidget* themeDummyWidget = new QWidget(this);
     themeDummyWidget->setLayout(themeVStack);
