@@ -4,6 +4,7 @@
 
 #include "contentview.h"
 #include "sidebarview.h"
+#include "detailview.h"
 
 #include "themefile.h"
 
@@ -21,13 +22,11 @@ ContentView::ContentView(QWidget* parent) :
     sideBarView->setFixedWidth(210);
     sideBarView->setTheme(getTheme("theme.cfg"));
 
-    QWidget *rightRect = new QWidget(this);
-    rightRect->setStyleSheet("background-color: white;");
-    rightRect->setContentsMargins(0, 0, 0, 0);
-    //rightRect->setFixedWidth(400);
+    detailView = new DetailView(this);
+    detailView->setContentsMargins(0, 0, 0, 0);
 
     mainHStack->addWidget(sideBarView);
-    mainHStack->addWidget(rightRect);
+    mainHStack->addWidget(detailView);
 
     this->setLayout(mainHStack);
 }

@@ -6,6 +6,7 @@
 #include <QWidget>
 
 class SideBarView;
+class DetailView;
 
 class ContentView : public QWidget
 {
@@ -13,6 +14,7 @@ class ContentView : public QWidget
 public:
     explicit ContentView(QWidget *parent = 0);
     SideBarView* sideBarView;
+    DetailView* detailView;
 
 signals:
 
