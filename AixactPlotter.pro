@@ -32,3 +32,6 @@ HEADERS  += mainwindow.h \
     editorview.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES += \
+    ../Documents/Kalibracja.txt

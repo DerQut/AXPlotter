@@ -51,8 +51,17 @@ void ContentView::obtainScriptFile() {
     QFileInfo fileInfo(scriptFile);
     QMessageBox messageBox;
 
-    if (fileInfo.fileName().count('.') > 1) {
-        messageBox.setText("File name \"" + fileInfo.fileName() + "\" contains more than one '.' character. Unable to read file.");
+    const QString fileName = fileInfo.fileName();
+    qDebug() << fileName;
+
+    if (fileName.count('.') > 1) {
+        messageBox.setText("File name \"" + fileName + "\" contains more than one '.' character. Unable to read file.");
+        messageBox.exec();
+        return;
+    }
+
+    if (fileName.count(' ') > 0) {
+        messageBox.setText("File name \"" + fileName + "\" contains a ' ' character. Unable to read file.");
         messageBox.exec();
         return;
     }
