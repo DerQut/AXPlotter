@@ -50,7 +50,7 @@ SideBarView::SideBarView(ContentView *parent) :
 
     this->setLayout(mainZStack);
 
-    connect(fileButton, SIGNAL(released()), this->contentView, SLOT(readScriptFile()));
+    connect(fileButton, SIGNAL(released()), this->contentView, SLOT(obtainScriptFile()));
 }
 
 

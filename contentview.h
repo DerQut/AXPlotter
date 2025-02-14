@@ -23,7 +23,7 @@ signals:
 
 public slots:
     void setTheme(int idClicked);
-    void readScriptFile();
+    void obtainScriptFile();
 };
 
 #endif // CONTENTVIEW_H

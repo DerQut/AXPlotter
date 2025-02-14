@@ -39,7 +39,7 @@ void ContentView::setTheme(int idClicked) {
 }
 
 
-void ContentView::readScriptFile() {
+void ContentView::obtainScriptFile() {
     this->scriptFile = QFileDialog::getOpenFileName(this, tr("Select script file"));
     qDebug() << this->scriptFile;
 
