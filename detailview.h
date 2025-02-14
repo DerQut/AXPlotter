@@ -6,6 +6,7 @@
 #include <QWidget>
 
 class ContentView;
+class EditorView;
 
 class DetailView : public QWidget
 {
@@ -13,6 +14,7 @@ class DetailView : public QWidget
 public:
     explicit DetailView(ContentView *parent = 0);
     ContentView* contentView;
+    EditorView* editorView;
 
 signals:
 

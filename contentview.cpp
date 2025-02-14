@@ -2,11 +2,14 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QDebug>
+#include <QMessageBox>
 
 #include "contentview.h"
 #include "sidebarview.h"
 #include "detailview.h"
+#include "editorview.h"
 
 #include "themefile.h"
 
@@ -45,5 +48,15 @@ void ContentView::obtainScriptFile() {
 
     if (scriptFile == "") { return; }
 
+    QFileInfo fileInfo(scriptFile);
+    QMessageBox messageBox;
+
+    if (fileInfo.fileName().count('.') > 1) {
+        messageBox.setText("File name \"" + fileInfo.fileName() + "\" contains more than one '.' character. Unable to read file.");
+        messageBox.exec();
+        return;
+    }
+
     this->sideBarView->setFileLabel(scriptFile);
+    this->detailView->editorView->readRecipeFile(scriptFile);
 }

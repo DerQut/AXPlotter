@@ -4,6 +4,7 @@
 
 #include "detailview.h"
 #include "contentview.h"
+#include "editorview.h"
 
 DetailView::DetailView(ContentView *parent) :
     QWidget(parent)
@@ -14,15 +15,14 @@ DetailView::DetailView(ContentView *parent) :
     QTabWidget* tabView = new QTabWidget(this);
     tabView->setTabPosition(QTabWidget::North);
 
-    // Creating temporary widgets (tabs for the QTabWidget instance)
-    QWidget* tempRect1 = new QWidget(this);
-    tempRect1->setStyleSheet("background-color: red;");
+    // Creating tabs for the QTabWidget instance
+    editorView = new EditorView(this);
 
     QWidget* tempRect2 = new QWidget(this);
     tempRect2->setStyleSheet("background-color: blue;");
 
     // Adding the temp widgets to the QTabWidget instance
-    tabView->addTab(tempRect1, "Red");
+    tabView->addTab(editorView, "Edit");
     tabView->addTab(tempRect2, "Blue");
 
     // Creating a dummy layout to host the QTabWidget instance

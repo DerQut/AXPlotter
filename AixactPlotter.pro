@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     sidebarview.cpp \
     axtoolbar.cpp \
     themefile.cpp \
-    detailview.cpp
+    detailview.cpp \
+    editorview.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -27,6 +28,7 @@ HEADERS  += mainwindow.h \
     axtoolbar.h \
     sidebarview.h \
     axmenubar.h \
-    detailview.h
+    detailview.h \
+    editorview.h
 
 FORMS    += mainwindow.ui
