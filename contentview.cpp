@@ -1,6 +1,8 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QFileDialog>
+#include <QDebug>
 
 #include "contentview.h"
 #include "sidebarview.h"
@@ -31,6 +33,17 @@ ContentView::ContentView(QWidget* parent) :
     this->setLayout(mainHStack);
 }
 
+
 void ContentView::setTheme(int idClicked) {
     this->sideBarView->setTheme((Theme) idClicked);
+}
+
+
+void ContentView::readScriptFile() {
+    this->scriptFile = QFileDialog::getOpenFileName(this, tr("Select script file"));
+    qDebug() << this->scriptFile;
+
+    if (scriptFile == "") { return; }
+
+    this->sideBarView->setFileLabel(scriptFile);
 }

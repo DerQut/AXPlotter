@@ -4,6 +4,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QString>
 
 class SideBarView;
 class DetailView;
@@ -16,10 +17,13 @@ public:
     SideBarView* sideBarView;
     DetailView* detailView;
 
+    QString scriptFile;
+
 signals:
 
 public slots:
     void setTheme(int idClicked);
+    void readScriptFile();
 };
 
 #endif // CONTENTVIEW_H

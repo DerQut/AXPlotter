@@ -1,9 +1,12 @@
+#include <QApplication>
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QStackedLayout>
 #include <QGradient>
-#include <QApplication>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QStyle>
 
 #include "sidebarview.h"
 #include "contentview.h"
@@ -19,9 +22,23 @@ SideBarView::SideBarView(ContentView *parent) :
     mainZStack->setStackingMode(QStackedLayout::StackAll);
 
     // Creating the widget to host the background gradient
-    background = new QWidget();
+    background = new QWidget(this);
 
+    // Creating the main VStack to host widgets in front of the background
     QVBoxLayout* mainVStack = new QVBoxLayout();
+
+    // Creating the label to show the current file directory
+    QHBoxLayout* fileHStack = new QHBoxLayout();
+
+    fileDisplay = new QLineEdit("Please select a file", this);
+    fileDisplay->setDisabled(true);
+    fileHStack->addWidget(fileDisplay);
+
+    QPushButton* fileButton = new QPushButton(this->style()->standardIcon(QStyle::SP_DirOpenIcon), "", this);
+    fileButton->setToolTip("Open file");
+    fileHStack->addWidget(fileButton);
+
+    mainVStack->addLayout(fileHStack);
 
     mainVStack->addStretch();
 
@@ -32,7 +49,10 @@ SideBarView::SideBarView(ContentView *parent) :
     mainZStack->addWidget(dummyZStackWidget);
 
     this->setLayout(mainZStack);
+
+    connect(fileButton, SIGNAL(released()), this->contentView, SLOT(readScriptFile()));
 }
+
 
 void SideBarView::setDarkTheme()
 {
@@ -40,17 +60,20 @@ void SideBarView::setDarkTheme()
     saveTheme("theme.cfg", DARK);
 }
 
+
 void SideBarView::setDefaultTheme()
 {
     background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #6375d7, stop:1 #7ba2e6);");
     saveTheme("theme.cfg", DEFAULT);
 }
 
+
 void SideBarView::setClassicTheme()
 {
     background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #d2d0c9, stop:1 #d2d0c9);");
     saveTheme("theme.cfg", CLASSIC);
 }
+
 
 void SideBarView::setTheme(Theme theme) {
     switch (theme) {
@@ -63,4 +86,9 @@ void SideBarView::setTheme(Theme theme) {
     default:
         this->setDefaultTheme();
     }
+}
+
+
+void SideBarView::setFileLabel(QString text) {
+    this->fileDisplay->setText(text);
 }

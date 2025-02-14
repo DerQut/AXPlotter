@@ -4,6 +4,8 @@
 #pragma once
 
 #include <QWidget>
+#include <QLineEdit>
+
 
 #include "themefile.h"
 
@@ -23,11 +25,13 @@ public:
 private:
     ContentView* contentView;
     QWidget* background;
+    QLineEdit* fileDisplay;
 
 signals:
 
 public slots:
     void setTheme(Theme theme);
+    void setFileLabel(QString text);
 
 };
 
