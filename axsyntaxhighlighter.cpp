@@ -11,7 +11,8 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
     keywordFormat.setForeground(Qt::darkBlue);
     keywordFormat.setFontWeight(QFont::Bold);
     const QString keywordPatterns[] = {
-        QStringLiteral("\\bvariable\\b")
+        QStringLiteral("\\bvariable\\b"),
+        QStringLiteral("\\A\\s*\\d+")
     };
 
     for (const QString &pattern : keywordPatterns) {
