@@ -9,6 +9,7 @@
 
 #include "editorview.h"
 #include "detailview.h"
+#include "axsyntaxhighlighter.h"
 
 EditorView::EditorView(DetailView *parent) :
     QWidget(parent)
@@ -20,6 +21,8 @@ EditorView::EditorView(DetailView *parent) :
 
     textEdit = new QTextEdit(this);
     mainVStack->addWidget(textEdit);
+
+    highlighter = new AXSyntaxHighlighter(textEdit->document());
 
     this->setLayout(mainVStack);
 }

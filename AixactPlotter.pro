@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT      += core gui
+CONFIG  += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -20,7 +21,8 @@ SOURCES += main.cpp\
     axtoolbar.cpp \
     themefile.cpp \
     detailview.cpp \
-    editorview.cpp
+    editorview.cpp \
+    axsyntaxhighlighter.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -29,7 +31,8 @@ HEADERS  += mainwindow.h \
     sidebarview.h \
     axmenubar.h \
     detailview.h \
-    editorview.h
+    editorview.h \
+    axsyntaxhighlighter.h
 
 FORMS    += mainwindow.ui
 

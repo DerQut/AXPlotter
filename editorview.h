@@ -5,6 +5,7 @@
 #include <QTextEdit>
 
 class DetailView;
+class AXSyntaxHighlighter;
 
 class EditorView : public QWidget
 {
@@ -13,6 +14,7 @@ public:
     explicit EditorView(DetailView *parent = 0);
     DetailView* detailView;
     QTextEdit* textEdit;
+    AXSyntaxHighlighter* highlighter;
 
 signals:
 
