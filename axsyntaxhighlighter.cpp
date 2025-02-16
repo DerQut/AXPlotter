@@ -11,8 +11,7 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
     keywordFormat.setForeground(Qt::darkBlue);
     keywordFormat.setFontWeight(QFont::Bold);
     const QString keywordPatterns[] = {
-        QStringLiteral("\\bvariable\\b"),
-        QStringLiteral("\\A\\s*\\d+")
+        QStringLiteral("\\bvariable\\b")
     };
 
     for (const QString &pattern : keywordPatterns) {
@@ -20,6 +19,11 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
         rule.format = keywordFormat;
         highlightingRules.append(rule);
     }
+
+    waitFormat.setFontWeight(QFont::Bold);
+    rule.pattern = QRegularExpression(QStringLiteral("\\A\\s*\\d+"));
+    rule.format = waitFormat;
+    highlightingRules.append(rule);
 
     quotationFormat.setForeground(Qt::darkGreen);
     rule.pattern = QRegularExpression(QStringLiteral("\".*\""));
@@ -37,10 +41,11 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
-    multiLineCommentFormat.setForeground(Qt::red);
+    layerFormat.setBackground(Qt::gray);
 
-    commentStartExpression = QRegularExpression(QStringLiteral("/\\*"));
-    commentEndExpression = QRegularExpression(QStringLiteral("\\*/"));
+    layerStartExpression = QRegularExpression(QStringLiteral("layer\\s*{"));
+    layerEndExpression = QRegularExpression(QStringLiteral("}"));
+
 }
 
 
@@ -54,13 +59,15 @@ void AXSyntaxHighlighter::highlightBlock(const QString &text)
         }
     }
 
+    // Apply a format to the layer{} call (disabled because it does not look good)
+    /*
     setCurrentBlockState(0);
     int startIndex = 0;
     if (previousBlockState() != 1)
-        startIndex = text.indexOf(commentStartExpression);
+        startIndex = text.indexOf(layerStartExpression);
 
     while (startIndex >= 0) {
-        QRegularExpressionMatch match = commentEndExpression.match(text, startIndex);
+        QRegularExpressionMatch match = layerEndExpression.match(text, startIndex);
         int endIndex = match.capturedStart();
         int commentLength = 0;
         if (endIndex == -1) {
@@ -69,7 +76,8 @@ void AXSyntaxHighlighter::highlightBlock(const QString &text)
         } else {
             commentLength = endIndex - startIndex + match.capturedLength();
         }
-        setFormat(startIndex, commentLength, multiLineCommentFormat);
-        startIndex = text.indexOf(commentStartExpression, startIndex + commentLength);
+        setFormat(startIndex, commentLength, layerFormat);
+        startIndex = text.indexOf(layerStartExpression, startIndex + commentLength);
     }
+    */
 }

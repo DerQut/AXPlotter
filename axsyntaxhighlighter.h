@@ -23,15 +23,15 @@ private:
     };
     QList<HighlightingRule> highlightingRules;
 
-    QRegularExpression commentStartExpression;
-    QRegularExpression commentEndExpression;
+    QRegularExpression layerStartExpression;
+    QRegularExpression layerEndExpression;
 
     QTextCharFormat keywordFormat;
-    QTextCharFormat classFormat;
+    QTextCharFormat waitFormat;
     QTextCharFormat singleLineCommentFormat;
-    QTextCharFormat multiLineCommentFormat;
     QTextCharFormat quotationFormat;
     QTextCharFormat functionFormat;
+    QTextCharFormat layerFormat;
 };
 
 #endif // AXSYNTAXHIGHLIGHTER_H
