@@ -16,10 +16,16 @@ EditorView::EditorView(DetailView *parent) :
 {
     detailView = parent;
 
+    QFont font;
+    font.setFamily("Courier");
+    font.setFixedPitch(true);
+    font.setPointSize(10);
+
     QVBoxLayout* mainVStack = new QVBoxLayout();
     mainVStack->setMargin(0);
 
     textEdit = new QTextEdit(this);
+    textEdit->setFont(font);
     mainVStack->addWidget(textEdit);
 
     highlighter = new AXSyntaxHighlighter(textEdit->document());
