@@ -26,6 +26,7 @@ EditorView::EditorView(DetailView *parent) :
 
     textEdit = new QTextEdit(this);
     textEdit->setFont(font);
+    textEdit->setLineWrapMode(QTextEdit::NoWrap);
     mainVStack->addWidget(textEdit);
 
     highlighter = new AXSyntaxHighlighter(textEdit->document());
