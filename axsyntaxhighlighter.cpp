@@ -10,6 +10,7 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
 
     keywordFormat.setForeground(Qt::darkBlue);
     keywordFormat.setFontWeight(QFont::Bold);
+
     const QString keywordPatterns[] = {
         QStringLiteral("\\bvariable\\b"),
         QStringLiteral("\\bdeviation\\b"),
@@ -26,15 +27,32 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
         highlightingRules.append(rule);
     }
 
+
+    macroFormat.setForeground(Qt::darkYellow);
+    macroFormat.setFontWeight(QFont::Bold);
+
+    const QString macroPatterns[] = {
+        QStringLiteral("\\blayer\\b")
+    };
+
+    for (const QString &pattern : macroPatterns) {
+        rule.pattern = QRegularExpression(pattern);
+        rule.format = macroFormat;
+        highlightingRules.append(rule);
+    }
+
+
     waitFormat.setFontWeight(QFont::Bold);
     rule.pattern = QRegularExpression(QStringLiteral("\\A\\s*\\d+"));
     rule.format = waitFormat;
     highlightingRules.append(rule);
 
+
     quotationFormat.setForeground(Qt::darkGreen);
     rule.pattern = QRegularExpression(QStringLiteral("\".*\""));
     rule.format = quotationFormat;
     highlightingRules.append(rule);
+
 
     functionFormat.setFontItalic(true);
     functionFormat.setForeground(Qt::blue);
@@ -42,13 +60,14 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
     rule.format = functionFormat;
     highlightingRules.append(rule);
 
+
     singleLineCommentFormat.setForeground(Qt::red);
     rule.pattern = QRegularExpression(QStringLiteral("#[^\n]*"));
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
-    layerFormat.setBackground(Qt::gray);
 
+    layerFormat.setBackground(Qt::gray);
     layerStartExpression = QRegularExpression(QStringLiteral("layer\\s*{"));
     layerEndExpression = QRegularExpression(QStringLiteral("}"));
 

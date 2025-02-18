@@ -27,6 +27,7 @@ private:
     QRegularExpression layerEndExpression;
 
     QTextCharFormat keywordFormat;
+    QTextCharFormat macroFormat;
     QTextCharFormat waitFormat;
     QTextCharFormat singleLineCommentFormat;
     QTextCharFormat quotationFormat;
