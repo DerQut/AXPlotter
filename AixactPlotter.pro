@@ -22,8 +22,7 @@ SOURCES += main.cpp\
     themefile.cpp \
     detailview.cpp \
     editorview.cpp \
-    axsyntaxhighlighter.cpp \
-    linenumbersview.cpp
+    axsyntaxhighlighter.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -33,8 +32,7 @@ HEADERS  += mainwindow.h \
     axmenubar.h \
     detailview.h \
     editorview.h \
-    axsyntaxhighlighter.h \
-    linenumbersview.h
+    axsyntaxhighlighter.h
 
 FORMS    += mainwindow.ui
 

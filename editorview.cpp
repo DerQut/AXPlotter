@@ -1,6 +1,6 @@
 #include <QWidget>
 #include <QTextEdit>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
@@ -11,7 +11,6 @@
 #include "editorview.h"
 #include "detailview.h"
 #include "axsyntaxhighlighter.h"
-#include "linenumbersview.h"
 
 EditorView::EditorView(DetailView *parent) :
     QWidget(parent)
@@ -23,21 +22,18 @@ EditorView::EditorView(DetailView *parent) :
     font.setFixedPitch(true);
     font.setPointSize(10);
 
-    QHBoxLayout* mainHStack = new QHBoxLayout();
-    mainHStack->setMargin(0);
-    mainHStack->setSpacing(0);
-
-    lineNumbersView = new LineNumbersView(this);
-    mainHStack->addWidget(lineNumbersView);
+    QVBoxLayout* mainVStack = new QVBoxLayout();
+    mainVStack->setMargin(0);
+    mainVStack->setSpacing(0);
 
     textEdit = new QTextEdit(this);
     textEdit->setFont(font);
     textEdit->setLineWrapMode(QTextEdit::NoWrap);
-    mainHStack->addWidget(textEdit);
+    mainVStack->addWidget(textEdit);
 
     highlighter = new AXSyntaxHighlighter(textEdit->document());
 
-    this->setLayout(mainHStack);
+    this->setLayout(mainVStack);
 }
 
 
