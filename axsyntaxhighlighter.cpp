@@ -22,7 +22,10 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
         QStringLiteral("\\b[iI][nN]\\b"),
         QStringLiteral("\\b[tT][oO]\\b"),
         QStringLiteral("\\b[wW][iI][tT][hH]\\b"),
-        QStringLiteral("\\b[fF][oO][lL][lL][oO][wW]\\b")
+        QStringLiteral("\\b[fF][oO][lL][lL][oO][wW]\\b"),
+        QStringLiteral("\\b[bB][eE][gG][iI][nN]\\b"),
+        QStringLiteral("\\b[eE][nN][dD]\\b"),
+        QStringLiteral("\\b[sS][tT][aA][tT]\\b")
     };
 
     for (const QString &pattern : keywordPatterns) {
