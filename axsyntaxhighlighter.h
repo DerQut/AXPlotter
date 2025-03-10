@@ -29,7 +29,7 @@ private:
     QTextCharFormat waitFormat;
     QTextCharFormat singleLineCommentFormat;
     QTextCharFormat quotationFormat;
-    QTextCharFormat functionFormat;
+    QTextCharFormat readFormat;
 };
 
 #endif // AXSYNTAXHIGHLIGHTER_H
