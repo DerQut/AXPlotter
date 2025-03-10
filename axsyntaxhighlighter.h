@@ -21,10 +21,8 @@ private:
         QRegularExpression pattern;
         QTextCharFormat format;
     };
-    QList<HighlightingRule> highlightingRules;
 
-    QRegularExpression layerStartExpression;
-    QRegularExpression layerEndExpression;
+    QList<HighlightingRule> highlightingRules;
 
     QTextCharFormat keywordFormat;
     QTextCharFormat macroFormat;
@@ -32,7 +30,6 @@ private:
     QTextCharFormat singleLineCommentFormat;
     QTextCharFormat quotationFormat;
     QTextCharFormat functionFormat;
-    QTextCharFormat layerFormat;
 };
 
 #endif // AXSYNTAXHIGHLIGHTER_H

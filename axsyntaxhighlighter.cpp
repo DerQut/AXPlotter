@@ -8,6 +8,7 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
 {
     HighlightingRule rule;
 
+    // Setting up regex recognition for language keywords
     keywordFormat.setForeground(Qt::darkBlue);
     keywordFormat.setFontWeight(QFont::Bold);
 
@@ -18,7 +19,8 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
         QStringLiteral("\\bwarning\\b"),
         QStringLiteral("\\balarm\\b"),
         QStringLiteral("\\buntil\\b"),
-        QStringLiteral("\\bin\\b")
+        QStringLiteral("\\bin\\b"),
+        QStringLiteral("\\bto\\b")
     };
 
     for (const QString &pattern : keywordPatterns) {
@@ -28,11 +30,13 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
     }
 
 
+    // Setting up regex recognition for macro definitions
     macroFormat.setForeground(Qt::darkYellow);
     macroFormat.setFontWeight(QFont::Bold);
 
     const QString macroPatterns[] = {
-        QStringLiteral("\\blayer\\b")
+        QStringLiteral("\\w+\\s*{"),
+        QStringLiteral("}")
     };
 
     for (const QString &pattern : macroPatterns) {
@@ -42,18 +46,21 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
     }
 
 
+    // Setting up regex recognition for wait calls
     waitFormat.setFontWeight(QFont::Bold);
     rule.pattern = QRegularExpression(QStringLiteral("\\A\\s*\\d+"));
     rule.format = waitFormat;
     highlightingRules.append(rule);
 
 
+    // Setting up regex recognition for print calls
     quotationFormat.setForeground(Qt::darkGreen);
     rule.pattern = QRegularExpression(QStringLiteral("\".*\""));
     rule.format = quotationFormat;
     highlightingRules.append(rule);
 
 
+    // Setting up regex recognition for function calls
     functionFormat.setFontItalic(true);
     functionFormat.setForeground(Qt::blue);
     rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Za-z0-9_]+(?=\\()"));
@@ -61,15 +68,11 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
     highlightingRules.append(rule);
 
 
+    // Setting up regex recognition for code comments
     singleLineCommentFormat.setForeground(Qt::red);
     rule.pattern = QRegularExpression(QStringLiteral("#[^\n]*"));
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
-
-
-    layerFormat.setBackground(Qt::gray);
-    layerStartExpression = QRegularExpression(QStringLiteral("layer\\s*{"));
-    layerEndExpression = QRegularExpression(QStringLiteral("}"));
 
 }
 
