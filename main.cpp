@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
     toolbar->setVisible(false);
 
     mainWindow->show();
+    mainWindow->resize(640, 480);
 
     return mainApp.exec();
 }
