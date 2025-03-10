@@ -13,16 +13,16 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
     keywordFormat.setFontWeight(QFont::Bold);
 
     const QString keywordPatterns[] = {
-        QStringLiteral("\\bvariable\\b"),
-        QStringLiteral("\\bdeviation\\b"),
-        QStringLiteral("\\bdefault\\b"),
-        QStringLiteral("\\bwarning\\b"),
-        QStringLiteral("\\balarm\\b"),
-        QStringLiteral("\\buntil\\b"),
-        QStringLiteral("\\bin\\b"),
-        QStringLiteral("\\bto\\b"),
-        QStringLiteral("\\bwith\\b"),
-        QStringLiteral("\\bfollow\\b")
+        QStringLiteral("\\b[vV][aA][rR][iI][aA][bB][lL][eE]\\b"),
+        QStringLiteral("\\b[dD][eE][vV][iI][aA][tT][iI][oO][nN]\\b"),
+        QStringLiteral("\\b[dD][eE][fF][aA][uU][lL][tT]\\b"),
+        QStringLiteral("\\b[wW][aA][rR][nN][iI][nN][gG]\\b"),
+        QStringLiteral("\\b[aA][lL][aA][rR][mM]\\b"),
+        QStringLiteral("\\b[uU][nN][tT][iI][lL]\\b"),
+        QStringLiteral("\\b[iI][nN]\\b"),
+        QStringLiteral("\\b[tT][oO]\\b"),
+        QStringLiteral("\\b[wW][iI][tT][hH]\\b"),
+        QStringLiteral("\\b[fF][oO][lL][lL][oO][wW]\\b")
     };
 
     for (const QString &pattern : keywordPatterns) {
@@ -89,7 +89,7 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
     // read Macros.txt
     //
     readFormat.setForeground(Qt::darkMagenta);
-    rule.pattern = QRegularExpression("\\bread\\s*\\w*");
+    rule.pattern = QRegularExpression("\\b[rR][eE][aA][dD]\\s*\\w*");
     rule.format = readFormat;
     highlightingRules.append(rule);
 
