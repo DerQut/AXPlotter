@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QButtonGroup>
 #include <QRadioButton>
+#include <QPushButton>
 
 #include "axmenubar.h"
 #include "contentview.h"
@@ -18,7 +19,7 @@ AXMenuBar::AXMenuBar(ContentView* parent) :
     contentView = parent;
 
     // Creating QMenu instances
-    QMenu* fileMenu = new QMenu("&File", this);
+    QMenu* fileMenu = new AXMBFileMenu("&File", this);
     this->addMenu(fileMenu);
 
     QMenu* editMenu = new QMenu("&Edit", this);
@@ -77,5 +78,18 @@ AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
     themeSubMenu->addAction(selectTheme);
 
     connect(themeGroup, SIGNAL(buttonClicked(int)), this->axMenuBar->contentView, SLOT(setTheme(int)));
+}
+
+
+AXMBFileMenu::AXMBFileMenu(const QString &title, AXMenuBar* parent) :
+    QMenu(title, parent)
+{
+    axMenuBar = parent;
+
+    // Creating QActions for filr operations
+    QAction* fileOpenAction = this->addAction("Open recipe file");
+
+    // Connecting all the necessary signals
+    connect(fileOpenAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(obtainScriptFile()));
 }
 

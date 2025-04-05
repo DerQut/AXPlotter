@@ -27,6 +27,7 @@ public slots:
 
 };
 
+
 class AXMBViewMenu : public QMenu
 {
     Q_OBJECT
@@ -38,6 +39,22 @@ private:
     QRadioButton* defaultThemeButton;
     QRadioButton* darkThemeButton;
     QRadioButton* classicThemeButton;
+
+signals:
+
+public slots:
+
+};
+
+
+class AXMBFileMenu : public QMenu
+{
+    Q_OBJECT
+public:
+    explicit AXMBFileMenu(const QString &title, AXMenuBar* parent = 0);
+    AXMenuBar* axMenuBar;
+
+private:
 
 signals:
 

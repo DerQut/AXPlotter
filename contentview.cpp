@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QDebug>
 #include <QMessageBox>
+#include <QShortcut>
 
 #include "contentview.h"
 #include "sidebarview.h"
@@ -34,6 +35,8 @@ ContentView::ContentView(QWidget* parent) :
     mainHStack->addWidget(detailView);
 
     this->setLayout(mainHStack);
+
+    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(obtainScriptFile()));
 }
 
 
