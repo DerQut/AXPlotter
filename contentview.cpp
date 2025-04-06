@@ -80,12 +80,22 @@ void ContentView::obtainScriptFile() {
 
 void ContentView::saveScriptFile() {
 
+    QFileInfo fileInfo(scriptFile);
+    QMessageBox messageBox;
+
     // Empty file name fallback
     if (scriptFile == "") { saveScriptFileAs(); }
 
     // Missing file extention fallback
     if (scriptFile.count(".") != 1) {
         scriptFile.append(".txt");
+    }
+
+    // Additional fallback for a semi-empty file name
+    if (scriptFile.at(0) == '.') {
+        messageBox.setText("File name \"" + scriptFile + "\" is invalid. Unable to save file.");
+        messageBox.exec();
+        return;
     }
 
     // Opening the given file
@@ -130,7 +140,7 @@ void ContentView::saveScriptFileAs() {
     }
 
     if (fileName.count(' ') > 0) {
-        messageBox.setText("File name \"" + fileName + "\" contains a ' ' character. Unable to save file.");
+        messageBox.setText("File name \"" + fileName + "\" contains a '  ' character. Unable to save file.");
         messageBox.exec();
         return;
     }

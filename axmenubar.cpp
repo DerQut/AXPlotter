@@ -86,10 +86,14 @@ AXMBFileMenu::AXMBFileMenu(const QString &title, AXMenuBar* parent) :
 {
     axMenuBar = parent;
 
-    // Creating QActions for filr operations
+    // Creating QActions for file operations
     QAction* fileOpenAction = this->addAction("Open recipe file");
+    QAction* fileSaveAction = this->addAction("Save recipe file");
+    QAction* fileSaveAsAction = this->addAction("Save recipe file as");
 
     // Connecting all the necessary signals
     connect(fileOpenAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(obtainScriptFile()));
+    connect(fileSaveAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(saveScriptFile()));
+    connect(fileSaveAsAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(saveScriptFileAs()));
 }
 
