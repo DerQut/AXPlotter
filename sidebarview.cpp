@@ -91,4 +91,5 @@ void SideBarView::setTheme(Theme theme) {
 
 void SideBarView::setFileLabel(QString text) {
     this->fileDisplay->setText(text);
+    this->fileDisplay->setToolTip(text);
 }
