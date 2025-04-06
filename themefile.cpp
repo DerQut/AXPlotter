@@ -73,7 +73,7 @@ void saveTheme(const char* fileName, Theme theme) {
         return;
     }
 
-    // Reading Theme to file
+    // Saving Theme to file
     file << line;
     file.close();
 

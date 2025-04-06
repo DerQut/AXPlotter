@@ -24,6 +24,8 @@ signals:
 public slots:
     void setTheme(int idClicked);
     void obtainScriptFile();
+    void saveScriptFile();
+    void saveScriptFileAs();
 };
 
 #endif // CONTENTVIEW_H

@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -37,6 +39,8 @@ ContentView::ContentView(QWidget* parent) :
     this->setLayout(mainHStack);
 
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(obtainScriptFile()));
+    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveScriptFile()));
+    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S + Qt::SHIFT), this, SLOT(saveScriptFileAs()));
 }
 
 
@@ -68,6 +72,70 @@ void ContentView::obtainScriptFile() {
         messageBox.exec();
         return;
     }
+
+    this->sideBarView->setFileLabel(scriptFile);
+    this->detailView->editorView->readRecipeFile(scriptFile);
+}
+
+
+void ContentView::saveScriptFile() {
+
+    // Empty file name fallback
+    if (scriptFile == "") { saveScriptFileAs(); }
+
+    // Missing file extention fallback
+    if (scriptFile.count(".") != 1) {
+        scriptFile.append(".txt");
+    }
+
+    // Opening the given file
+    std::ofstream file;
+    file.open(scriptFile.toStdString());
+
+    // Error handling
+    if (!file.is_open()) {
+        qDebug() << "Error writing to file";
+        return;
+    }
+
+    // Saving Theme to file
+    file << (this->detailView->editorView->textEdit->document()->toPlainText().toStdString());
+    file.close();
+
+    qDebug() << "File " << scriptFile << " saved!";
+
+}
+
+
+void ContentView::saveScriptFileAs() {
+    this->scriptFile = QFileDialog::getSaveFileName(this, tr("Select script file"));
+    qDebug() << this->scriptFile;
+
+    QFileInfo fileInfo(scriptFile);
+    QMessageBox messageBox;
+
+    const QString fileName = fileInfo.fileName();
+    qDebug() << fileName;
+
+    if (fileName == "") {
+        messageBox.setText("File name is empty. Unable to save file.");
+        messageBox.exec();
+        return;
+    }
+
+    if (fileName.count('.') > 1) {
+        messageBox.setText("File name \"" + fileName + "\" contains more than one '.' character. Unable to save file.");
+        messageBox.exec();
+        return;
+    }
+
+    if (fileName.count(' ') > 0) {
+        messageBox.setText("File name \"" + fileName + "\" contains a ' ' character. Unable to save file.");
+        messageBox.exec();
+        return;
+    }
+
+    this->saveScriptFile();
 
     this->sideBarView->setFileLabel(scriptFile);
     this->detailView->editorView->readRecipeFile(scriptFile);
