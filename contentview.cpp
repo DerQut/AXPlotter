@@ -22,6 +22,12 @@ ContentView::ContentView(QWidget* parent) :
 {
     this->setContentsMargins(0, 0, 0, 0);
 
+    recentFile1 = "";
+    recentFile2 = "";
+    recentFile3 = "";
+    recentFile4 = "";
+    recentFile5 = "";
+
     QHBoxLayout *mainHStack = new QHBoxLayout(this);
     mainHStack->setMargin(0);
     mainHStack->setSpacing(0);
@@ -50,12 +56,12 @@ void ContentView::setTheme(int idClicked) {
 
 
 void ContentView::obtainScriptFile() {
-    this->scriptFile = QFileDialog::getOpenFileName(this, tr("Select script file"));
+    QString newScriptFile = QFileDialog::getOpenFileName(this, tr("Select script file"));
     qDebug() << this->scriptFile;
 
-    if (scriptFile == "") { return; }
+    if (newScriptFile == "") { return; }
 
-    QFileInfo fileInfo(scriptFile);
+    QFileInfo fileInfo(newScriptFile);
     QMessageBox messageBox;
 
     const QString fileName = fileInfo.fileName();
@@ -73,8 +79,11 @@ void ContentView::obtainScriptFile() {
         return;
     }
 
+    this->scriptFile = newScriptFile;
     this->sideBarView->setFileLabel(scriptFile);
     this->detailView->editorView->readRecipeFile(scriptFile);
+
+    this->shiftRecentFiles();
 }
 
 
@@ -149,4 +158,45 @@ void ContentView::saveScriptFileAs() {
 
     this->sideBarView->setFileLabel(scriptFile);
     this->detailView->editorView->readRecipeFile(scriptFile);
+}
+
+
+void ContentView::shiftRecentFiles() {
+    recentFile5 = recentFile4;
+    recentFile4 = recentFile3;
+    recentFile3 = recentFile2;
+    recentFile2 = recentFile1;
+    recentFile1 = scriptFile;
+
+    emit this->recentFilesChanged();
+}
+
+
+void ContentView::readScriptFile(QString newScriptFile) {
+    qDebug() << this->scriptFile;
+
+    if (newScriptFile == "") { return; }
+
+    QFileInfo fileInfo(newScriptFile);
+    QMessageBox messageBox;
+
+    const QString fileName = fileInfo.fileName();
+    qDebug() << fileName;
+
+    if (fileName.count('.') > 1) {
+        messageBox.setText("File name \"" + fileName + "\" contains more than one '.' character. Unable to read file.");
+        messageBox.exec();
+        return;
+    }
+
+    if (fileName.count(' ') > 0) {
+        messageBox.setText("File name \"" + fileName + "\" contains a ' ' character. Unable to read file.");
+        messageBox.exec();
+        return;
+    }
+
+    this->scriptFile = newScriptFile;
+    this->sideBarView->setFileLabel(scriptFile);
+    this->detailView->editorView->readRecipeFile(scriptFile);
+
 }

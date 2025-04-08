@@ -10,6 +10,7 @@
 
 #include "sidebarview.h"
 #include "contentview.h"
+#include "recentfilesview.h"
 #include "themefile.h"
 
 SideBarView::SideBarView(ContentView *parent) :
@@ -39,6 +40,10 @@ SideBarView::SideBarView(ContentView *parent) :
     fileHStack->addWidget(fileButton);
 
     mainVStack->addLayout(fileHStack);
+
+    // Creating a recent files view
+    RecentFilesView* recentFilesView = new RecentFilesView(this->contentView, this);
+    mainVStack->addWidget(recentFilesView);
 
     mainVStack->addStretch();
 

@@ -19,13 +19,23 @@ public:
 
     QString scriptFile;
 
+    // Temporary solution, likely to be replaced by an array
+    QString recentFile1;
+    QString recentFile2;
+    QString recentFile3;
+    QString recentFile4;
+    QString recentFile5;
+
 signals:
+    void recentFilesChanged();
 
 public slots:
     void setTheme(int idClicked);
     void obtainScriptFile();
+    void readScriptFile(QString newScriptFile);
     void saveScriptFile();
     void saveScriptFileAs();
+    void shiftRecentFiles();
 };
 
 #endif // CONTENTVIEW_H
