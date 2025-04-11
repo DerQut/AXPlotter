@@ -5,6 +5,7 @@
 
 #include <QWidget>
 #include <QString>
+#include <QList>
 
 class SideBarView;
 class DetailView;
@@ -19,12 +20,7 @@ public:
 
     QString scriptFile;
 
-    // Temporary solution, likely to be replaced by an array
-    QString recentFile1;
-    QString recentFile2;
-    QString recentFile3;
-    QString recentFile4;
-    QString recentFile5;
+    QList<QString> recentFiles;
 
 signals:
     void recentFilesChanged();

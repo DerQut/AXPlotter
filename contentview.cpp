@@ -22,11 +22,7 @@ ContentView::ContentView(QWidget* parent) :
 {
     this->setContentsMargins(0, 0, 0, 0);
 
-    recentFile1 = "";
-    recentFile2 = "";
-    recentFile3 = "";
-    recentFile4 = "";
-    recentFile5 = "";
+    recentFiles << "" << "" << "" << "" << "";
 
     QHBoxLayout *mainHStack = new QHBoxLayout(this);
     mainHStack->setMargin(0);
@@ -162,11 +158,8 @@ void ContentView::saveScriptFileAs() {
 
 
 void ContentView::shiftRecentFiles() {
-    recentFile5 = recentFile4;
-    recentFile4 = recentFile3;
-    recentFile3 = recentFile2;
-    recentFile2 = recentFile1;
-    recentFile1 = scriptFile;
+    recentFiles.removeLast();
+    recentFiles.prepend(scriptFile);
 
     emit this->recentFilesChanged();
 }
