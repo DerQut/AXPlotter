@@ -75,7 +75,7 @@ void SideBarView::setDefaultTheme()
 
 void SideBarView::setClassicTheme()
 {
-    background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #d2d0c9, stop:1 #d2d0c9);");
+    background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #f5f5f5, stop:1 #f5f5f5);");
     saveTheme("theme.cfg", CLASSIC);
 }
 

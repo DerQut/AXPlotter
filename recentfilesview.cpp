@@ -19,7 +19,7 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
 
     // Creating the widget to host the background gradient
     QWidget* background = new QWidget(this);
-    background->setStyleSheet("background-color: white");
+    background->setStyleSheet("background-color: #f5f5f5");
 
     // Creating the main VStack to host widgets in front of the background
     QVBoxLayout* mainVStack = new QVBoxLayout();
@@ -50,7 +50,11 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
     recentGroup->addButton(recentFileButton3, 3);
     recentGroup->addButton(recentFileButton4, 4);
 
-    recentFileButtons << recentFileButton0 << recentFileButton1 << recentFileButton2 << recentFileButton3 << recentFileButton4;
+    recentFileButtons << recentFileButton0
+                      << recentFileButton1
+                      << recentFileButton2
+                      << recentFileButton3
+                      << recentFileButton4;
 
     recentFileButton0->setStyleSheet("border: none; color: palette(window-text); background: transparent; text-align:left;");
     recentFileButton1->setStyleSheet("border: none; color: palette(window-text); background: transparent; text-align:left;");
@@ -89,7 +93,7 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
 
 
 void RecentFilesView::updateButtons() {
-    for (int i=0; i < recentFileButtons.count()-1; i++) {
+    for (int i=0; i < recentFileButtons.count(); i++) {
         recentFileButtons[i]->setText( contentView->recentFiles[i] );
     }
 }
