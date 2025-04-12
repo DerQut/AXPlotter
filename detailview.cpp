@@ -10,6 +10,7 @@ DetailView::DetailView(ContentView *parent) :
     QWidget(parent)
 {
     this->contentView = parent;
+    this->setContentsMargins(0, 0, 0, 0);
 
     // Creating a QTabWidget instance
     QTabWidget* tabView = new QTabWidget(this);

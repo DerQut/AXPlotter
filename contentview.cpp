@@ -1,6 +1,7 @@
 #include <fstream>
 
 #include <QWidget>
+#include <QSplitter>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFileDialog>
@@ -21,24 +22,29 @@ ContentView::ContentView(QWidget* parent) :
     QWidget(parent)
 {
     this->setContentsMargins(0, 0, 0, 0);
+    QHBoxLayout* dummyLayout = new QHBoxLayout();
 
     recentFiles << "" << "" << "" << "" << "";
 
-    QHBoxLayout *mainHStack = new QHBoxLayout(this);
-    mainHStack->setMargin(0);
-    mainHStack->setSpacing(0);
+    QSplitter* mainSplitter = new QSplitter(this);
+    mainSplitter->setContentsMargins(0, 0, 0, 0);
+    mainSplitter->setHandleWidth(1);
+    mainSplitter->setChildrenCollapsible(false);
 
     sideBarView = new SideBarView(this);
-    sideBarView->setFixedWidth(210);
+    //sideBarView->setFixedWidth(210);
     sideBarView->setTheme(getTheme("theme.cfg"));
 
     detailView = new DetailView(this);
     detailView->setContentsMargins(0, 0, 0, 0);
 
-    mainHStack->addWidget(sideBarView);
-    mainHStack->addWidget(detailView);
+    mainSplitter->addWidget(sideBarView);
+    mainSplitter->addWidget(detailView);
 
-    this->setLayout(mainHStack);
+    mainSplitter->setSizes(QList<int>() << 150 << 480-150);
+
+    dummyLayout->addWidget(mainSplitter);
+    this->setLayout(dummyLayout);
 
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(obtainScriptFile()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveScriptFile()));

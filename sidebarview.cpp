@@ -17,7 +17,7 @@ SideBarView::SideBarView(ContentView *parent) :
     QWidget(parent)
 {
     this->contentView = parent;
-    this->setContentsMargins(2, 0, 2, 2);
+    this->setContentsMargins(0, 0, 0, 0);
 
     QStackedLayout* mainZStack = new QStackedLayout();
     mainZStack->setStackingMode(QStackedLayout::StackAll);
