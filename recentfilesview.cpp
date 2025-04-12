@@ -87,6 +87,7 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
     this->setMaximumHeight(160);
 
     connect(this->contentView, SIGNAL(recentFilesChanged()), this, SLOT(updateButtons()));
+    this->updateButtons();
 
     connect(recentGroup, SIGNAL( buttonClicked(int) ), this, SLOT( forceReadRecentFile(int) ));
 }
@@ -95,6 +96,10 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
 void RecentFilesView::updateButtons() {
     for (int i=0; i < recentFileButtons.count(); i++) {
         recentFileButtons[i]->setText( contentView->recentFiles[i] );
+        recentFileButtons[i]->setDisabled(false);
+        if (contentView->recentFiles[i] == "") {
+            recentFileButtons[i]->setDisabled(true);
+        }
     }
 }
 

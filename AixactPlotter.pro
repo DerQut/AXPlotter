@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT      += core gui
-CONFIG  += c++11
+CONFIG  += c++17
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,8 +35,6 @@ HEADERS  += mainwindow.h \
     editorview.h \
     axsyntaxhighlighter.h \
     recentfilesview.h
-
-FORMS    += mainwindow.ui
 
 OTHER_FILES += \
     ../Documents/Kalibracja.txt

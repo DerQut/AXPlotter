@@ -28,7 +28,7 @@ ContentView::ContentView(QWidget* parent) :
 
     QSplitter* mainSplitter = new QSplitter(this);
     mainSplitter->setContentsMargins(0, 0, 0, 0);
-    mainSplitter->setHandleWidth(1);
+    mainSplitter->setHandleWidth(5);
     mainSplitter->setChildrenCollapsible(false);
 
     sideBarView = new SideBarView(this);
