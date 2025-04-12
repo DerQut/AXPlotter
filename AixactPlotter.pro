@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     detailview.cpp \
     editorview.cpp \
     axsyntaxhighlighter.cpp \
-    recentfilesview.cpp
+    recentfilesview.cpp \
+    axinterpreter.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     detailview.h \
     editorview.h \
     axsyntaxhighlighter.h \
-    recentfilesview.h
+    recentfilesview.h \
+    axinterpreter.h
 
 OTHER_FILES += \
     ../Documents/Kalibracja.txt
