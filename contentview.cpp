@@ -91,7 +91,6 @@ void ContentView::obtainScriptFile() {
 
 void ContentView::saveScriptFile() {
 
-    QFileInfo fileInfo(scriptFile);
     QMessageBox messageBox;
 
     // Empty file name fallback
@@ -160,6 +159,8 @@ void ContentView::saveScriptFileAs() {
 
     this->sideBarView->setFileLabel(scriptFile);
     this->detailView->editorView->readRecipeFile(scriptFile);
+
+    this->shiftRecentFiles();
 }
 
 
