@@ -1,17 +1,24 @@
 #ifndef AXINTERPRETER_H
 #define AXINTERPRETER_H
 
-#include <QWidget>
+#include <QMessageBox>
 
-class AXInterpreter : public QWidget
+class ContentView;
+
+
+class AXInterpreter : public QMessageBox
 {
     Q_OBJECT
 public:
-    explicit AXInterpreter(QWidget *parent = 0);
+    explicit AXInterpreter(ContentView* parent = 0);
+    ContentView* contentView;
 
 signals:
+    void failure();
+    void success();
 
 public slots:
+    void startCompilation();
 
 };
 

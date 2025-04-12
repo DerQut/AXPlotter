@@ -9,6 +9,7 @@
 
 class SideBarView;
 class DetailView;
+class AXInterpreter;
 
 class ContentView : public QWidget
 {
@@ -17,6 +18,7 @@ public:
     explicit ContentView(QWidget *parent = 0);
     SideBarView* sideBarView;
     DetailView* detailView;
+    AXInterpreter* axinterpreter;
 
     QString scriptFile;
 
@@ -32,6 +34,7 @@ public slots:
     void saveScriptFile();
     void saveScriptFileAs();
     void shiftRecentFiles();
+    void askToCompile();
 };
 
 #endif // CONTENTVIEW_H
