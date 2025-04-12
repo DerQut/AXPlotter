@@ -111,7 +111,7 @@ void ContentView::saveScriptFile() {
 
     // Opening the given file
     std::ofstream file;
-    file.open(scriptFile.toStdString());
+    file.open(scriptFile.toStdString().c_str());
 
     // Error handling
     if (!file.is_open()) {
@@ -120,7 +120,7 @@ void ContentView::saveScriptFile() {
     }
 
     // Saving Theme to file
-    file << (this->detailView->editorView->textEdit->document()->toPlainText().toStdString());
+    file << (this->detailView->editorView->textEdit->document()->toPlainText().toStdString().c_str());
     file.close();
 
     qDebug() << "File " << scriptFile << " saved!";
