@@ -183,6 +183,12 @@ void ContentView::readScriptFile(QString newScriptFile) {
     const QString fileName = fileInfo.fileName();
     qDebug() << fileName;
 
+    if (!QFileInfo::exists(newScriptFile)) {
+        messageBox.setText("File name \"" + fileName + "\" does not exist.");
+        messageBox.exec();
+        return;
+    }
+
     if (fileName.count('.') > 1) {
         messageBox.setText("File name \"" + fileName + "\" contains more than one '.' character. Unable to read file.");
         messageBox.exec();
