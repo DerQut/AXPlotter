@@ -1,12 +1,12 @@
 #ifndef AXINTERPRETER_H
 #define AXINTERPRETER_H
 
-#include <QMessageBox>
+#include <QMainWindow>
 
 class ContentView;
 
 
-class AXInterpreter : public QMessageBox
+class AXInterpreter : public QMainWindow
 {
     Q_OBJECT
 public:

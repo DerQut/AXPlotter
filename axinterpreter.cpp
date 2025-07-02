@@ -1,19 +1,21 @@
 #include <QDebug>
+#include <QLabel>
 
 #include "axinterpreter.h"
 #include "contentview.h"
 
 AXInterpreter::AXInterpreter(ContentView* parent) :
-    QMessageBox(parent)
+    QMainWindow(parent)
 {
     this->contentView = parent;
 
-    this->setText("Test");
+    QLabel* placeholder = new QLabel("Test");
+    this->setCentralWidget(placeholder);
+    this->hide();
 }
 
 
 
 void AXInterpreter::startCompilation() {
-    qDebug() << "Test";
-    this->exec();
+    this->show();
 }

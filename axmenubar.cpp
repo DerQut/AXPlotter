@@ -12,6 +12,7 @@
 #include "contentview.h"
 #include "sidebarview.h"
 #include "themefile.h"
+#include "axinterpreter.h"
 
 AXMenuBar::AXMenuBar(ContentView* parent) :
     QMenuBar(parent)
@@ -91,9 +92,13 @@ AXMBFileMenu::AXMBFileMenu(const QString &title, AXMenuBar* parent) :
     QAction* fileSaveAction = this->addAction("Save recipe file");
     QAction* fileSaveAsAction = this->addAction("Save recipe file as");
 
+    QAction* fileStartCompilation = this->addAction("Start compilation");
+
     // Connecting all the necessary signals
     connect(fileOpenAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(obtainScriptFile()));
     connect(fileSaveAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(saveScriptFile()));
     connect(fileSaveAsAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(saveScriptFileAs()));
+
+    connect(fileStartCompilation, SIGNAL(triggered()), this->axMenuBar->contentView->axinterpreter, SLOT(startCompilation()));
 }
 
