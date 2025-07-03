@@ -29,10 +29,12 @@ void AXInterpreter::startCompilation(QString scriptFile) {
 
     this->scriptFile = scriptFile;
 
-    if (!this->recreateFolder()) {
+    if (this->recreateFolder()) {
         qDebug() << "recreateFolder() failed!";
         return;
     }
+
+    qDebug() << "Folder " << this->baseFolder.absolutePath() << " created!";
 
     this->show();
 }
