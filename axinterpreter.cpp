@@ -46,6 +46,22 @@ void AXInterpreter::startCompilation(QString scriptFile) {
     qDebug() << "Folder " << this->baseFolder.absolutePath() << " created!";
     this->mainText->setText("Folder " + this->baseFolder.absolutePath() + " created!");
 
+    // Create an .AXR file (READ commands replaced with contents of specified files)
+    this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axr...");
+
+    // Create an .AXC file (Comments removed)
+    this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axc...");
+
+    // Create an .AXS file (Separated by semicolons)
+    this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axs...");
+
+
+    // Infer variables
+
+    // Create .AXV files (Per-variable script files)
+
+    // Create .CSV files for plotting
+
 }
 
 
