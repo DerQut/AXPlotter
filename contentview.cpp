@@ -51,7 +51,7 @@ ContentView::ContentView(QWidget* parent) :
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(obtainScriptFile()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveScriptFile()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S + Qt::SHIFT), this, SLOT(saveScriptFileAs()));
-    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this->axinterpreter, SLOT(startCompilation()));
+    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(askToCompile()));
 }
 
 
@@ -193,5 +193,7 @@ void ContentView::readScriptFile(QString newScriptFile) {
 
 
 
-void ContentView::askToCompile() {}
+void ContentView::askToCompile() {
+    this->axinterpreter->startCompilation(this->scriptFile);
+}
 
