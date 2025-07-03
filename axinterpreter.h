@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QDir>
+#include <QLabel>
 
 class ContentView;
 
@@ -12,6 +13,7 @@ class AXInterpreter : public QMainWindow
     Q_OBJECT
 public:
     explicit AXInterpreter(ContentView* parent = 0);
+    QLabel* mainText;
     ContentView* contentView;
     QDir baseFolder;
     QString scriptFile;

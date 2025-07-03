@@ -11,8 +11,8 @@ AXInterpreter::AXInterpreter(ContentView* parent) :
 {
     this->contentView = parent;
 
-    QLabel* placeholder = new QLabel("Test");
-    this->setCentralWidget(placeholder);
+    this->mainText = new QLabel("Test");
+    this->setCentralWidget(this->mainText);
     this->hide();
 }
 
@@ -20,24 +20,34 @@ AXInterpreter::AXInterpreter(ContentView* parent) :
 
 void AXInterpreter::startCompilation(QString scriptFile) {
 
+    this->show();
 
     // Check if the given scriptFile is valid
     if (!scriptFile.count()) {
         qDebug() << "No file specified!";
+        this->mainText->setText("No file specified!");
+        return;
+    }
+
+    if (!QFileInfo(scriptFile).exists()) {
+        qDebug() << "Specified file does not exist!";
+        this->mainText->setText("Specified file does not exist!");
         return;
     }
 
     this->scriptFile = scriptFile;
 
     if (this->recreateFolder()) {
-        qDebug() << "recreateFolder() failed!";
+        qDebug() << "Failed to recreate folder!";
+        this->mainText->setText("Failed to recreate folder!");
         return;
     }
 
     qDebug() << "Folder " << this->baseFolder.absolutePath() << " created!";
+    this->mainText->setText("Folder " + this->baseFolder.absolutePath() + " created!");
 
-    this->show();
 }
+
 
 int AXInterpreter::recreateFolder() {
     // Create a new folder named after the given scriptFile
