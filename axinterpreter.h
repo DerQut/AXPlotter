@@ -17,6 +17,7 @@ public:
     ContentView* contentView;
     QDir baseFolder;
     QString scriptFile;
+    QDir scriptFileFolder;
 
 signals:
     void failure();
@@ -25,6 +26,9 @@ signals:
 public slots:
     void startCompilation(QString scriptFile);
     int recreateFolder();
+    int generateAXRfile();
+    //int generateAXCfile();
+    //int generateAXSfile();
 
 };
 

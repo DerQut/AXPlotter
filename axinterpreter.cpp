@@ -2,9 +2,14 @@
 #include <QLabel>
 #include <QDir>
 #include <QFileInfo>
+#include <QFile>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
+#include <QTextStream>
 
 #include "axinterpreter.h"
 #include "contentview.h"
+#include "recursiveReplaceRead.h"
 
 AXInterpreter::AXInterpreter(ContentView* parent) :
     QMainWindow(parent)
@@ -48,6 +53,10 @@ void AXInterpreter::startCompilation(QString scriptFile) {
 
     // Create an .AXR file (READ commands replaced with contents of specified files)
     this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axr...");
+    if (this->generateAXRfile()) {
+        this->mainText->setText("Failed to create " + this->baseFolder.dirName() + ".axr");
+        return;
+    }
 
     // Create an .AXC file (Comments removed)
     this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axc...");
@@ -55,6 +64,7 @@ void AXInterpreter::startCompilation(QString scriptFile) {
     // Create an .AXS file (Separated by semicolons)
     this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axs...");
 
+    // Create .AXM files (Macros pasted in place of their call functions)
 
     // Infer variables
 
@@ -69,8 +79,10 @@ int AXInterpreter::recreateFolder() {
     // Create a new folder named after the given scriptFile
     QFileInfo fileInfo(this->scriptFile);
     QString baseFolderName = fileInfo.absolutePath() + QDir::separator() + fileInfo.completeBaseName();
+    QString scriptFolderName = fileInfo.absolutePath();
 
     this->baseFolder = QDir(baseFolderName);
+    this->scriptFileFolder = QDir(scriptFolderName);
 
     // Delete the folder and all of its contents
     if (baseFolder.exists()) {
@@ -89,5 +101,26 @@ int AXInterpreter::recreateFolder() {
         return -2;
     }
     qDebug() << "Created!!";
+    return 0;
+}
+
+
+int AXInterpreter::generateAXRfile() {
+
+    // Create the .AXR file header
+    QFile axrFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axr");
+
+    // Create and open the .AXR file
+    if (!(axrFileHeader.open(QIODevice::WriteOnly | QIODevice::Text))) {
+        return -1;
+    }
+
+    // Write text to file
+    QTextStream out (&axrFileHeader);
+    out << recursiveReplaceRead(this->scriptFile);
+
+    // Close the file
+    axrFileHeader.close();
+
     return 0;
 }
