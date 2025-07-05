@@ -51,7 +51,7 @@ QString recursiveReplaceRead(QString fileName) {
             }
 
             // Check if the file is not trying to read itself
-            if (newFile != filename) {
+            if (newFile != fileName) {
                 line = recursiveReplaceRead(newFile);
             } else {
                 line = QString();
