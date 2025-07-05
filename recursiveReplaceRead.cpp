@@ -37,21 +37,22 @@ QString recursiveReplaceRead(QString fileName) {
         if (matchRead.hasMatch()) {
 
             // Inferred file name
-            QString newFile;
+            QString newFile = QFileInfo(fileName).absolutePath() + QDir::separator();
 
             // Check if the captured file has an extention
             QRegularExpressionMatch matchExtention = regexExtention.match(matchRead.captured(1));
 
-            // if the file has no extention, use the default one (.epi)
-            newFile = matchRead.captured(1) + ".epi";
-
             if (matchExtention.hasMatch()) {
-                newFile = matchRead.captured(1) + "." + matchExtention.captured(2);
+                // if the file has an extention, use it
+                newFile += matchRead.captured(1) + "." + matchExtention.captured(2);
+            } else {
+                // if the file has no extention, use the default one (.epi)
+                newFile += matchRead.captured(1) + ".epi";
             }
 
             // Check if the file is not trying to read itself
-            if (QFileInfo(fileName).absolutePath() + QDir::separator() + newFile != filename) {
-                line = recursiveReplaceRead(QFileInfo(fileName).absolutePath() + QDir::separator() + newFile);
+            if (newFile != filename) {
+                line = recursiveReplaceRead(newFile);
             } else {
                 line = QString();
             }
