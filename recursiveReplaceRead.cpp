@@ -30,7 +30,7 @@ QString recursiveReplaceRead(QString fileName) {
     // Create a text stream for reading the script file
     QTextStream in (&fileHeader);
     while (!in.atEnd()) {
-        QString line = in.readLine().trimmed();
+        QString line = in.readLine().simplified();
 
         QRegularExpressionMatch matchRead = regexRead.match(line);
         if (matchRead.hasMatch()) {
@@ -47,7 +47,7 @@ QString recursiveReplaceRead(QString fileName) {
             }
             line = recursiveReplaceRead(QFileInfo(fileName).absolutePath() + QDir::separator() + newFile);
         }
-        result += line.trimmed() + "\n";
+        result += line.simplified() + "\n";
     }
 
     // Close the file

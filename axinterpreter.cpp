@@ -60,6 +60,10 @@ void AXInterpreter::startCompilation(QString scriptFile) {
 
     // Create an .AXC file (Comments removed)
     this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axc...");
+    if (this->generateAXCfile()) {
+        this->mainText->setText("Failed to create " + this->baseFolder.dirName() + ".axc");
+        return;
+    }
 
     // Create an .AXS file (Separated by semicolons)
     this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axs...");
@@ -71,6 +75,9 @@ void AXInterpreter::startCompilation(QString scriptFile) {
     // Create .AXV files (Per-variable script files)
 
     // Create .CSV files for plotting
+
+    // Done!
+    this->mainText->setText("Done!");
 
 }
 
@@ -123,4 +130,57 @@ int AXInterpreter::generateAXRfile() {
     axrFileHeader.close();
 
     return 0;
+}
+
+
+int AXInterpreter::generateAXCfile() {
+    // Create the .AXC file header
+    QFile axcFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axc");
+
+    // Create and open the .AXC file
+    if (!(axcFileHeader.open(QIODevice::WriteOnly | QIODevice::Text))) {
+        return -1;
+    }
+
+    // Create the .AXR file header
+    QFile axrFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axr");
+
+    // Open the .AXR file (Read-only)
+    if(!(axrFileHeader.open(QIODevice::ReadOnly | QIODevice::Text))) {
+        return -2;
+    }
+
+    // Create the text streams for reading and writing
+    QTextStream in (&axrFileHeader);
+    QTextStream out (&axcFileHeader);
+
+    // Variable to store the result of reading from .AXR
+    QString result = QString();
+
+    // Regex to find comments (from '#' to the end of the line)
+    // (Match if has at least 0 chars that are not '#' followed by a '#' and at least 0 of any other char)
+    // Also capture everything proceeding the '#' char
+    QRegularExpression regexComment("^([^#]*)#.*$");
+
+    // Read the .AXR file
+    while (!(in.atEnd())) {
+        QString line = in.readLine();
+        QRegularExpressionMatch matchComment = regexComment.match(line);
+
+        if (matchComment.hasMatch()) {
+            line = matchComment.captured(1);
+        }
+
+        result += line.simplified() + "\n";
+    }
+
+    // Write to the .AXC
+    out << result;
+
+    // Close all files
+    axrFileHeader.close();
+    axcFileHeader.close();
+
+    return 0;
+
 }

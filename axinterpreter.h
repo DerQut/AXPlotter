@@ -27,7 +27,7 @@ public slots:
     void startCompilation(QString scriptFile);
     int recreateFolder();
     int generateAXRfile();
-    //int generateAXCfile();
+    int generateAXCfile();
     //int generateAXSfile();
 
 };
