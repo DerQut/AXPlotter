@@ -74,8 +74,6 @@ void AXInterpreter::startCompilation(QString scriptFile) {
 
     // Infer variables
 
-    // Create .AXV files (Per-variable script files)
-
     // Create .CSV files for plotting
 
     // Done!
@@ -228,17 +226,27 @@ int AXInterpreter::generateAXMfile() {
     QString result = QString();
     while (!(in.atEnd())) {
         QString line = in.readLine().trimmed();
+        // Add all lines next to one another (no newline)
         result += line + " ";
     }
 
     // Regex to find macro definitions
+    // Match when a single non-digit, non-space char is followed by any amount of word chars, a '{', anything, '}'
+    // Catches: entire definition (0), macro name (1), macro contents (2)
     QRegularExpression regexDefinitions ("([^\\s\\d][\\w]*)\\s*[{]([^}]*)[}]");
     while (1) {
         QRegularExpressionMatch matchDefinitions = regexDefinitions.match(result);
+
+        // if there is a macro declaration
         if (matchDefinitions.hasMatch()) {
+
+            // remove the declaration
             result.remove(matchDefinitions.captured(0));
+
+            // replace all macro calls (captured(1)) with macro contents (captured(2))
             result.replace(" " + matchDefinitions.captured(1) + ";", " " + matchDefinitions.captured(2));
         } else {
+            // Stop the loop once there are no macro definitions left
             break;
         }
     }
