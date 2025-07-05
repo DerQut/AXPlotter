@@ -170,9 +170,21 @@ int AXInterpreter::generateAXCfile() {
         if (matchComment.hasMatch()) {
             line = matchComment.captured(1);
         }
+        // Remove whitespaces from beginning and the end of the line, remove multiple whitespaces
+        line = line.simplified();
 
-        result += line.simplified() + "\n";
+        // Skip empty lines
+        if (line != QString()) {
+            // Add all lines next to one another (no newline)
+            result += line;
+        }
     }
+
+    // Insert new newline characters
+    result.replace(",", ", ");
+    result.replace(";", ";\n");
+    result.replace("{", "{\n");
+    result.replace("}", "}\n");
 
     // Write to the .AXC
     out << result;

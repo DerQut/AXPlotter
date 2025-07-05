@@ -13,7 +13,7 @@ QString recursiveReplaceRead(QString fileName) {
     // Create a file header
     QFile fileHeader(fileName);
 
-    // Try to open the file
+    // Try to open the file, return an empty string upon failure
     if (!(fileHeader.open(QIODevice::ReadOnly | QIODevice::Text))) {
         return QString();
     }
@@ -25,6 +25,7 @@ QString recursiveReplaceRead(QString fileName) {
     QRegularExpression regexRead("^read\\s+(.+);$");
 
     //Regular expression to check if a file extention is given
+    // At least one letter, dot, at least one letter
     QRegularExpression regexExtention("(\\w+)[.](\\w+)");
 
     // Create a text stream for reading the script file
@@ -43,11 +44,12 @@ QString recursiveReplaceRead(QString fileName) {
             if (matchExtention.hasMatch()) {
                 newFile = matchRead.captured(1) + "." + matchExtention.captured(2);
             } else {
+                // if the file has no extention, use the default one (.epi)
                 newFile = matchRead.captured(1) + ".epi";
             }
             line = recursiveReplaceRead(QFileInfo(fileName).absolutePath() + QDir::separator() + newFile);
         }
-        result += line.simplified() + "\n";
+        result += line.trimmed() + "\n";
     }
 
     // Close the file
