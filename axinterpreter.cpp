@@ -65,10 +65,12 @@ void AXInterpreter::startCompilation(QString scriptFile) {
         return;
     }
 
-    // Create an .AXS file (Separated by semicolons)
-    this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axs...");
-
-    // Create .AXM files (Macros pasted in place of their call functions)
+    // Create an .AXM file (Macros pasted in place of their call functions)
+    this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axm...");
+    if (this->generateAXMfile()) {
+        this->mainText->setText("Failed to create " + this->baseFolder.dirName() + ".axm");
+        return;
+    }
 
     // Infer variables
 
@@ -180,11 +182,13 @@ int AXInterpreter::generateAXCfile() {
         }
     }
 
-    // Insert new newline characters
+    // Regenerate whitespaces
     result.replace(",", ", ");
     result.replace(";", ";\n");
     result.replace("{", "{\n");
     result.replace("}", "}\n");
+
+    result += "\nlayer;";
 
     // Write to the .AXC
     out << result;
@@ -195,4 +199,64 @@ int AXInterpreter::generateAXCfile() {
 
     return 0;
 
+}
+
+
+int AXInterpreter::generateAXMfile() {
+
+    // Create the .AXM file header
+    QFile axmFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axm");
+
+    // Create and open the .AXM file
+    if (!(axmFileHeader.open(QIODevice::WriteOnly | QIODevice::Text))) {
+        return -1;
+    }
+
+    // Create the .AXC file header
+    QFile axcFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axc");
+
+    // Open the .AXC file (Read-only)
+    if(!(axcFileHeader.open(QIODevice::ReadOnly | QIODevice::Text))) {
+        return -2;
+    }
+
+    // Create the text streams for reading and writing
+    QTextStream in (&axcFileHeader);
+    QTextStream out (&axmFileHeader);
+
+    // Variable to store the result of reading from .AXC
+    QString result = QString();
+    while (!(in.atEnd())) {
+        QString line = in.readLine().trimmed();
+        result += line + " ";
+    }
+
+    // Regex to find macro definitions
+    QRegularExpression regexDefinitions ("([^\\s\\d][\\w]*)\\s*[{]([^}]*)[}]");
+    while (1) {
+        QRegularExpressionMatch matchDefinitions = regexDefinitions.match(result);
+        if (matchDefinitions.hasMatch()) {
+            result.remove(matchDefinitions.captured(0));
+            result.replace(" " + matchDefinitions.captured(1) + ";", " " + matchDefinitions.captured(2));
+        } else {
+            break;
+        }
+    }
+
+    // Regenerate whitespaces
+    result = result.simplified();
+    result.replace("; ", ";\n");
+    result.replace(" ;", ";");
+
+    // Remove unresolved macros
+    result.remove(QRegularExpression("\n[^\\d\\s][\\w]*[;]"));
+
+    // Write to .AXM file
+    out << result;
+
+    // Close files
+    axcFileHeader.close();
+    axmFileHeader.close();
+
+    return 0;
 }

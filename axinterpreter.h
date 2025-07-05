@@ -28,7 +28,7 @@ public slots:
     int recreateFolder();
     int generateAXRfile();
     int generateAXCfile();
-    //int generateAXSfile();
+    int generateAXMfile();
 
 };
 
