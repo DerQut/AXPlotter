@@ -258,6 +258,24 @@ int AXInterpreter::generateAXMfile() {
         }
     }
 
+    // Regex to find dots in non-digits
+    // Match when a non-digit is followed by a dot
+    // Capture both chars (0) and the first char (1)
+    QRegularExpression regexDot ("(\\D)[\\.]");
+    while (1) {
+        QRegularExpressionMatch matchDot = regexDot.match(result);
+
+        // if there is a dot in a non-digit
+        if (matchDot.hasMatch()) {
+            // Replace the sequence (char + dot) with the first character and an underscore
+            result.replace(matchDot.captured(0), matchDot.captured(1) + "_");
+        } else {
+            // Stop the loop once there are no dots to replace
+            break;
+        }
+    }
+
+
     // Regenerate whitespaces
     result = result.simplified();
     result.replace("; ", ";\n");
@@ -299,7 +317,8 @@ int AXInterpreter::generatePyFile() {
     QString result = QString();
 
     // Add a default header to always be created
-    result += "import time\n\n";
+    result += "import time\n";
+    result += "import threading\n\n";
     result += "on = 1\n";
     result += "off = 1\n";
     result += "open = 1\n";
