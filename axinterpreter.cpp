@@ -261,20 +261,22 @@ int AXInterpreter::generateAXMfile() {
     // Regex to find dots in non-digits
     // Match when a non-digit is followed by a dot
     // Capture both chars (0) and the first char (1)
-    QRegularExpression regexDot ("(\\D)[\\.]");
+    QRegularExpression regexDot ("[\\.]([^\\d])");
     while (1) {
         QRegularExpressionMatch matchDot = regexDot.match(result);
 
         // if there is a dot in a non-digit
         if (matchDot.hasMatch()) {
             // Replace the sequence (char + dot) with the first character and an underscore
-            result.replace(matchDot.captured(0), matchDot.captured(1) + "_");
+            result.replace(matchDot.captured(0), "_" + matchDot.captured(1));
         } else {
             // Stop the loop once there are no dots to replace
             break;
         }
     }
 
+    // Replace "parameter" keyword with "variable"
+    result.replace(QRegularExpression("[\\s][pP][aA][rR][aA][mM][eE][tT][eE][rR][\\s]"), " variable ");
 
     // Regenerate whitespaces
     result = result.simplified();

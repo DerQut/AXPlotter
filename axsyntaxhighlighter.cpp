@@ -14,6 +14,7 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
 
     const QString keywordPatterns[] = {
         QStringLiteral("\\b[vV][aA][rR][iI][aA][bB][lL][eE]\\b"),
+        QStringLiteral("\\b[pP][aA][rR][aA][mM][eE][tT][eE][rR]\\b"),
         QStringLiteral("\\b[dD][eE][vV][iI][aA][tT][iI][oO][nN]\\b"),
         QStringLiteral("\\b[dD][eE][fF][aA][uU][lL][tT]\\b"),
         QStringLiteral("\\b[wW][aA][rR][nN][iI][nN][gG]\\b"),
