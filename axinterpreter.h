@@ -2,6 +2,7 @@
 #define AXINTERPRETER_H
 
 #include <QMainWindow>
+#include <QString>
 #include <QDir>
 #include <QLabel>
 

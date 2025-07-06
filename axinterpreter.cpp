@@ -14,6 +14,7 @@
 AXInterpreter::AXInterpreter(ContentView* parent) :
     QMainWindow(parent)
 {
+
     this->contentView = parent;
 
     this->mainText = new QLabel("Test");
@@ -71,8 +72,6 @@ void AXInterpreter::startCompilation(QString scriptFile) {
         this->mainText->setText("Failed to create " + this->baseFolder.dirName() + ".axm");
         return;
     }
-
-    // Infer variables
 
     // Create .CSV files for plotting
 
@@ -268,3 +267,4 @@ int AXInterpreter::generateAXMfile() {
 
     return 0;
 }
+
