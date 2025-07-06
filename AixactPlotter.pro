@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     axsyntaxhighlighter.cpp \
     recentfilesview.cpp \
     axinterpreter.cpp \
-    recursiveReplaceRead.cpp
+    recursiveReplaceRead.cpp \
+    convertaxmtopy.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -38,7 +39,8 @@ HEADERS  += mainwindow.h \
     axsyntaxhighlighter.h \
     recentfilesview.h \
     axinterpreter.h \
-    recursiveReplaceRead.h
+    recursiveReplaceRead.h \
+    convertaxmtopy.h
 
 OTHER_FILES += \
     ../Documents/Kalibracja.txt

@@ -31,6 +31,8 @@ public slots:
     int generateAXCfile();
     int generateAXMfile();
 
+    int generatePyFile();
+
 };
 
 #endif // AXINTERPRETER_H

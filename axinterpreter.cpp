@@ -10,6 +10,7 @@
 #include "axinterpreter.h"
 #include "contentview.h"
 #include "recursiveReplaceRead.h"
+#include "convertaxmtopy.h"
 
 AXInterpreter::AXInterpreter(ContentView* parent) :
     QMainWindow(parent)
@@ -70,6 +71,13 @@ void AXInterpreter::startCompilation(QString scriptFile) {
     this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axm...");
     if (this->generateAXMfile()) {
         this->mainText->setText("Failed to create " + this->baseFolder.dirName() + ".axm");
+        return;
+    }
+
+    // Generete python script file
+    this->mainText->setText("Creating python script file");
+    if (this->generatePyFile()) {
+        this->mainText->setText("Failed to create main.py");
         return;
     }
 
@@ -268,3 +276,45 @@ int AXInterpreter::generateAXMfile() {
     return 0;
 }
 
+
+int AXInterpreter::generatePyFile() {
+    // Create file header
+    QFile axmFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axm");
+    QFile pyFileHeader(this->baseFolder.absolutePath() + QDir::separator() + "main.py");
+
+    // Try opening the files
+    if (!(axmFileHeader.open(QIODevice::ReadOnly | QIODevice::Text))) {
+        return -1;
+    }
+
+    if (!(pyFileHeader.open(QIODevice::WriteOnly | QIODevice::Text))) {
+        return -2;
+    }
+
+    // Create text streams (in from .AXM, out to .py)
+    QTextStream in (&axmFileHeader);
+    QTextStream out (&pyFileHeader);
+
+    // Text to write to .py
+    QString result = QString();
+
+    // Add a default header to always be created
+    result += "import time\n\n";
+    result += "on = 1\n";
+    result += "off = 1\n";
+    result += "open = 1\n";
+    result += "closed = 0\n\n";
+
+    // Read from .AXM
+    while (!(in.atEnd())) {
+        QString line = in.readLine();
+        result += convertAXMtoPy(line) + "\n";
+    }
+
+    out << result;
+
+    axmFileHeader.close();
+    pyFileHeader.close();
+
+    return 0;
+}
