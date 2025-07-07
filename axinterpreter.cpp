@@ -325,6 +325,7 @@ int AXInterpreter::generatePyFile() {
     result += "off = 1\n";
     result += "open = 1\n";
     result += "closed = 0\n\n";
+    result += "AX_GLOBAL_TIMESTEP = 0\n\n";
 
     // Read from .AXM
     while (!(in.atEnd())) {
