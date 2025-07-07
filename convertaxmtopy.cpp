@@ -46,7 +46,7 @@ QString convertAXMtoPy(QString axmLine) {
                 QString variableName = matchDirectAssignment.captured(1);
                 QString variableEndGoal = matchDirectAssignment.captured(2);
 
-                result += "\n\nfile = open('" + variableName.trimmed() + ".csv', 'a+')";
+                result += "\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
 
                 result += "\ni = 0";
                 result += "\nwhile i < AX_STEP_LENGTH:";
@@ -64,7 +64,7 @@ QString convertAXMtoPy(QString axmLine) {
                 QString variableEndGoal = matchToAssignmentDefault.captured(2);
 
                 result += "\n\n" + variableName + "_AXCOPY = " + variableName;
-                result += "\nfile = open('" + variableName.trimmed() + ".csv', 'a+')";
+                result += "\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
 
                 result += "\ni = 0";
                 result += "\nwhile i < AX_STEP_LENGTH:";
@@ -83,7 +83,7 @@ QString convertAXMtoPy(QString axmLine) {
                 QString variableEndTime = matchToAssignmentUntil.captured(3);
 
                 result += "\n\n" + variableName + "_AXCOPY = " + variableName;
-                result += "\nfile = open('" + variableName.trimmed() + ".csv', 'a+')";
+                result += "\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
 
                 result += "\ni = 0";
                 result += "\nwhile i < AX_STEP_LENGTH:";

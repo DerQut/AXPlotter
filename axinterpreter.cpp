@@ -278,6 +278,12 @@ int AXInterpreter::generateAXMfile() {
     // Replace "parameter" keyword with "variable"
     result.replace(QRegularExpression("[\\s][pP][aA][rR][aA][mM][eE][tT][eE][rR][\\s]"), " variable ");
 
+    // Replace keyword values with a caps-locked version
+    result.replace(QRegularExpression("\\b[oO][pP][eE][nN]\\b"), "OPEN");
+    result.replace(QRegularExpression("\\b[cC][lL][oO][sS][eE]\\b"), "CLOSE");
+    result.replace(QRegularExpression("\\b[oO][nN]\\b"), "ON");
+    result.replace(QRegularExpression("\\b[oO][fF][fF]\\b"), "OFF");
+
     // Regenerate whitespaces
     result = result.simplified();
     result.replace("; ", ";\n");
@@ -321,10 +327,10 @@ int AXInterpreter::generatePyFile() {
     // Add a default header to always be created
     result += "import time\n";
     result += "import threading\n\n";
-    result += "on = 1\n";
-    result += "off = 1\n";
-    result += "open = 1\n";
-    result += "closed = 0\n\n";
+    result += "ON = 1\n";
+    result += "OFF = 1\n";
+    result += "OPEN = 1\n";
+    result += "CLOSE = 0\n\n";
     result += "AX_GLOBAL_TIMESTEP = 0\n\n";
 
     // Read from .AXM
