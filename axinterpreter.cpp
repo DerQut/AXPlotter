@@ -237,6 +237,17 @@ int AXInterpreter::generateAXMfile() {
         result += line + " ";
     }
 
+    // Regex to find loop definitions
+    QRegularExpression regexLoop ("[lL][oO][oO][pP]\\s+([^{]*)\\s*[{]([^}]*)[}]");
+    while (1) {
+        QRegularExpressionMatch matchLoop = regexLoop.match(result);
+        if (matchLoop.hasMatch()) {
+            result.replace(matchLoop.captured(0), "loop " +matchLoop.captured(1)+ "@" +matchLoop.captured(2)+ "£");
+        } else {
+            break;
+        }
+    }
+
     // Regex to find macro definitions
     // Match when a single non-digit, non-space char is followed by any amount of word chars, a '{', anything, '}'
     // Catches: entire definition (0), macro name (1), macro contents (2)
@@ -286,8 +297,12 @@ int AXInterpreter::generateAXMfile() {
 
     // Regenerate whitespaces
     result = result.simplified();
+    result.replace("@", "{");
+    result.replace("£", "}");
     result.replace("; ", ";\n");
     result.replace(" ;", ";");
+    result.replace("{", "{\n");
+    result.replace("}", "}\n");
 
     // Remove unresolved macros
     result.remove(QRegularExpression("\n[^\\d\\s][\\w]*[;]"));
@@ -336,20 +351,34 @@ int AXInterpreter::generatePyFile() {
     result += "CLOSE = 0\n\n";
     result += "AX_GLOBAL_TIMESTEP = 0\n\n";
 
+    // Regular expressions for finding beginnings and endings of loops
+    QRegularExpression regexLoopStart (".*\\#AXLOOPSTART\\$.*");
+    QRegularExpression regexLoopEnd (".*\\#AXLOOPEND\\$.*");
+
     // Read from .AXM
     while (!(in.atEnd())) {
         QString line = in.readLine();
-        for (int i = 0; i < tabCount; i++) {
-            result += "    ";
-        }
-        result += convertAXMtoPy(line) + "\n";
 
-        if (line.endsWith('#')) {
-            tabCount++;
-        }
+        QString pyLine = convertAXMtoPy(line);
+        QStringList pyLines = pyLine.split("\n");
 
-        if (line.endsWith('$') && tabCount > 0) {
-            tabCount--;
+        for (int i = 0; i < pyLines.count(); i++) {
+            QRegularExpressionMatch matchLoopStart = regexLoopStart.match(pyLines.at(i));
+            QRegularExpressionMatch matchLoopEnd = regexLoopEnd.match(pyLines.at(i));
+
+            for (int j = 0; j < tabCount; j++) {
+                result += "    ";
+            }
+
+            if (matchLoopStart.hasMatch()) {
+                tabCount++;
+            }
+
+            if (matchLoopEnd.hasMatch() && tabCount) {
+                tabCount--;
+            }
+
+            result += pyLines.at(i) + "\n";
         }
     }
 

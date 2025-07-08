@@ -1,6 +1,7 @@
 #include <QString>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <QtGlobal>
 
 #include "convertaxmtopy.h"
 
@@ -23,8 +24,27 @@ QString convertAXMtoPy(QString axmLine) {
     QRegularExpressionMatch matchTimeStepDefault = regexTimeStepDefault.match(axmLine);
 
     QRegularExpression regexDirectAssignment ("(.+)\\s*=\\s*(.+)");
-    QRegularExpression regexToAssignmentDefault ("^(.+)\\s+[tT][oO]\\s+([^\\s]+)$");
-    QRegularExpression regexToAssignmentUntil ("^(.+)\\s+[tT][oO]\\s+([^\\s]+)$");
+    QRegularExpression regexToAssignmentDefault ("^(.+)\\s+[tT][oO]\\s+(.*)$");
+    QRegularExpression regexToAssignmentIn ("^(.+)\\s+[tT][oO]\\s+(.*)\\s+[iI][nN](.*)$");
+
+    QRegularExpression regexLoop ("^[lL][oO][oO][pP]\\s+(.*)\\s*{$");
+    QRegularExpressionMatch matchLoop = regexLoop.match(axmLine.trimmed());
+
+    if (matchLoop.hasMatch()) {
+        // Generate a random string for loop iterator (allows for nested loops)
+        QString chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+        QString randomString = QString();
+        for (int i = 0; i < 12; i++) {
+            randomString += chars.at(qrand() % chars.size());
+        }
+        result += "\n\n" +randomString+ "=0";
+        result += "\nwhile " +randomString+ " < " +matchLoop.captured(1)+ ":";
+        result += "\n    " +randomString+ " = " +randomString+ " + 1 #AXLOOPSTART$";
+    }
+
+    if (axmLine.trimmed() == "}") {
+        result += "\n#AXLOOPEND$";
+    }
 
     if (matchTimeStepDefault.hasMatch()) {
 
@@ -67,7 +87,9 @@ QString convertAXMtoPy(QString axmLine) {
 
             // Check if the given positional argument matches a "to" assignment (a to 8)
             QRegularExpressionMatch matchToAssignmentDefault = regexToAssignmentDefault.match(argument);
-            if (matchToAssignmentDefault.hasMatch()) {
+            QRegularExpressionMatch matchIn = regexToAssignmentIn.match(argument);
+
+            if (matchToAssignmentDefault.hasMatch() && !(matchIn.hasMatch())) {
                 QString variableName = matchToAssignmentDefault.captured(1).trimmed();
                 QString variableEndGoal = matchToAssignmentDefault.captured(2);
 
@@ -97,11 +119,11 @@ QString convertAXMtoPy(QString axmLine) {
             }
 
             // Check if the given positional atgument matches a "to ... in" assignment (a to 8 in 15)
-            QRegularExpressionMatch matchToAssignmentUntil = regexToAssignmentUntil.match(argument);
-            if (matchToAssignmentUntil.hasMatch()) {
-                QString variableName = matchToAssignmentUntil.captured(1).trimmed();
-                QString variableEndGoal = matchToAssignmentUntil.captured(2).trimmed();
-                QString variableEndTime = matchToAssignmentUntil.captured(3).trimmed();
+            QRegularExpressionMatch matchToAssignmentIn = regexToAssignmentIn.match(argument);
+            if (matchToAssignmentIn.hasMatch()) {
+                QString variableName = matchToAssignmentIn.captured(1).trimmed();
+                QString variableEndGoal = matchToAssignmentIn.captured(2).trimmed();
+                QString variableEndTime = matchToAssignmentIn.captured(3).trimmed();
 
                 // Replace "default" keyword with a proper variable
                 variableEndGoal.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
