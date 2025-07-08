@@ -324,6 +324,9 @@ int AXInterpreter::generatePyFile() {
     // Text to write to .py
     QString result = QString();
 
+    // Number of tabs to insert (used in loops)
+    int tabCount = 0;
+
     // Add a default header to always be created
     result += "import time\n";
     result += "import threading\n\n";
@@ -336,11 +339,21 @@ int AXInterpreter::generatePyFile() {
     // Read from .AXM
     while (!(in.atEnd())) {
         QString line = in.readLine();
-        result += convertAXMtoPy(line) + "\n";
+        result += tabCount * "    " + convertAXMtoPy(line) + "\n";
+
+        if (line.endsWith('#')) {
+            tabCount++;
+        }
+
+        if (line.endsWith('$') && tabCount > 0) {
+            tabCount--;
+        }
     }
 
+    // Write to .py file
     out << result;
 
+    // Close both files
     axmFileHeader.close();
     pyFileHeader.close();
 

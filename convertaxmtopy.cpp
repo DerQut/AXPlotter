@@ -63,8 +63,16 @@ QString convertAXMtoPy(QString axmLine) {
                 QString variableName = matchToAssignmentDefault.captured(1);
                 QString variableEndGoal = matchToAssignmentDefault.captured(2);
 
-                result += "\n\n" + variableName + "_AXCOPY = " + variableName;
-                result += "\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
+                result += "\n\ntry:";
+                result += "\n    " + variableName + "_AXCOPY = " + variableName;
+                result += "\nexcept NameError:";
+                result += "\n    try:";
+                result += "\n        " + variableName + "_AXCOPY = " + variableName + "_AXDEFAULT";
+                result += "\n        " + variableName + " = " + variableName + "_AXDEFAULT";
+                result += "\n    except NameError:";
+                result += "\n        " + variableName + " = 0";
+                result += "\n        " + variableName + "_AXCOPY = 0";
+                result += "\n\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
 
                 result += "\ni = 0";
                 result += "\nwhile i < AX_STEP_LENGTH:";
@@ -82,8 +90,16 @@ QString convertAXMtoPy(QString axmLine) {
                 QString variableEndGoal = matchToAssignmentUntil.captured(2);
                 QString variableEndTime = matchToAssignmentUntil.captured(3);
 
-                result += "\n\n" + variableName + "_AXCOPY = " + variableName;
-                result += "\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
+                result += "\n\ntry:";
+                result += "\n    " + variableName + "_AXCOPY = " + variableName;
+                result += "\nexcept NameError:";
+                result += "\n    try:";
+                result += "\n        " + variableName + "_AXCOPY = " + variableName + "_AXDEFAULT";
+                result += "\n        " + variableName + " = " + variableName + "_AXDEFAULT";
+                result += "\n    except NameError:";
+                result += "\n        " + variableName + " = 0";
+                result += "\n        " + variableName + "_AXCOPY = 0";
+                result += "\n\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
 
                 result += "\ni = 0";
                 result += "\nwhile i < AX_STEP_LENGTH:";
