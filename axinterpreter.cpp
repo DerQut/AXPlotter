@@ -339,7 +339,10 @@ int AXInterpreter::generatePyFile() {
     // Read from .AXM
     while (!(in.atEnd())) {
         QString line = in.readLine();
-        result += tabCount * "    " + convertAXMtoPy(line) + "\n";
+        for (int i = 0; i < tabCount; i++) {
+            result += "    ";
+        }
+        result += convertAXMtoPy(line) + "\n";
 
         if (line.endsWith('#')) {
             tabCount++;

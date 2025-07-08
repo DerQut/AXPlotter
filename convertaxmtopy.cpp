@@ -43,13 +43,21 @@ QString convertAXMtoPy(QString axmLine) {
             // Check if the given positional argument matches a direct assignment (a = 8)
             QRegularExpressionMatch matchDirectAssignment = regexDirectAssignment.match(argument);
             if (matchDirectAssignment.hasMatch()) {
-                QString variableName = matchDirectAssignment.captured(1);
-                QString variableEndGoal = matchDirectAssignment.captured(2);
+                QString variableName = matchDirectAssignment.captured(1).trimmed();
+                QString variableEndGoal = matchDirectAssignment.captured(2).trimmed();
+
+                // Replace "default" keyword with a proper variable
+                variableEndGoal.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
+
+                result += "\n\ntry:";
+                result += "\n    " +variableName+ "_AXDEFAULT = " +variableName+ "_AXDEFAULT";
+                result += "\nexcept NameError:";
+                result += "\n    " +variableName+ "_AXDEFAULT = 0";
 
                 result += "\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
 
                 result += "\ni = 0";
-                result += "\nwhile i < AX_STEP_LENGTH:";
+                result += "\nwhile i <= AX_STEP_LENGTH:";
                 result += "\n    " + variableName + " = " + variableEndGoal;
                 result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" + variableName+ "}\\n')";
                 result += "\n    i = i + 1";
@@ -60,24 +68,29 @@ QString convertAXMtoPy(QString axmLine) {
             // Check if the given positional argument matches a "to" assignment (a to 8)
             QRegularExpressionMatch matchToAssignmentDefault = regexToAssignmentDefault.match(argument);
             if (matchToAssignmentDefault.hasMatch()) {
-                QString variableName = matchToAssignmentDefault.captured(1);
+                QString variableName = matchToAssignmentDefault.captured(1).trimmed();
                 QString variableEndGoal = matchToAssignmentDefault.captured(2);
 
+                // Replace "default" keyword with a proper variable
+                variableEndGoal.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
+                variableEndGoal = variableEndGoal.trimmed();
+
                 result += "\n\ntry:";
-                result += "\n    " + variableName + "_AXCOPY = " + variableName;
+                result += "\n    " +variableName+ "_AXDEFAULT = " +variableName+ "_AXDEFAULT";
                 result += "\nexcept NameError:";
-                result += "\n    try:";
-                result += "\n        " + variableName + "_AXCOPY = " + variableName + "_AXDEFAULT";
-                result += "\n        " + variableName + " = " + variableName + "_AXDEFAULT";
-                result += "\n    except NameError:";
-                result += "\n        " + variableName + " = 0";
-                result += "\n        " + variableName + "_AXCOPY = 0";
-                result += "\n\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
+                result += "\n    " +variableName+ "_AXDEFAULT = 0";
+
+                result += "\ntry:";
+                result += "\n    " +variableName+ "_AXCOPY = " +variableName;
+                result += "\nexcept NameError:";
+                result += "\n    " +variableName+ "_AXCOPY = " +variableName+ "_AXDEFAULT";
+                result += "\n    " +variableName+ " = " +variableName+ "_AXDEFAULT";
+                result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
 
                 result += "\ni = 0";
-                result += "\nwhile i < AX_STEP_LENGTH:";
-                result += "\n    " + variableName + " = " + variableName + "_AXCOPY + (i+1) * (" + variableEndGoal + " - " + variableName + "_AXCOPY) / AX_STEP_LENGTH";
-                result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" + variableName+ "}\\n')";
+                result += "\nwhile i <= AX_STEP_LENGTH:";
+                result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / AX_STEP_LENGTH";
+                result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" +variableName+ "}\\n')";
                 result += "\n    i = i + 1";
                 result += "\nfile.close()";
                 continue;
@@ -86,25 +99,32 @@ QString convertAXMtoPy(QString axmLine) {
             // Check if the given positional atgument matches a "to ... in" assignment (a to 8 in 15)
             QRegularExpressionMatch matchToAssignmentUntil = regexToAssignmentUntil.match(argument);
             if (matchToAssignmentUntil.hasMatch()) {
-                QString variableName = matchToAssignmentUntil.captured(1);
-                QString variableEndGoal = matchToAssignmentUntil.captured(2);
-                QString variableEndTime = matchToAssignmentUntil.captured(3);
+                QString variableName = matchToAssignmentUntil.captured(1).trimmed();
+                QString variableEndGoal = matchToAssignmentUntil.captured(2).trimmed();
+                QString variableEndTime = matchToAssignmentUntil.captured(3).trimmed();
+
+                // Replace "default" keyword with a proper variable
+                variableEndGoal.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
+
+                // Replace "default" keyword with a proper variable (should not ever match)
+                variableEndTime.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
 
                 result += "\n\ntry:";
-                result += "\n    " + variableName + "_AXCOPY = " + variableName;
+                result += "\n    " +variableName+ "_AXDEFAULT = " +variableName+ "_AXDEFAULT";
                 result += "\nexcept NameError:";
-                result += "\n    try:";
-                result += "\n        " + variableName + "_AXCOPY = " + variableName + "_AXDEFAULT";
-                result += "\n        " + variableName + " = " + variableName + "_AXDEFAULT";
-                result += "\n    except NameError:";
-                result += "\n        " + variableName + " = 0";
-                result += "\n        " + variableName + "_AXCOPY = 0";
-                result += "\n\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
+                result += "\n    " +variableName+ "_AXDEFAULT = 0";
+
+                result += "\ntry:";
+                result += "\n    " +variableName+ "_AXCOPY = " +variableName;
+                result += "\nexcept NameError:";
+                result += "\n    " +variableName+ "_AXCOPY = " +variableName+ "_AXDEFAULT";
+                result += "\n    " +variableName+ " = " +variableName+ "_AXDEFAULT";
+                result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
 
                 result += "\ni = 0";
                 result += "\nwhile i < AX_STEP_LENGTH:";
-                result += "\n    " + variableName + " = " + variableName + "_AXCOPY + (i+1) * (" + variableEndGoal + " - " + variableName + "_AXCOPY) / " + variableEndTime;
-                result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" + variableName+ "}\\n')";
+                result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / " +variableEndTime;
+                result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" +variableName+ "}\\n')";
                 result += "\n    i = i + 1";
                 result += "\nfile.close()";
                 continue;
