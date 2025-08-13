@@ -20,7 +20,7 @@ QString convertAXMtoPy(QString axmLine) {
     }
 
     // Regex to find defult timesteps: 1 "message" a=8, b=10;
-    QRegularExpression regexTimeStepDefault ("(.+)\\s+[\"](.*)[\"]\\s*(.*);");
+    QRegularExpression regexTimeStepDefault ("(\\S+)\\s+(.*);");
     QRegularExpressionMatch matchTimeStepDefault = regexTimeStepDefault.match(axmLine);
 
     QRegularExpression regexDirectAssignment ("(.+)\\s*=\\s*(.+)");
@@ -53,10 +53,9 @@ QString convertAXMtoPy(QString axmLine) {
         timestepLength.remove("[");
 
         result = QString();
-        result += "\n\n#" + matchTimeStepDefault.captured(2);
         result += "\nAX_STEP_LENGTH = " + timestepLength;
 
-        QStringList arguments = matchTimeStepDefault.captured(3).split(",");
+        QStringList arguments = matchTimeStepDefault.captured(2).split(",");
         for (int i = 0; i < arguments.size(); i++) {
             QString argument = arguments[i].trimmed();
 

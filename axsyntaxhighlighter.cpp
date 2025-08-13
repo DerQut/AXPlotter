@@ -26,7 +26,12 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
         QStringLiteral("\\b[fF][oO][lL][lL][oO][wW]\\b"),
         QStringLiteral("\\b[bB][eE][gG][iI][nN]\\b"),
         QStringLiteral("\\b[eE][nN][dD]\\b"),
-        QStringLiteral("\\b[sS][tT][aA][tT]\\b")
+        QStringLiteral("\\b[sS][tT][aA][tT]\\b"),
+        QStringLiteral("\\b[lL][oO][oO][pP]\\b"),
+        // Python keywords
+        QStringLiteral("\\btry\\b"),
+        QStringLiteral("\\bexcept\\b"),
+        QStringLiteral("\\bwhile\\b")
     };
 
     for (const QString &pattern : keywordPatterns) {
