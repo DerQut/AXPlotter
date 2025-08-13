@@ -382,11 +382,6 @@ int AXInterpreter::generatePyFile() {
         }
     }
 
-    // Add a command to register the max timestep
-    result += "\nfile = open(\"w+\", \"timestep.txt\")";
-    result += "\nfile.write(f'{AX_GLOBAL_TIMESTEP}')";
-    result += "\nfile.close()";
-
     // Write to .py file
     out << result;
 
