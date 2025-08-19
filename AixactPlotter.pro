@@ -8,7 +8,7 @@ QT      += core gui
 CONFIG  += c++11
 QMAKE_CXXFLAGS += -std=c++11
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = AixactPlotter
 TEMPLATE = app
@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     recentfilesview.cpp \
     axinterpreter.cpp \
     recursiveReplaceRead.cpp \
-    convertaxmtopy.cpp
+    convertaxmtopy.cpp \
+    qcustomplot/qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -41,7 +42,8 @@ HEADERS  += mainwindow.h \
     recentfilesview.h \
     axinterpreter.h \
     recursiveReplaceRead.h \
-    convertaxmtopy.h
+    convertaxmtopy.h \
+    qcustomplot/qcustomplot.h
 
 OTHER_FILES += \
     ../Documents/Kalibracja.txt
