@@ -16,7 +16,7 @@ public:
     explicit GraphsView(ContentView *parent = 0);
     ContentView* contentView;
 
-    QWidget* scrollWidget;
+    QVBoxLayout* scrollVStack;
 
 signals:
 
