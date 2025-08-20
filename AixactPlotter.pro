@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     axinterpreter.cpp \
     recursiveReplaceRead.cpp \
     convertaxmtopy.cpp \
-    qcustomplot/qcustomplot.cpp
+    qcustomplot/qcustomplot.cpp \
+    graphsview.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -43,7 +44,8 @@ HEADERS  += mainwindow.h \
     axinterpreter.h \
     recursiveReplaceRead.h \
     convertaxmtopy.h \
-    qcustomplot/qcustomplot.h
+    qcustomplot/qcustomplot.h \
+    graphsview.h
 
 OTHER_FILES += \
     ../Documents/Kalibracja.txt
