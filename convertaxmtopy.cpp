@@ -76,7 +76,7 @@ QString convertAXMtoPy(QString axmLine) {
                 result += "\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
 
                 result += "\ni = 0";
-                result += "\nwhile i <= AX_STEP_LENGTH:";
+                result += "\nwhile i < AX_STEP_LENGTH:";
                 result += "\n    " + variableName + " = " + variableEndGoal;
                 result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" + variableName+ "}\\n')";
                 result += "\n    i = i + 1";
@@ -110,7 +110,7 @@ QString convertAXMtoPy(QString axmLine) {
                 result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
 
                 result += "\ni = 0";
-                result += "\nwhile i <= " +variableEndTime+ ":";
+                result += "\nwhile i < " +variableEndTime+ ":";
                 result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / " +variableEndTime;
                 result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" +variableName+ "}\\n')";
                 result += "\n    i = i + 1";
@@ -143,7 +143,7 @@ QString convertAXMtoPy(QString axmLine) {
                 result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
 
                 result += "\ni = 0";
-                result += "\nwhile i <= AX_STEP_LENGTH:";
+                result += "\nwhile i < AX_STEP_LENGTH:";
                 result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / AX_STEP_LENGTH";
                 result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" +variableName+ "}\\n')";
                 result += "\n    i = i + 1";

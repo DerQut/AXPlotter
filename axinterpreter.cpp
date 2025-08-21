@@ -287,7 +287,7 @@ int AXInterpreter::generateAXMfile() {
     }
 
     // Replace "parameter" keyword with "variable"
-    result.replace(QRegularExpression("[\\s][pP][aA][rR][aA][mM][eE][tT][eE][rR][\\s]"), " variable ");
+    result.replace(QRegularExpression("[\\b][pP][aA][rR][aA][mM][eE][tT][eE][rR][\\b]"), " variable ");
 
     // Replace keyword values with a caps-locked version
     result.replace(QRegularExpression("\\b[oO][pP][eE][nN]\\b"), "OPEN");
