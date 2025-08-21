@@ -32,8 +32,8 @@ GraphsView::GraphsView(ContentView *parent) :
 
     QPushButton* forceUpdateButton = new QPushButton("Update", this);
     connect(forceUpdateButton, &QPushButton::clicked, this, [this]() {
-        this->updatePlots(this->contentView->axinterpreter->baseFolder.absolutePath());
-        qDebug() << this->contentView->axinterpreter->baseFolder.absolutePath();
+        this->updatePlots(this->contentView->scriptFile.remove(QRegularExpression("\\.(.*)")));
+        qDebug() << this->contentView->scriptFile.remove(QRegularExpression("\\.(.*)"));
     });
     mainVStack->addWidget(forceUpdateButton);
 
@@ -96,8 +96,8 @@ void GraphsView::updatePlots(QString directoryName) {
             csvFile.close();
         }
 
-        plot->addGraph();
-        plot->graph(0)->addData(xData, yData);
+        QCPCurve* curve = new QCPCurve(plot->xAxis, plot->yAxis);
+        curve->addData(xData, yData);
 
         plot->yAxis->rescale();
         plot->xAxis->rescale();
