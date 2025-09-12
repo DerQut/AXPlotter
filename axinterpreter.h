@@ -33,6 +33,8 @@ public slots:
 
     int generatePyFile();
 
+    void launchPy();
+
 };
 
 #endif // AXINTERPRETER_H

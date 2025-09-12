@@ -6,6 +6,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QTextStream>
+#include <QProcess>
 
 #include "axinterpreter.h"
 #include "contentview.h"
@@ -82,6 +83,8 @@ void AXInterpreter::startCompilation(QString scriptFile) {
     }
 
     // Create .CSV files for plotting
+    this->mainText->setText("Running main.py");
+    this->launchPy();
 
     // Done!
     this->mainText->setText("Done!");
@@ -395,4 +398,19 @@ int AXInterpreter::generatePyFile() {
     pyFileHeader.close();
 
     return 0;
+}
+
+
+void AXInterpreter::launchPy() {
+    QDir::setCurrent(this->baseFolder.absolutePath());
+    QProcess pyProcess;
+    pyProcess.setProgram("cmd.exe");
+    pyProcess.setArguments(QStringList() << "/C" << "python main.py");
+    pyProcess.start();
+    pyProcess.waitForFinished(-1);
+
+    qDebug() << "Output:" << pyProcess.readAllStandardOutput();
+    qDebug() << "Errors:" << pyProcess.readAllStandardError();
+
+    pyProcess.kill();
 }
