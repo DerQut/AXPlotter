@@ -17,7 +17,7 @@ QString convertAXMtoPy(QString axmLine) {
     if (matchVariable.hasMatch()) {
         result = (matchVariable.captured(1).trimmed() + " = " +  matchVariable.captured(2));
         result += "\nfile = open(\"" +matchVariable.captured(1).trimmed()+ ".csv\", \"a+\")";
-        result += "\nfile.write(f\"0,{" +matchVariable.captured(1).trimmed()+ "}\\n\")";
+        result += "\nfile.write('0,' + str(" +matchVariable.captured(1).trimmed()+ ") + '\\n')";
         result += "\nfile.close()\n";
 
         return result;
@@ -82,7 +82,7 @@ QString convertAXMtoPy(QString axmLine) {
                 result += "\ni = 0";
                 result += "\nwhile i <= AX_STEP_LENGTH:";
                 result += "\n    " + variableName + " = " + variableEndGoal;
-                result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" + variableName+ "}\\n')";
+                result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" + variableName+ ") + '\\n')";
                 result += "\n    i = i + 1";
                 result += "\nfile.close()";
                 continue;
@@ -116,7 +116,7 @@ QString convertAXMtoPy(QString axmLine) {
                 result += "\ni = 0";
                 result += "\nwhile i <= " +variableEndTime+ ":";
                 result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / " +variableEndTime;
-                result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" +variableName+ "}\\n')";
+                result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" +variableName+ ") + '\\n')";
                 result += "\n    i = i + 1";
                 result += "\nfile.close()";
                 continue;
@@ -149,7 +149,7 @@ QString convertAXMtoPy(QString axmLine) {
                 result += "\ni = 0";
                 result += "\nwhile i <= AX_STEP_LENGTH:";
                 result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / AX_STEP_LENGTH";
-                result += "\n    file.write(f'{AX_GLOBAL_TIMESTEP+i},{" +variableName+ "}\\n')";
+                result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" +variableName+ ") + '\\n')";
                 result += "\n    i = i + 1";
                 result += "\nfile.close()";
                 continue;
