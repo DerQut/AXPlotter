@@ -84,10 +84,13 @@ void AXInterpreter::startCompilation(QString scriptFile) {
 
     // Create .CSV files for plotting
     this->mainText->setText("Running main.py");
-    this->launchPy();
-
-    // Done!
-    this->mainText->setText("Done!");
+    QString stdErrors = this->launchPy();
+    if (stdErrors != "") {
+        this->mainText->setText("Error encountered when running the generated script:\n" + stdErrors);
+    } else {
+        // Done!
+        this->mainText->setText("Done!");
+    }
 
 }
 
@@ -401,7 +404,7 @@ int AXInterpreter::generatePyFile() {
 }
 
 
-void AXInterpreter::launchPy() {
+QString AXInterpreter::launchPy() {
     QDir::setCurrent(this->baseFolder.absolutePath());
     QProcess pyProcess;
     pyProcess.setProgram("cmd.exe");
@@ -409,8 +412,13 @@ void AXInterpreter::launchPy() {
     pyProcess.start();
     pyProcess.waitForFinished(-1);
 
-    qDebug() << "Output:" << pyProcess.readAllStandardOutput();
-    qDebug() << "Errors:" << pyProcess.readAllStandardError();
+    QString stdOutput = pyProcess.readAllStandardOutput();
+    QString stdErrors = pyProcess.readAllStandardError();
+
+    qDebug() << "Output:" << stdOutput;
+    qDebug() << "Errors:" << stdErrors;
 
     pyProcess.kill();
+
+    return stdErrors;
 }

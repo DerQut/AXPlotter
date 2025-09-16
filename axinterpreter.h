@@ -33,7 +33,7 @@ public slots:
 
     int generatePyFile();
 
-    void launchPy();
+    QString launchPy();
 
 };
 
