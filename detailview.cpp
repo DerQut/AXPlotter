@@ -14,7 +14,7 @@ DetailView::DetailView(ContentView *parent) :
     this->setContentsMargins(0, 0, 0, 0);
 
     // Creating a QTabWidget instance
-    QTabWidget* tabView = new QTabWidget(this);
+    tabView = new QTabWidget(this);
     tabView->setTabPosition(QTabWidget::North);
 
     // Creating the editor tab

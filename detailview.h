@@ -4,6 +4,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QTabWidget>
 
 class ContentView;
 class EditorView;
@@ -17,6 +18,7 @@ public:
     ContentView* contentView;
     EditorView* editorView;
     GraphsView* graphsView;
+    QTabWidget* tabView;
 
 signals:
 

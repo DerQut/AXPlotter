@@ -10,6 +10,8 @@
 
 #include "axinterpreter.h"
 #include "contentview.h"
+#include "detailview.h"
+#include "graphsview.h"
 #include "recursiveReplaceRead.h"
 #include "convertaxmtopy.h"
 
@@ -90,8 +92,9 @@ void AXInterpreter::startCompilation(QString scriptFile) {
     } else {
         // Done!
         this->mainText->setText("Done!");
+        this->contentView->detailView->graphsView->updatePlots(this->baseFolder.absolutePath());
+        this->contentView->detailView->tabView->setCurrentIndex(1);
     }
-
 }
 
 
