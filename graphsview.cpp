@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QDebug>
+#include <QRegularExpression>
 
 #include "graphsview.h"
 #include "contentview.h"
@@ -68,15 +69,25 @@ void GraphsView::updatePlots(QString directoryName) {
     QCPMarginGroup* marginGroup = new QCPMarginGroup(nullptr);
 
     foreach (const QString &filename, csvFiles) {
-        QLabel* graphTitle = new QLabel(filename, this);
+
+        QString cleanFilename = filename;
+        cleanFilename.remove(QRegularExpression("[\\.][cC][sS][vV]"));
+        cleanFilename.replace(QRegularExpression("\\_+"), " ");
+
+        QHBoxLayout* mainHStack = new QHBoxLayout();
+
+        QLabel* graphTitle = new QLabel(cleanFilename, this);
         graphTitle->setAlignment(Qt::AlignCenter);
+        graphTitle->setWordWrap(true);
+        graphTitle->setFixedWidth(100);
+        mainHStack->addWidget(graphTitle);
 
         QCustomPlot* plot = new QCustomPlot();
         plot->setMinimumHeight(200);
         plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+        mainHStack->addWidget(plot);
 
-        this->scrollVStack->addWidget(graphTitle);
-        this->scrollVStack->addWidget(plot);
+        this->scrollVStack->addLayout(mainHStack);
 
         QVector<double> xData, yData;
         QFile csvFile (csvDir.absoluteFilePath(filename));
@@ -105,9 +116,9 @@ void GraphsView::updatePlots(QString directoryName) {
         plot->axisRect()->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
     }
 
-    QLabel* dirLabel = new QLabel(directoryName, this);
-
-    this->scrollVStack->addWidget(dirLabel);
+    // Add a label that shows the current directory
+    //QLabel* dirLabel = new QLabel(directoryName, this);
+    //this->scrollVStack->addWidget(dirLabel);
 
     this->scrollVStack->addStretch();
 }
