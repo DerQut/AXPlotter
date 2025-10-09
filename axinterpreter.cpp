@@ -7,6 +7,7 @@
 #include <QRegularExpressionMatch>
 #include <QTextStream>
 #include <QProcess>
+#include <QThread>
 
 #include "axinterpreter.h"
 #include "contentview.h"
@@ -30,6 +31,10 @@ AXInterpreter::AXInterpreter(ContentView* parent) :
 
 void AXInterpreter::startCompilation(QString scriptFile) {
 
+    // Remove all plots
+    this->contentView->detailView->graphsView->deletePlots();
+
+    // Show the popup window
     this->show();
 
     // Check if the given scriptFile is valid
@@ -112,8 +117,9 @@ int AXInterpreter::recreateFolder() {
         qDebug() << "Folder does exist. deleting...";
         if (!baseFolder.removeRecursively()) {
             qDebug() << "Failed to remove.";
-            return -1;
+                return -1;
         }
+
         qDebug() << "Removed!!";
     }
 
@@ -422,6 +428,8 @@ QString AXInterpreter::launchPy() {
     qDebug() << "Errors:" << stdErrors;
 
     pyProcess.kill();
+
+    QDir::setCurrent("C:/");
 
     return stdErrors;
 }

@@ -31,28 +31,11 @@ GraphsView::GraphsView(ContentView *parent) :
 
     this->scrollVStack = new QVBoxLayout(scrollWidget);
 
-    QPushButton* forceUpdateButton = new QPushButton("Update", this);
-    connect(forceUpdateButton, &QPushButton::clicked, this, [this]() {
-        this->updatePlots(this->contentView->scriptFile.remove(QRegularExpression("\\.(.*)")));
-        qDebug() << this->contentView->scriptFile.remove(QRegularExpression("\\.(.*)"));
-    });
-    mainVStack->addWidget(forceUpdateButton);
-
     mainVStack->addWidget(scrollArea);
 }
 
 
 void GraphsView::updatePlots(QString directoryName) {
-
-    // Remove all widgets from the VStack
-    QLayoutItem* itemToRemove;
-    while ((itemToRemove = this->scrollVStack->takeAt(0)) != nullptr) {
-        if (itemToRemove->widget()) {
-            delete itemToRemove->widget();
-        }
-        delete itemToRemove;
-    }
-
 
     // Read all .csv files
     QDir csvDir (directoryName);
@@ -116,11 +99,19 @@ void GraphsView::updatePlots(QString directoryName) {
         plot->axisRect()->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
     }
 
-    // Add a label that shows the current directory
-    //QLabel* dirLabel = new QLabel(directoryName, this);
-    //this->scrollVStack->addWidget(dirLabel);
-
     this->scrollVStack->addStretch();
+}
+
+
+void GraphsView::deletePlots() {
+    // Remove all widgets from the VStack
+    QLayoutItem* itemToRemove;
+    while ((itemToRemove = this->scrollVStack->takeAt(0)) != nullptr) {
+        if (itemToRemove->widget()) {
+            delete itemToRemove->widget();
+        }
+        delete itemToRemove;
+    }
 }
 
 void GraphsView::setPlotsXRange(int xMin, int yMin) {

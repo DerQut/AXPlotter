@@ -22,6 +22,7 @@ signals:
 
 public slots:
     void updatePlots(QString directoryName);
+    void deletePlots();
     void setPlotsXRange(int xMin, int yMin);
 
 };
