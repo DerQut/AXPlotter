@@ -358,12 +358,13 @@ int AXInterpreter::generatePyFile() {
     int tabCount = 0;
 
     // Add a default header to always be created
-    result += "import time\n";
-    result += "import threading\n\n";
+    result += "from math import sin, cos, tan, exp, log, log10, sqrt\n\n";
     result += "ON = 1\n";
     result += "OFF = 1\n";
     result += "OPEN = 1\n";
     result += "CLOSE = 0\n\n";
+    result += "def exp10(x):\n";
+    result += "    return 10**x\n\n";
     result += "AX_GLOBAL_TIMESTEP = 0\n\n";
 
     // Regular expressions for finding beginnings and endings of loops
@@ -399,7 +400,7 @@ int AXInterpreter::generatePyFile() {
 
     // Add a command to register the max timestep
     result += "\nfile = open(\"timestep.txt\", \"w+\")";
-    result += "\nfile.write('str(AX_GLOBAL_TIMESTEP)')";
+    result += "\nfile.write(str(AX_GLOBAL_TIMESTEP))";
     result += "\nfile.close()";
 
     // Write to .py file
