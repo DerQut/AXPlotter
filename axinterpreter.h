@@ -29,12 +29,14 @@ public slots:
     int recreateFolder();
     int generateAXRfile();
     int generateAXCfile();
-    int generateAXMfile();
+    QString generateAXMfile();
 
     int generatePyFile();
 
     QString launchPy();
 
 };
+
+int findMatchingBrace(const QString& str, int startPos);
 
 #endif // AXINTERPRETER_H

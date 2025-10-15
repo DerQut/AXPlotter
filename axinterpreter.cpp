@@ -77,8 +77,9 @@ void AXInterpreter::startCompilation(QString scriptFile) {
 
     // Create an .AXM file (Macros pasted in place of their call functions)
     this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axm...");
-    if (this->generateAXMfile()) {
-        this->mainText->setText("Failed to create " + this->baseFolder.dirName() + ".axm");
+    QString axmResult = this->generateAXMfile();
+    if (!axmResult.isEmpty()) {
+        this->mainText->setText(axmResult);
         return;
     }
 
@@ -208,8 +209,6 @@ int AXInterpreter::generateAXCfile() {
     result.replace("{", "{\n");
     result.replace("}", "}\n");
 
-    result += "\nlayer;";
-
     // Write to the .AXC
     out << result;
 
@@ -222,14 +221,14 @@ int AXInterpreter::generateAXCfile() {
 }
 
 
-int AXInterpreter::generateAXMfile() {
+QString AXInterpreter::generateAXMfile() {
 
     // Create the .AXM file header
     QFile axmFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axm");
 
     // Create and open the .AXM file
     if (!(axmFileHeader.open(QIODevice::WriteOnly | QIODevice::Text))) {
-        return -1;
+        return "Failed to create file " +(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName())+ ".axm";
     }
 
     // Create the .AXC file header
@@ -237,7 +236,7 @@ int AXInterpreter::generateAXMfile() {
 
     // Open the .AXC file (Read-only)
     if(!(axcFileHeader.open(QIODevice::ReadOnly | QIODevice::Text))) {
-        return -2;
+        return "Failed to read file " +(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName())+ ".axc";
     }
 
     // Create the text streams for reading and writing
@@ -252,54 +251,73 @@ int AXInterpreter::generateAXMfile() {
         result += line + " ";
     }
 
-    // Regex to find loop definitions
-    QRegularExpression regexLoop ("[lL][oO][oO][pP]\\s+([^{]*)\\s*[{]([^}]*)[}]");
-    while (1) {
-        QRegularExpressionMatch matchLoop = regexLoop.match(result);
-        if (matchLoop.hasMatch()) {
-            result.replace(matchLoop.captured(0), "loop " +matchLoop.captured(1)+ "@" +matchLoop.captured(2)+ "£");
-        } else {
+    // Find macro definitions
+    while (true) {
+
+        // Find the start of a macro definition ("macro_name {")
+        // Excludes word "layer" and "loop"
+        QRegularExpression regexDefStart("\\b(?![lL][oO][oO][pP]\\b|\\b[lL][aA][yY][eE][rR]\\b)([^\\s\\d;{}()][\\w]*)\\s*\\{");
+
+        QRegularExpressionMatch defStartMatch = regexDefStart.match(result);
+
+        if (!defStartMatch.hasMatch()) {
+            // All macro definitions found
             break;
         }
+
+        QString macroName = defStartMatch.captured(1);
+        int openBracePos = defStartMatch.capturedEnd(0) - 1;
+
+        int closeBracePos = findMatchingBrace(result, openBracePos);
+
+        if (closeBracePos == -1) {
+            return "Syntax error: Unmatched brace for block: " +macroName;
+        }
+
+        // Extract the macro content and the full definition text.
+        int contentStart = openBracePos + 1;
+        int contentLength = closeBracePos - contentStart;
+        QString macroContent = result.mid(contentStart, contentLength);
+
+        int defStart = defStartMatch.capturedStart(0);
+        int defLength = (closeBracePos + 1) - defStart;
+
+        // Remove the macro definition
+        result.remove(defStart, defLength);
+
+        // Replace the macro call with their content
+        QRegularExpression regexCall("\\b" + QRegularExpression::escape(macroName) + "\\b\\s*;");
+        result.replace(regexCall, macroContent);
     }
 
-    // Regex to find macro definitions
-    // Match when a single non-digit, non-space char is followed by any amount of word chars, a '{', anything, '}'
-    // Catches: entire definition (0), macro name (1), macro contents (2)
-    QRegularExpression regexDefinitions ("([^\\s\\d][\\w]*)\\s*[{]([^}]*)[}]");
-    while (1) {
-        QRegularExpressionMatch matchDefinitions = regexDefinitions.match(result);
+    // Replace all the code with the contents of the Layer block
+    QRegularExpression regexLayerStart("\\b[lL][aA][yY][eE][rR]\\b\\s*\\{");
+    QRegularExpressionMatch layerStartMatch = regexLayerStart.match(result);
 
-        // if there is a macro declaration
-        if (matchDefinitions.hasMatch()) {
+    if (layerStartMatch.hasMatch()) {
+        int layerStartBlock = layerStartMatch.capturedStart(0);
+        int layerOpenBrace = layerStartMatch.capturedEnd(0) - 1;
+        int layerCloseBrace = findMatchingBrace(result, layerOpenBrace);
 
-            // remove the declaration
-            result.remove(matchDefinitions.captured(0));
+        if (layerCloseBrace != -1) {
+            int contentStart = layerOpenBrace + 1;
+            int contentLength = layerCloseBrace - contentStart;
+            QString layerContent = result.mid(contentStart, contentLength);
 
-            // replace all macro calls (captured(1)) with macro contents (captured(2))
-            result.replace(" " + matchDefinitions.captured(1) + ";", " " + matchDefinitions.captured(2));
+            // Extract the content inside the main block.
+            result.replace(layerStartMatch.capturedStart(0), layerCloseBrace + 1 - layerStartBlock, layerContent);
         } else {
-            // Stop the loop once there are no macro definitions left
-            break;
+            return "Syntax error: Layer block not closed";
         }
+    } else {
+        return "Syntax error: Layer block not found";
     }
 
     // Regex to find dots in non-digits
     // Match when a dot is followed by a non-digit
     // Capture both chars (0) and the last char (1)
     QRegularExpression regexDot ("[\\.]([^\\d])");
-    while (1) {
-        QRegularExpressionMatch matchDot = regexDot.match(result);
-
-        // if there is a dot in a non-digit
-        if (matchDot.hasMatch()) {
-            // Replace the sequence (dot + char) with underscore + char
-            result.replace(matchDot.captured(0), "_" + matchDot.captured(1));
-        } else {
-            // Stop the loop once there are no dots to replace
-            break;
-        }
-    }
+    result.replace(regexDot, "_\\1");
 
     // Replace "parameter" keyword with "variable"
     result.replace(QRegularExpression("\\b[pP][aA][rR][aA][mM][eE][tT][eE][rR]\\b"), " variable ");
@@ -312,8 +330,6 @@ int AXInterpreter::generateAXMfile() {
 
     // Regenerate whitespaces
     result = result.simplified();
-    result.replace("@", "{");
-    result.replace("£", "}");
     result.replace("; ", ";\n");
     result.replace(" ;", ";");
     result.replace("{", "{\n");
@@ -329,7 +345,7 @@ int AXInterpreter::generateAXMfile() {
     axcFileHeader.close();
     axmFileHeader.close();
 
-    return 0;
+    return "";
 }
 
 
@@ -438,4 +454,26 @@ QString AXInterpreter::launchPy() {
     QDir::setCurrent("C:/");
 
     return stdErrors;
+}
+
+int findMatchingBrace(const QString& str, int startPos) {
+    if (startPos < 0 || startPos >= str.length() || str[startPos] != '{') {
+        // Invalid starting position
+        return -1;
+    }
+
+    int depth = 1;
+    for (int i = startPos + 1; i < str.length(); ++i) {
+        if (str[i] == '{') {
+            depth++;
+        } else if (str[i] == '}') {
+            depth--;
+            if (depth == 0) {
+                // Matching brace found
+                return i;
+            }
+        }
+    }
+    // Matching brace not found
+    return -1;
 }
