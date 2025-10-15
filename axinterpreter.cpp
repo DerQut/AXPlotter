@@ -375,6 +375,11 @@ int AXInterpreter::generatePyFile() {
     while (!(in.atEnd())) {
         QString line = in.readLine();
 
+        // Force python syntax for less than, greater than, pow
+        line = line.replace(QRegularExpression("<<"), "<");
+        line = line.replace(QRegularExpression(">>"), ">");
+        line = line.replace(QRegularExpression("\\^"), "**");
+
         QString pyLine = convertAXMtoPy(line);
         QStringList pyLines = pyLine.split("\n");
 
