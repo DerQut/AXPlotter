@@ -70,7 +70,6 @@ void GraphsView::updatePlots(QString directoryName) {
 
         QCustomPlot* plot = new QCustomPlot();
         plot->setMinimumHeight(200);
-        plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
         mainHStack->addWidget(plot);
 
         this->scrollVStack->addLayout(mainHStack);
