@@ -37,12 +37,15 @@ GraphsView::GraphsView(ContentView *parent) :
 
 void GraphsView::updatePlots(QString directoryName) {
 
+    // Clear the plots
+    this->deletePlots();
+
     // Read all .csv files
     QDir csvDir (directoryName);
     QStringList csvFiles = csvDir.entryList(QStringList() << "*.csv", QDir::Files);
 
     if (csvFiles.isEmpty()) {
-        QLabel* failedLabel = new QLabel("No files found in:", this);
+        QLabel* failedLabel = new QLabel("No files found in: " +this->contentView->axinterpreter->baseFolder.absolutePath(), this);
         this->scrollVStack->addWidget(failedLabel);
         return;
     }
@@ -104,16 +107,22 @@ void GraphsView::updatePlots(QString directoryName) {
 
 
 void GraphsView::deletePlots() {
-    // Remove all widgets from the VStack
-    QLayoutItem* itemToRemove;
-    while ((itemToRemove = this->scrollVStack->takeAt(0)) != nullptr) {
-        if (itemToRemove->widget()) {
-            delete itemToRemove->widget();
-        }
-        delete itemToRemove;
-    }
+    clearLayout(this->scrollVStack);
 }
 
 void GraphsView::setPlotsXRange(int xMin, int yMin) {
     return;
+}
+
+void clearLayout(QLayout* layout) {
+    while (QLayoutItem* item = layout->takeAt(0)) {
+
+        if (QWidget* widget = item->widget())
+            widget->deleteLater();
+
+        if (QLayout* childLayout = item->layout())
+            clearLayout(childLayout);
+
+        delete item;
+    }
 }

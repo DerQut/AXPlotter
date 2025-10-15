@@ -27,4 +27,6 @@ public slots:
 
 };
 
+void clearLayout(QLayout* layout);
+
 #endif // GRAPHSVIEW_H
