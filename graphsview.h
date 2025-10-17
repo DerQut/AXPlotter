@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QString>
 #include <QVBoxLayout>
+#include <QSlider>
 
 #include "qcustomplot/qcustomplot.h"
 
@@ -17,13 +18,21 @@ public:
     ContentView* contentView;
 
     QVBoxLayout* scrollVStack;
+    QVector<QCustomPlot*> plots;
+
+    QSlider* xMinSlider;
+    QSlider* xMaxSlider;
 
 signals:
 
 public slots:
     void updatePlots(QString directoryName);
     void deletePlots();
-    void setPlotsXRange(int xMin, int yMin);
+    void setPlotsXRange(int xMin, int xMax);
+
+    void updatePlotsRange();
+    void xMinSliderCall();
+    void xMaxSliderCall();
 
 };
 

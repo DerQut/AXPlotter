@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QRegularExpression>
+#include <QSlider>
 
 #include "graphsview.h"
 #include "contentview.h"
@@ -32,6 +33,30 @@ GraphsView::GraphsView(ContentView *parent) :
     this->scrollVStack = new QVBoxLayout(scrollWidget);
 
     mainVStack->addWidget(scrollArea);
+
+    // Sliders to control the plot X scale
+    this->xMinSlider = new QSlider(this);
+    this->xMinSlider->setRange(0, 100);
+    this->xMinSlider->setValue(0);
+    this->xMinSlider->setOrientation(Qt::Horizontal);
+
+    this->xMaxSlider = new QSlider(this);
+    this->xMaxSlider->setRange(0, 100);
+    this->xMaxSlider->setValue(100);
+    this->xMaxSlider->setOrientation(Qt::Horizontal);
+
+    QHBoxLayout* xMinHStack = new QHBoxLayout();
+    QHBoxLayout* xMaxHStack = new QHBoxLayout();
+
+    xMinHStack->addWidget(this->xMinSlider);
+    xMaxHStack->addWidget(this->xMaxSlider);
+
+    mainVStack->addLayout(xMinHStack);
+    mainVStack->addLayout(xMaxHStack);
+
+    connect(this->xMinSlider, SIGNAL(valueChanged(int)), this, SLOT(xMinSliderCall()));
+    connect(this->xMaxSlider, SIGNAL(valueChanged(int)), this, SLOT(xMaxSliderCall()));
+
 }
 
 
@@ -113,28 +138,62 @@ void GraphsView::updatePlots(QString directoryName) {
         plot->xAxis->rescale();
 
         plot->axisRect()->setMarginGroup(QCP::msLeft | QCP::msRight, marginGroup);
+
+        this->plots.append(plot);
     }
 
     this->scrollVStack->addStretch();
+
+    this->xMaxSlider->setRange(0, maxTimestep);
+    this->xMaxSlider->setValue(maxTimestep);
+
+    this->xMinSlider->setRange(0, maxTimestep);
+    this->xMinSlider->setValue(0);
 }
 
 
 void GraphsView::deletePlots() {
     clearLayout(this->scrollVStack);
+    this->plots.clear();
 }
 
-void GraphsView::setPlotsXRange(int xMin, int yMin) {
-    return;
+void GraphsView::setPlotsXRange(int xMin, int xMax) {
+    foreach (QCustomPlot* plot, this->plots) {
+        plot->xAxis->setRange(xMin, xMax);
+        plot->yAxis->rescale(true);
+        plot->replot();
+    }
+}
+
+void GraphsView::updatePlotsRange() {
+    qDebug() << "xMin: " << this->xMinSlider->value() << ", xMax: " << this->xMaxSlider->value();
+    this->setPlotsXRange(this->xMinSlider->value(), this->xMaxSlider->value());
+}
+
+void GraphsView::xMaxSliderCall() {
+    if (xMaxSlider->value() < xMinSlider->value()) {
+        xMinSlider->setValue(xMaxSlider->value());
+    }
+    this->updatePlotsRange();
+}
+
+void GraphsView::xMinSliderCall() {
+    if (xMinSlider->value() > xMaxSlider->value()) {
+        xMaxSlider->setValue(xMinSlider->value());
+    }
+    this->updatePlotsRange();
 }
 
 void clearLayout(QLayout* layout) {
     while (QLayoutItem* item = layout->takeAt(0)) {
 
-        if (QWidget* widget = item->widget())
+        if (QWidget* widget = item->widget()) {
             widget->deleteLater();
+        }
 
-        if (QLayout* childLayout = item->layout())
+        if (QLayout* childLayout = item->layout()) {
             clearLayout(childLayout);
+        }
 
         delete item;
     }

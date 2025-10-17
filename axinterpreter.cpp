@@ -101,9 +101,10 @@ void AXInterpreter::startCompilation(QString scriptFile) {
     } else {
         // Done!
         this->mainText->setText("Done!");
-        this->contentView->detailView->graphsView->updatePlots(this->baseFolder.absolutePath());
-        this->contentView->detailView->tabView->setCurrentIndex(1);
     }
+
+    this->contentView->detailView->graphsView->updatePlots(this->baseFolder.absolutePath());
+    this->contentView->detailView->tabView->setCurrentIndex(1);
 }
 
 
@@ -254,6 +255,9 @@ QString AXInterpreter::generateAXMfile() {
         result += line + " ";
     }
 
+    // Close the file
+    axcFileHeader.close();
+
     // Find macro definitions
     while (true) {
 
@@ -274,6 +278,7 @@ QString AXInterpreter::generateAXMfile() {
         int closeBracePos = findMatchingBrace(result, openBracePos);
 
         if (closeBracePos == -1) {
+            axmFileHeader.close();
             return "Syntax error: Unmatched brace for block: " +macroName;
         }
 
@@ -297,6 +302,11 @@ QString AXInterpreter::generateAXMfile() {
     QRegularExpression regexLayerStart("\\b[lL][aA][yY][eE][rR]\\b\\s*\\{");
     QRegularExpressionMatch layerStartMatch = regexLayerStart.match(result);
 
+    if (result.count(regexLayerStart) > 1) {
+        axmFileHeader.close();
+        return "Syntax error: multiple Layer macros defined!";
+    }
+
     if (layerStartMatch.hasMatch()) {
         int layerStartBlock = layerStartMatch.capturedStart(0);
         int layerOpenBrace = layerStartMatch.capturedEnd(0) - 1;
@@ -310,9 +320,11 @@ QString AXInterpreter::generateAXMfile() {
             // Extract the content inside the main block.
             result.replace(layerStartMatch.capturedStart(0), layerCloseBrace + 1 - layerStartBlock, layerContent);
         } else {
+            axmFileHeader.close();
             return "Syntax error: Layer block not closed";
         }
     } else {
+        axmFileHeader.close();
         return "Syntax error: Layer block not found";
     }
 
@@ -344,8 +356,7 @@ QString AXInterpreter::generateAXMfile() {
     // Write to .AXM file
     out << result;
 
-    // Close files
-    axcFileHeader.close();
+    // Close the file
     axmFileHeader.close();
 
     return "";
@@ -467,7 +478,7 @@ int findMatchingBrace(const QString& str, int startPos) {
 
     int depth = 1;
     for (int i = startPos + 1; i < str.length(); ++i) {
-        // if finds another '{', then the next one is not the closing bracket
+        // if finds another '{', then the next one is not the closing brace
         if (str[i] == '{') {
             depth++;
         } else if (str[i] == '}') {
