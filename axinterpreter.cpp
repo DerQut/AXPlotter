@@ -467,6 +467,7 @@ int findMatchingBrace(const QString& str, int startPos) {
 
     int depth = 1;
     for (int i = startPos + 1; i < str.length(); ++i) {
+        // if finds another '{', then the next one is not the closing bracket
         if (str[i] == '{') {
             depth++;
         } else if (str[i] == '}') {
