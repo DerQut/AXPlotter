@@ -25,6 +25,9 @@ AXInterpreter::AXInterpreter(ContentView* parent) :
     this->mainText = new QLabel("Test");
     this->setCentralWidget(this->mainText);
     this->hide();
+
+    this->setWindowTitle("AX Interpreter");
+
 }
 
 
