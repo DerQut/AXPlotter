@@ -35,6 +35,15 @@ GraphsView::GraphsView(ContentView *parent) :
     mainVStack->addWidget(scrollArea);
 
     // Sliders to control the plot X scale
+
+    this->xMinLabel = new QLabel("X range (min): 0", this);
+    this->xMinLabel->setFixedWidth(110);
+    this->xMinLabel->setAlignment(Qt::AlignLeft);
+
+    this->xMaxLabel = new QLabel("X range (max): 100", this);
+    this->xMaxLabel->setFixedWidth(110);
+    this->xMaxLabel->setAlignment(Qt::AlignLeft);
+
     this->xMinSlider = new QSlider(this);
     this->xMinSlider->setRange(0, 100);
     this->xMinSlider->setValue(0);
@@ -48,7 +57,10 @@ GraphsView::GraphsView(ContentView *parent) :
     QHBoxLayout* xMinHStack = new QHBoxLayout();
     QHBoxLayout* xMaxHStack = new QHBoxLayout();
 
+    xMinHStack->addWidget(this->xMinLabel);
     xMinHStack->addWidget(this->xMinSlider);
+
+    xMaxHStack->addWidget(this->xMaxLabel);
     xMaxHStack->addWidget(this->xMaxSlider);
 
     mainVStack->addLayout(xMinHStack);
@@ -160,7 +172,9 @@ void GraphsView::deletePlots() {
 void GraphsView::setPlotsXRange(int xMin, int xMax) {
     foreach (QCustomPlot* plot, this->plots) {
         plot->xAxis->setRange(xMin, xMax);
-        plot->yAxis->rescale(true);
+        for (int i=0; i < plot->graphCount(); i++) {
+            plot->graph(i)->rescaleValueAxis(false, true);
+        }
         plot->replot();
     }
 }
@@ -171,6 +185,7 @@ void GraphsView::updatePlotsRange() {
 }
 
 void GraphsView::xMaxSliderCall() {
+    this->xMaxLabel->setText("X range (max): " + QString::number(this->xMaxSlider->value()));
     if (xMaxSlider->value() < xMinSlider->value()) {
         xMinSlider->setValue(xMaxSlider->value());
     }
@@ -178,6 +193,7 @@ void GraphsView::xMaxSliderCall() {
 }
 
 void GraphsView::xMinSliderCall() {
+    this->xMinLabel->setText("X range (min): " + QString::number(this->xMinSlider->value()));
     if (xMinSlider->value() > xMaxSlider->value()) {
         xMaxSlider->setValue(xMinSlider->value());
     }

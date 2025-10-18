@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVBoxLayout>
 #include <QSlider>
+#include <QLabel>
 
 #include "qcustomplot/qcustomplot.h"
 
@@ -22,6 +23,9 @@ public:
 
     QSlider* xMinSlider;
     QSlider* xMaxSlider;
+
+    QLabel* xMinLabel;
+    QLabel* xMaxLabel;
 
 signals:
 
