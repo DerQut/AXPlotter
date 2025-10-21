@@ -172,8 +172,14 @@ void GraphsView::deletePlots() {
 void GraphsView::setPlotsXRange(int xMin, int xMax) {
     foreach (QCustomPlot* plot, this->plots) {
         plot->xAxis->setRange(xMin, xMax);
-        for (int i=0; i < plot->graphCount(); i++) {
-            plot->graph(i)->rescaleValueAxis(false, true);
+
+        for (int i = 0; i < plot->plottableCount(); i++) {
+            QCPAbstractPlottable* plottable = plot->plottable(i);
+            QCPCurve* curve = qobject_cast<QCPCurve*>(plottable);
+
+            if (curve) {
+                curve->rescaleValueAxis(false, true);
+            }
         }
         plot->replot();
     }
