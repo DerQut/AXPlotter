@@ -2,6 +2,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QtGlobal>
+#include <QDebug>
 
 #include "convertaxmtopy.h"
 
@@ -33,6 +34,9 @@ QString convertAXMtoPy(QString axmLine) {
 
     QRegularExpression regexLoop ("^[lL][oO][oO][pP]\\s+(.*)\\s*{$");
     QRegularExpressionMatch matchLoop = regexLoop.match(axmLine.trimmed());
+
+    QRegularExpression regexWithAssignment ("(.*)\\s+[wW][iI][tT][hH]\\s+(.*)");
+    QRegularExpression regexWithInAssignment ("(.*)\\s+[wW][iI][tT][hH]\\s+(.*)\\s+[iI][nN]\\s+(.*)");
 
     if (matchLoop.hasMatch()) {
         // Generate a random string for loop iterator (allows for nested loops)
@@ -124,9 +128,8 @@ QString convertAXMtoPy(QString axmLine) {
 
             // Check if the given positional argument matches a "to" assignment (a to 8)
             QRegularExpressionMatch matchToAssignmentDefault = regexToAssignmentDefault.match(argument);
-            QRegularExpressionMatch matchIn = regexToAssignmentIn.match(argument);
 
-            if (matchToAssignmentDefault.hasMatch() && !(matchIn.hasMatch())) {
+            if (matchToAssignmentDefault.hasMatch()) {
                 QString variableName = matchToAssignmentDefault.captured(1).trimmed();
                 QString variableEndGoal = matchToAssignmentDefault.captured(2);
 
@@ -152,6 +155,45 @@ QString convertAXMtoPy(QString axmLine) {
                 result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" +variableName+ ") + '\\n')";
                 result += "\n    i = i + 1";
                 result += "\nfile.close()";
+                continue;
+            }
+
+            // Check if the given positional argument matches a "with ... in" assignment (a with x^3 in 15)
+            QRegularExpressionMatch matchWithInAssignment = regexWithInAssignment.match(argument);
+
+            // Check if the given positional argument matches a "with" assignment (a with sin(x))
+            QRegularExpressionMatch matchWithAssignment = regexWithAssignment.match(argument);
+
+            if (matchWithInAssignment.hasMatch() || matchWithAssignment.hasMatch()) {
+
+                QString variableName;
+                QString equation;
+                QString variableEndTime;
+
+                if (matchWithInAssignment.hasMatch()) {
+                    variableName = matchWithInAssignment.captured(1).trimmed();
+                    equation = matchWithInAssignment.captured(2).trimmed();
+                    variableEndTime = matchWithInAssignment.captured(3);
+                } else {
+                    variableName = matchWithAssignment.captured(1).trimmed();
+                    equation = matchWithAssignment.captured(2).trimmed();
+                    variableEndTime = "AX_STEP_LENGTH";
+                }
+
+                result += "\n\ntry:";
+                result += "\n    " +variableName+ "_AXDEFAULT = " +variableName+ "_AXDEFAULT";
+                result += "\nexcept NameError:";
+                result += "\n    " +variableName+ "_AXDEFAULT = 0";
+
+                result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
+
+                result += "\nx = 0";
+                result += "\nwhile x <= AX_STEP_LENGTH:";
+                result += "\n    " +variableName+ " = " +equation;
+                result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+x) + ',' + str(" +variableName+ ") + '\\n')";
+                result += "\n    x = x + 1";
+                result += "\nfile.close()";
+
                 continue;
             }
 
