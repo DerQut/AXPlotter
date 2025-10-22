@@ -188,7 +188,7 @@ QString convertAXMtoPy(QString axmLine) {
                 result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
 
                 result += "\nx = 0";
-                result += "\nwhile x <= AX_STEP_LENGTH:";
+                result += "\nwhile x <= " +variableEndTime+ ":";
                 result += "\n    " +variableName+ " = " +equation;
                 result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+x) + ',' + str(" +variableName+ ") + '\\n')";
                 result += "\n    x = x + 1";
