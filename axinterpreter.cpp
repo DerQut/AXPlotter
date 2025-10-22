@@ -353,6 +353,9 @@ QString AXInterpreter::generateAXMfile() {
     // Remove unresolved macros
     result.remove(QRegularExpression("\n[^\\d\\s][\\w]*[;]"));
 
+    // Remove messages ("message")
+    result.remove(QRegularExpression("\"[^\"]*\","));
+
     // Write to .AXM file
     out << result;
 
