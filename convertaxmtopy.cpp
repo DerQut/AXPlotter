@@ -94,10 +94,25 @@ QString convertAXMtoPy(QString axmLine) {
 
             // Check if the given positional atgument matches a "to ... in" assignment (a to 8 in 15)
             QRegularExpressionMatch matchToAssignmentIn = regexToAssignmentIn.match(argument);
-            if (matchToAssignmentIn.hasMatch()) {
-                QString variableName = matchToAssignmentIn.captured(1).trimmed();
-                QString variableEndGoal = matchToAssignmentIn.captured(2).trimmed();
-                QString variableEndTime = matchToAssignmentIn.captured(3).trimmed();
+
+            // Check if the given positional argument matches a "to" assignment (a to 8)
+            QRegularExpressionMatch matchToAssignmentDefault = regexToAssignmentDefault.match(argument);
+
+            if (matchToAssignmentIn.hasMatch() || matchToAssignmentDefault.hasMatch()) {
+
+                QString variableName;
+                QString variableEndGoal;
+                QString variableEndTime;
+
+                if (matchToAssignmentIn.hasMatch()) {
+                    variableName = matchToAssignmentIn.captured(1).trimmed();
+                    variableEndGoal = matchToAssignmentIn.captured(2).trimmed();
+                    variableEndTime = matchToAssignmentIn.captured(3).trimmed();
+                } else {
+                    variableName = matchToAssignmentDefault.captured(1).trimmed();
+                    variableEndGoal = matchToAssignmentDefault.captured(2).trimmed();
+                    variableEndTime = "AX_STEP_LENGTH";
+                }
 
                 // Replace "default" keyword with a proper variable
                 variableEndGoal.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
@@ -120,38 +135,6 @@ QString convertAXMtoPy(QString axmLine) {
                 result += "\ni = 0";
                 result += "\nwhile i <= " +variableEndTime+ ":";
                 result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / " +variableEndTime;
-                result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" +variableName+ ") + '\\n')";
-                result += "\n    i = i + 1";
-                result += "\nfile.close()";
-                continue;
-            }
-
-            // Check if the given positional argument matches a "to" assignment (a to 8)
-            QRegularExpressionMatch matchToAssignmentDefault = regexToAssignmentDefault.match(argument);
-
-            if (matchToAssignmentDefault.hasMatch()) {
-                QString variableName = matchToAssignmentDefault.captured(1).trimmed();
-                QString variableEndGoal = matchToAssignmentDefault.captured(2);
-
-                // Replace "default" keyword with a proper variable
-                variableEndGoal.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
-                variableEndGoal = variableEndGoal.trimmed();
-
-                result += "\n\ntry:";
-                result += "\n    " +variableName+ "_AXDEFAULT = " +variableName+ "_AXDEFAULT";
-                result += "\nexcept NameError:";
-                result += "\n    " +variableName+ "_AXDEFAULT = 0";
-
-                result += "\ntry:";
-                result += "\n    " +variableName+ "_AXCOPY = " +variableName;
-                result += "\nexcept NameError:";
-                result += "\n    " +variableName+ "_AXCOPY = " +variableName+ "_AXDEFAULT";
-                result += "\n    " +variableName+ " = " +variableName+ "_AXDEFAULT";
-                result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
-
-                result += "\ni = 0";
-                result += "\nwhile i <= AX_STEP_LENGTH:";
-                result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / AX_STEP_LENGTH";
                 result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" +variableName+ ") + '\\n')";
                 result += "\n    i = i + 1";
                 result += "\nfile.close()";
