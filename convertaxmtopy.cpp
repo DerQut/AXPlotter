@@ -180,11 +180,6 @@ QString convertAXMtoPy(QString axmLine) {
                     variableEndTime = "AX_STEP_LENGTH";
                 }
 
-                result += "\n\ntry:";
-                result += "\n    " +variableName+ "_AXDEFAULT = " +variableName+ "_AXDEFAULT";
-                result += "\nexcept NameError:";
-                result += "\n    " +variableName+ "_AXDEFAULT = 0";
-
                 result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
 
                 result += "\nx = 0";
