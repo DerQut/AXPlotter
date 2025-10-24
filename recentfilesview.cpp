@@ -106,4 +106,8 @@ void RecentFilesView::updateButtons() {
 
 void RecentFilesView::forceReadRecentFile(int fileID) {
     contentView->readScriptFile( contentView->recentFiles[fileID] );
+
+    // Shift the clicked file to the first position of this->contentView->recentFiles
+    contentView->recentFiles.move(fileID, 0);
+    this->updateButtons();
 }

@@ -151,8 +151,11 @@ void ContentView::saveScriptFileAs() {
 
 
 void ContentView::shiftRecentFiles() {
-    recentFiles.removeLast();
-    recentFiles.prepend(scriptFile);
+
+    if (!this->recentFiles.contains(scriptFile)) {
+        recentFiles.removeLast();
+        recentFiles.prepend(scriptFile);
+    }
 
     emit this->recentFilesChanged();
 }
