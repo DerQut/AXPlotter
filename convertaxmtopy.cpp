@@ -73,6 +73,7 @@ QString convertAXMtoPy(QString axmLine) {
         bool convertionSuccesful;
 
         for (int i=0; i<timestepList.count(); i++) {
+            // iterate backwards (first seconds, then minutes, then hours, then a unit that does not exist but let's pretend it does)
             calculatedPart = timestepList.at(timestepList.count()-i-1).toInt(&convertionSuccesful);
             if (convertionSuccesful) {
                 for (int j=0; j<i; j++) {
@@ -87,6 +88,8 @@ QString convertAXMtoPy(QString axmLine) {
     } else if (matchTimeStepBracketed.hasMatch()) {
         timestepLength = matchTimeStepBracketed.captured(1);
     }
+
+    // if neither regex match, then no timestep is given (conditional step, "until"), so the timestep remains at 0
 
     result += "\nAX_STEP_LENGTH = " + timestepLength;
 
@@ -149,6 +152,10 @@ QString convertAXMtoPy(QString axmLine) {
                 variableName = matchToAssignmentDefault.captured(1).trimmed();
                 variableEndGoal = matchToAssignmentDefault.captured(2).trimmed();
                 variableEndTime = "AX_STEP_LENGTH";
+
+                result += "\nif AX_STEP_LENGTH == 0:";
+                result += "\n    sys.stderr.write(\"No timestep given for linear ramp. Affected variable: " +variableName+ ". Exiting.\")";
+                result += "\n    sys.exit()";
             }
 
             // Replace "default" keyword in variableEndGoal with a proper variable

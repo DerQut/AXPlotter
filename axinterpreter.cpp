@@ -391,6 +391,7 @@ int AXInterpreter::generatePyFile() {
     int tabCount = 0;
 
     // Add a default header to always be created
+    result += "import sys\n";
     result += "from math import sin, cos, tan, exp, log, log10, sqrt\n\n";
     result += "ON = 1\n";
     result += "OFF = 1\n";
