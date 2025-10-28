@@ -263,7 +263,7 @@ QString AXInterpreter::generateAXMfile() {
 
         // Find the start of a macro definition ("macro_name {")
         // Excludes word "layer" and "loop"
-        QRegularExpression regexDefStart("\\b(?![lL][oO][oO][pP]\\b|\\b[lL][aA][yY][eE][rR]\\b)([^\\s\\d;{}()][\\w]*)\\s*\\{");
+        QRegularExpression regexDefStart("\\b(?![l][o][o][p]\\b|\\b[l][a][y][e][r]\\b)([^\\s\\d;{}()][\\w]*)\\s*\\{");
 
         QRegularExpressionMatch defStartMatch = regexDefStart.match(result);
 
@@ -299,7 +299,7 @@ QString AXInterpreter::generateAXMfile() {
     }
 
     // Replace all the code with the contents of the Layer block
-    QRegularExpression regexLayerStart("\\b[lL][aA][yY][eE][rR]\\b\\s*\\{");
+    QRegularExpression regexLayerStart("\\b[l][a][y][e][r]\\b\\s*\\{");
     QRegularExpressionMatch layerStartMatch = regexLayerStart.match(result);
 
     if (result.count(regexLayerStart) > 1) {
@@ -335,13 +335,13 @@ QString AXInterpreter::generateAXMfile() {
     result.replace(regexDot, "_\\1");
 
     // Replace "parameter" keyword with "variable"
-    result.replace(QRegularExpression("\\b[pP][aA][rR][aA][mM][eE][tT][eE][rR]\\b"), " variable ");
+    result.replace(QRegularExpression("\\bparameter\\b"), " variable ");
 
     // Replace keyword values with a caps-locked version
-    result.replace(QRegularExpression("\\b[oO][pP][eE][nN]\\b"), "OPEN");
-    result.replace(QRegularExpression("\\b[cC][lL][oO][sS][eE]\\b"), "CLOSE");
-    result.replace(QRegularExpression("\\b[oO][nN]\\b"), "ON");
-    result.replace(QRegularExpression("\\b[oO][fF][fF]\\b"), "OFF");
+    result.replace(QRegularExpression("\\bopen\\b"), "OPEN");
+    result.replace(QRegularExpression("\\bclose\\b"), "CLOSE");
+    result.replace(QRegularExpression("\\bon\\b"), "ON");
+    result.replace(QRegularExpression("\\boff\\b"), "OFF");
 
     // Regenerate whitespaces
     result = result.simplified();

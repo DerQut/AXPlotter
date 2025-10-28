@@ -22,10 +22,10 @@ QString recursiveReplaceRead(QString fileName) {
     QString result = QString();
 
     // Regular expression to check for "read" call
-    QRegularExpression regexRead("^read\\s+(.+);$");
+    QRegularExpression regexRead("^\\s*read\\s+(.+);$");
 
     //Regular expression to check if a file extention is given
-    // At least one letter, dot, at least one letter
+    // At least one character, dot, at least one character
     QRegularExpression regexExtention("(\\w+)[.](\\w+)");
 
     // Create a text stream for reading the script file
