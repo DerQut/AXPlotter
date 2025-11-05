@@ -57,7 +57,7 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
                       << recentFileButton3
                       << recentFileButton4;
 
-    QString stylesheet = QString("QPushButton {border: none; color: palette(window-text); background: transparent; text-align:left;} QTooltip {border: 1px; color: black; background: white;}");
+    const QString stylesheet = QString("QPushButton {border: none; color: palette(window-text); background: transparent; text-align:left;} QTooltip {border: 1px; color: black; background: white;}");
 
 
     recentFileButton0->setStyleSheet(stylesheet);
