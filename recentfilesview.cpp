@@ -39,38 +39,30 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
     QButtonGroup* recentGroup = new QButtonGroup(this);
     recentGroup->setExclusive(0);
 
-    QPushButton* recentFileButton0 = new QPushButton("a", this);
-    QPushButton* recentFileButton1 = new QPushButton("b", this);
-    QPushButton* recentFileButton2 = new QPushButton("c", this);
-    QPushButton* recentFileButton3 = new QPushButton("d", this);
-    QPushButton* recentFileButton4 = new QPushButton("e", this);
+    const QString stylesheet = QString(
+        "QPushButton {"
+            "border: none;"
+            "color: palette(window-text);"
+            "background: transparent;"
+            "text-align:left;"
+        "}"
+            "QTooltip {"
+                "border: 1px;"
+                "color: black;"
+                "background: white;"
+        "}"
+    );
 
-    recentGroup->addButton(recentFileButton0, 0);
-    recentGroup->addButton(recentFileButton1, 1);
-    recentGroup->addButton(recentFileButton2, 2);
-    recentGroup->addButton(recentFileButton3, 3);
-    recentGroup->addButton(recentFileButton4, 4);
+    for (int i=0; i<this->contentView->recentFiles.count(); i++) {
 
-    recentFileButtons << recentFileButton0
-                      << recentFileButton1
-                      << recentFileButton2
-                      << recentFileButton3
-                      << recentFileButton4;
+        QPushButton* button = new QPushButton("", this);
+        button->setStyleSheet(stylesheet);
 
-    const QString stylesheet = QString("QPushButton {border: none; color: palette(window-text); background: transparent; text-align:left;} QTooltip {border: 1px; color: black; background: white;}");
+        recentFileButtons << button;
 
-
-    recentFileButton0->setStyleSheet(stylesheet);
-    recentFileButton1->setStyleSheet(stylesheet);
-    recentFileButton2->setStyleSheet(stylesheet);
-    recentFileButton3->setStyleSheet(stylesheet);
-    recentFileButton4->setStyleSheet(stylesheet);
-
-    scrollLayout->addWidget(recentFileButton0);
-    scrollLayout->addWidget(recentFileButton1);
-    scrollLayout->addWidget(recentFileButton2);
-    scrollLayout->addWidget(recentFileButton3);
-    scrollLayout->addWidget(recentFileButton4);
+        recentGroup->addButton(button, i);
+        scrollLayout->addWidget(button);
+    }
 
     scrollWidget->setLayout(scrollLayout);
     scrollWidget->setFixedWidth(300);
