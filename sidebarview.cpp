@@ -12,6 +12,7 @@
 #include "contentview.h"
 #include "recentfilesview.h"
 #include "themefile.h"
+#include "inferredvariablesview.h"
 
 SideBarView::SideBarView(ContentView *parent) :
     QWidget(parent)
@@ -44,6 +45,9 @@ SideBarView::SideBarView(ContentView *parent) :
     // Creating a recent files view
     recentFilesView = new RecentFilesView(this->contentView, this);
     mainVStack->addWidget(recentFilesView);
+
+    inferredVariablesView = new InferredVariablesView(this->contentView);
+    mainVStack->addWidget(inferredVariablesView);
 
     mainVStack->addStretch();
 

@@ -12,6 +12,7 @@
 
 class ContentView;
 class RecentFilesView;
+class InferredVariablesView;
 
 
 class SideBarView : public QWidget
@@ -24,6 +25,7 @@ public:
     void setDarkTheme();
 
     RecentFilesView* recentFilesView;
+    InferredVariablesView* inferredVariablesView;
 
 private:
     ContentView* contentView;
