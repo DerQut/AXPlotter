@@ -48,7 +48,7 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
         "}"
             "QTooltip {"
                 "border: 1px;"
-                "color: black;"
+                "color: palette(window-text);"
                 "background: white;"
         "}"
     );
