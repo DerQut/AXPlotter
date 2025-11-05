@@ -11,6 +11,7 @@
 
 
 class ContentView;
+class RecentFilesView;
 
 
 class SideBarView : public QWidget
@@ -21,6 +22,8 @@ public:
     void setDefaultTheme();
     void setClassicTheme();
     void setDarkTheme();
+
+    RecentFilesView* recentFilesView;
 
 private:
     ContentView* contentView;

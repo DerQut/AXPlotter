@@ -5,6 +5,7 @@
 #include <QStackedLayout>
 #include <QScrollArea>
 #include <QButtonGroup>
+#include <QDebug>
 
 #include "recentfilesview.h"
 #include "contentview.h"
@@ -56,11 +57,14 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
                       << recentFileButton3
                       << recentFileButton4;
 
-    recentFileButton0->setStyleSheet("border: none; color: palette(window-text); background: transparent; text-align:left;");
-    recentFileButton1->setStyleSheet("border: none; color: palette(window-text); background: transparent; text-align:left;");
-    recentFileButton2->setStyleSheet("border: none; color: palette(window-text); background: transparent; text-align:left;");
-    recentFileButton3->setStyleSheet("border: none; color: palette(window-text); background: transparent; text-align:left;");
-    recentFileButton4->setStyleSheet("border: none; color: palette(window-text); background: transparent; text-align:left;");
+    QString stylesheet = QString("QPushButton {border: none; color: palette(window-text); background: transparent; text-align:left;} QTooltip {border: 1px; color: black; background: white;}");
+
+
+    recentFileButton0->setStyleSheet(stylesheet);
+    recentFileButton1->setStyleSheet(stylesheet);
+    recentFileButton2->setStyleSheet(stylesheet);
+    recentFileButton3->setStyleSheet(stylesheet);
+    recentFileButton4->setStyleSheet(stylesheet);
 
     scrollLayout->addWidget(recentFileButton0);
     scrollLayout->addWidget(recentFileButton1);
@@ -96,6 +100,7 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
 void RecentFilesView::updateButtons() {
     for (int i=0; i < recentFileButtons.count(); i++) {
         recentFileButtons[i]->setText( contentView->recentFiles[i] );
+        recentFileButtons[i]->setToolTip( contentView->recentFiles[i] );
         recentFileButtons[i]->setDisabled(false);
         if (contentView->recentFiles[i] == "") {
             recentFileButtons[i]->setDisabled(true);

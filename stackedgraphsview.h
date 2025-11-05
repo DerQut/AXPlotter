@@ -3,11 +3,14 @@
 
 #include <QWidget>
 
+class ContentView;
+
 class StackedGraphsView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit StackedGraphsView(QWidget *parent = 0);
+    explicit StackedGraphsView(ContentView* parent = 0);
+    ContentView* contentView;
 
 signals:
 

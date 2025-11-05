@@ -42,7 +42,7 @@ SideBarView::SideBarView(ContentView *parent) :
     mainVStack->addLayout(fileHStack);
 
     // Creating a recent files view
-    RecentFilesView* recentFilesView = new RecentFilesView(this->contentView, this);
+    recentFilesView = new RecentFilesView(this->contentView, this);
     mainVStack->addWidget(recentFilesView);
 
     mainVStack->addStretch();

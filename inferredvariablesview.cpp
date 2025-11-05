@@ -1,6 +1,8 @@
 #include "inferredvariablesview.h"
+#include "contentview.h"
 
-InferredVariablesView::InferredVariablesView(QWidget *parent) :
+InferredVariablesView::InferredVariablesView(ContentView* parent) :
     QWidget(parent)
 {
+    this->contentView = parent;
 }

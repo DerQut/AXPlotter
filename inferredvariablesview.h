@@ -3,11 +3,14 @@
 
 #include <QWidget>
 
+class ContentView;
+
 class InferredVariablesView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit InferredVariablesView(QWidget *parent = 0);
+    explicit InferredVariablesView(ContentView* parent = 0);
+    ContentView* contentView;
 
 signals:
 
