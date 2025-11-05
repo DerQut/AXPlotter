@@ -1,3 +1,5 @@
+#include <cstdint>
+
 #include <QWidget>
 #include <QLabel>
 #include <QPushButton>
@@ -53,7 +55,7 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
         "}"
     );
 
-    for (int i=0; i<this->contentView->recentFiles.count(); i++) {
+    for (std::uint_fast8_t i=0; i<this->contentView->recentFiles.count(); i++) {
 
         QPushButton* button = new QPushButton("", this);
         button->setStyleSheet(stylesheet);
@@ -90,7 +92,7 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
 
 
 void RecentFilesView::updateButtons() {
-    for (int i=0; i < recentFileButtons.count(); i++) {
+    for (std::uint_fast8_t i=0; i < recentFileButtons.count(); i++) {
         recentFileButtons[i]->setText( contentView->recentFiles[i] );
         recentFileButtons[i]->setToolTip( contentView->recentFiles[i] );
         recentFileButtons[i]->setDisabled(false);
