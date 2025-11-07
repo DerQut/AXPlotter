@@ -16,9 +16,10 @@ ToggleViewHost::ToggleViewHost(ContentView* parent) :
     this->setLayout(mainVStack);
 
     this->toggleButton = new QPushButton("Name", this);
+    this->toggleButton->setObjectName("toggleButton");
 
     const QString toggleButtonStylesheet = QString(
-        "QPushButton {"
+        "QPushButton#toggleButton {"
             "border: none;"
             "color: palette(window-text);"
             "text-align:left;"
@@ -31,12 +32,7 @@ ToggleViewHost::ToggleViewHost(ContentView* parent) :
             "border-top-left-radius: 4px;"
             "border-top-right-radius: 4px;"
         "}"
-        "QTooltip {"
-            "border: 1px;"
-            "color: palette(window-text);"
-            "background: white;"
-        "}"
-        "QPushButton:focus {"
+        "QPushButton#toggleButton:focus {"
             "outline: none;"
         "}"
     );
