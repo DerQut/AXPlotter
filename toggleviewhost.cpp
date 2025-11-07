@@ -17,7 +17,7 @@ ToggleViewHost::ToggleViewHost(ContentView* parent) :
 
     this->toggleButton = new QPushButton("Name", this);
 
-    const QString stylesheet = QString(
+    const QString toggleButtonStylesheet = QString(
         "QPushButton {"
             "border: none;"
             "color: palette(window-text);"
@@ -41,7 +41,8 @@ ToggleViewHost::ToggleViewHost(ContentView* parent) :
         "}"
     );
 
-    this->toggleButton->setStyleSheet(stylesheet);
+
+    this->toggleButton->setStyleSheet(toggleButtonStylesheet);
     mainVStack->addWidget(toggleButton);
 
     connect(this->toggleButton, SIGNAL( clicked() ), this, SLOT( toggle() ));
@@ -52,6 +53,7 @@ ToggleViewHost::ToggleViewHost(ContentView* parent) :
     mainVStack->addWidget(toggleView);
 
     this->setContentsMargins(0, 0, 0, 0);
+
 }
 
 void ToggleViewHost::toggle() {
