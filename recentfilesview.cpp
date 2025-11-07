@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QStackedLayout>
 #include <QScrollArea>
 #include <QButtonGroup>
@@ -11,42 +12,41 @@
 
 #include "recentfilesview.h"
 #include "contentview.h"
+#include "toggleviewhost.h"
 
-RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
-    QWidget(parent)
+RecentFilesView::RecentFilesView(ContentView* parent) :
+    ToggleViewHost(parent)
 {
-    this->contentView = contentView;
+    this->contentView = parent;
 
-    QStackedLayout* mainZStack = new QStackedLayout();
-    mainZStack->setStackingMode(QStackedLayout::StackAll);
-
-    // Creating the widget to host the background gradient
-    QWidget* background = new QWidget(this);
-    background->setStyleSheet("background-color: #f5f5f5");
+    this->toggleButton->setText("Recent files");
 
     // Creating the main VStack to host widgets in front of the background
     QVBoxLayout* mainVStack = new QVBoxLayout();
-
-    // Creating a main label
-    QLabel* label = new QLabel("Recent files:", this);
-    label->setStyleSheet("font-weight: bold;");
-    mainVStack->addWidget(label);
+    mainVStack->setContentsMargins(0, 0, 0, 0);
 
     // Creating a QScrollArea instance
     QScrollArea* scrollArea = new QScrollArea();
-    QWidget* scrollWidget = new QWidget();
+    scrollArea->setContentsMargins(0,0,0,0);
+
+    scrollWidget = new QWidget();
+    scrollWidget->setContentsMargins(0,0,0,0);
+
     QVBoxLayout* scrollLayout = new QVBoxLayout();
+    scrollLayout->setContentsMargins(0,0,0,0);
+    scrollLayout->setSpacing(0);
 
     // Creating button instances
     QButtonGroup* recentGroup = new QButtonGroup(this);
     recentGroup->setExclusive(0);
 
-    const QString stylesheet = QString(
+    const QString buttonStylesheet = QString(
         "QPushButton {"
             "border: none;"
             "color: palette(window-text);"
             "background: transparent;"
             "text-align:left;"
+            "padding: 5px;"
         "}"
             "QTooltip {"
                 "border: 1px;"
@@ -55,32 +55,53 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
         "}"
     );
 
+    // Create the buttons
     for (std::uint_fast8_t i=0; i<this->contentView->recentFiles.count(); i++) {
 
+        QHBoxLayout* buttonHStack = new QHBoxLayout();
+        buttonHStack->setContentsMargins(0,0,0,0);
+
+        QWidget* dummyWidget = new QWidget(this);
+
+        if (i & 1) {
+            dummyWidget->setStyleSheet("background-color: #ffffff");
+        } else {
+            dummyWidget->setStyleSheet("background-color: #f8f8f8");
+        }
+
         QPushButton* button = new QPushButton("", this);
-        button->setStyleSheet(stylesheet);
+        button->setStyleSheet(buttonStylesheet);
+
+        button->setContentsMargins(0,0,0,0);
 
         recentFileButtons << button;
-
         recentGroup->addButton(button, i);
-        scrollLayout->addWidget(button);
+
+        buttonHStack->addWidget(button);
+        buttonHStack->addStretch();
+
+        dummyWidget->setLayout(buttonHStack);
+
+        scrollLayout->addWidget(dummyWidget);
     }
 
     scrollWidget->setLayout(scrollLayout);
-    scrollWidget->setFixedWidth(300);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea->setWidget(scrollWidget);
 
+    qDebug() << scrollArea->styleSheet();
+
+    const QString scrollAreaStylesheet = QString(
+        "QScrollArea{"
+            "border: none;"
+        "}"
+    );
+
+    scrollArea->setStyleSheet(scrollAreaStylesheet);
+
     mainVStack->addWidget(scrollArea);
 
-    // Creating a dummy widget to host the main VStack
-    QWidget* dummyWidget = new QWidget();
-    dummyWidget->setLayout(mainVStack);
-
-    mainZStack->addWidget(background);
-    mainZStack->addWidget(dummyWidget);
-
-    this->setLayout(mainZStack);
+    this->toggleView->setLayout(mainVStack);
 
     this->setMaximumHeight(160);
 
@@ -92,12 +113,24 @@ RecentFilesView::RecentFilesView(ContentView* contentView, QWidget* parent) :
 
 
 void RecentFilesView::updateButtons() {
+
+    int longest = 0;
+
     for (std::uint_fast8_t i=0; i < recentFileButtons.count(); i++) {
         recentFileButtons[i]->setText( contentView->recentFiles[i] );
         recentFileButtons[i]->setToolTip( contentView->recentFiles[i] );
         recentFileButtons[i]->setDisabled(false);
         if (contentView->recentFiles[i] == "") {
             recentFileButtons[i]->setDisabled(true);
+        }
+
+        if (recentFileButtons[i]->text().count() > longest) {
+            longest = recentFileButtons[i]->text().count();
+        }
+        if (longest*7 > 175) {
+            scrollWidget->setFixedWidth(longest*7);
+        } else {
+            scrollWidget->setFixedWidth(175);
         }
     }
 }

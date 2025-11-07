@@ -43,7 +43,7 @@ SideBarView::SideBarView(ContentView *parent) :
     mainVStack->addLayout(fileHStack);
 
     // Creating a recent files view
-    recentFilesView = new RecentFilesView(this->contentView, this);
+    recentFilesView = new RecentFilesView(this->contentView);
     mainVStack->addWidget(recentFilesView);
 
     inferredVariablesView = new InferredVariablesView(this->contentView);

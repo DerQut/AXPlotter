@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     qcustomplot/qcustomplot.cpp \
     graphsview.cpp \
     stackedgraphsview.cpp \
-    inferredvariablesview.cpp
+    inferredvariablesview.cpp \
+    toggleviewhost.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -49,7 +50,8 @@ HEADERS  += mainwindow.h \
     qcustomplot/qcustomplot.h \
     graphsview.h \
     stackedgraphsview.h \
-    inferredvariablesview.h
+    inferredvariablesview.h \
+    toggleviewhost.h
 
 OTHER_FILES += \
     ../Documents/Kalibracja.txt

@@ -2,15 +2,17 @@
 #define INFERREDVARIABLESVIEW_H
 
 #include <QWidget>
+#include <QPushButton>
+#include "toggleviewhost.h"
 
 class ContentView;
 
-class InferredVariablesView : public QWidget
+class InferredVariablesView : public ToggleViewHost
 {
     Q_OBJECT
 public:
     explicit InferredVariablesView(ContentView* parent = 0);
-    ContentView* contentView;
+
 
 signals:
 

@@ -5,17 +5,19 @@
 #include <QList>
 #include <QPushButton>
 
+#include "toggleviewhost.h"
+
 class ContentView;
 
 
-class RecentFilesView : public QWidget
+class RecentFilesView : public ToggleViewHost
 {
     Q_OBJECT
 public:
-    explicit RecentFilesView(ContentView* contentView, QWidget *parent = 0);
-    ContentView* contentView;
+    explicit RecentFilesView(ContentView* parent);
 
     QList<QPushButton*> recentFileButtons;
+    QWidget* scrollWidget;
 
 signals:
 
