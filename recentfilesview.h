@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QList>
 #include <QPushButton>
+#include <QScrollArea>
+#include <QResizeEvent>
 
 #include "toggleviewhost.h"
 
@@ -18,12 +20,17 @@ public:
 
     QList<QPushButton*> recentFileButtons;
     QWidget* scrollWidget;
+    QScrollArea* scrollArea;
 
 signals:
 
 public slots:
     void updateButtons();
     void forceReadRecentFile(int fileID);
+    void updateButtonSize();
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 
 };
 

@@ -26,11 +26,11 @@ RecentFilesView::RecentFilesView(ContentView* parent) :
     mainVStack->setContentsMargins(0, 0, 0, 0);
 
     // Creating a QScrollArea instance
-    QScrollArea* scrollArea = new QScrollArea();
-    scrollArea->setContentsMargins(0,0,0,0);
+    this->scrollArea = new QScrollArea();
+    this->scrollArea->setContentsMargins(0,0,0,0);
 
-    scrollWidget = new QWidget();
-    scrollWidget->setContentsMargins(0,0,0,0);
+    this->scrollWidget = new QWidget();
+    this->scrollWidget->setContentsMargins(0,0,0,0);
 
     QVBoxLayout* scrollLayout = new QVBoxLayout();
     scrollLayout->setContentsMargins(0,0,0,0);
@@ -109,13 +109,10 @@ RecentFilesView::RecentFilesView(ContentView* parent) :
     this->updateButtons();
 
     connect(recentGroup, SIGNAL( buttonClicked(int) ), this, SLOT( forceReadRecentFile(int) ));
-
 }
 
 
 void RecentFilesView::updateButtons() {
-
-    int longest = 0;
 
     for (std::uint_fast8_t i=0; i < recentFileButtons.count(); i++) {
         recentFileButtons[i]->setText( contentView->recentFiles[i] );
@@ -125,13 +122,22 @@ void RecentFilesView::updateButtons() {
             recentFileButtons[i]->setDisabled(true);
         }
 
+        this->updateButtonSize();
+    }
+}
+
+void RecentFilesView::updateButtonSize() {
+
+    int longest = 0;
+
+    for (std::uint_fast8_t i=0; i < recentFileButtons.count(); i++) {
         if (recentFileButtons[i]->text().count() > longest) {
             longest = recentFileButtons[i]->text().count();
         }
-        if (longest*7 > 175) {
+        if (longest*7 > this->scrollArea->width()) {
             scrollWidget->setFixedWidth(longest*7);
         } else {
-            scrollWidget->setFixedWidth(175);
+            scrollWidget->setFixedWidth(this->scrollArea->width());
         }
     }
 }
@@ -143,4 +149,9 @@ void RecentFilesView::forceReadRecentFile(int fileID) {
     // Shift the clicked file to the first position of this->contentView->recentFiles
     contentView->recentFiles.move(fileID, 0);
     this->updateButtons();
+}
+
+void RecentFilesView::resizeEvent(QResizeEvent* event) {
+    QWidget::resizeEvent(event);
+    this->updateButtonSize();
 }
