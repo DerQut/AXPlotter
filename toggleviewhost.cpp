@@ -9,6 +9,7 @@ ToggleViewHost::ToggleViewHost(ContentView* parent) :
     QWidget(parent)
 {
     this->contentView = parent;
+    this->setObjectName("toggleViewHost");
 
     QVBoxLayout* mainVStack = new QVBoxLayout(this);
     mainVStack->setContentsMargins(0, 0, 0, 0);
@@ -34,6 +35,9 @@ ToggleViewHost::ToggleViewHost(ContentView* parent) :
         "}"
         "QPushButton#toggleButton:focus {"
             "outline: none;"
+        "}"
+        "QPushButton#toggleButton:pressed {"
+            "background-color: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #dedede, stop:1 #afb8d9);"
         "}"
     );
 

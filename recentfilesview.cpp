@@ -109,6 +109,7 @@ RecentFilesView::RecentFilesView(ContentView* parent) :
     this->updateButtons();
 
     connect(recentGroup, SIGNAL( buttonClicked(int) ), this, SLOT( forceReadRecentFile(int) ));
+
 }
 
 

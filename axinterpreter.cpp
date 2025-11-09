@@ -227,6 +227,8 @@ int AXInterpreter::generateAXCfile() {
 
 QString AXInterpreter::generateAXMfile() {
 
+    QString returnVal = QString("");
+
     // Create the .AXM file header
     QFile axmFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axm");
 
@@ -263,17 +265,17 @@ QString AXInterpreter::generateAXMfile() {
 
         // Find the start of a macro definition ("macro_name {")
         // Excludes word "layer" and "loop"
-        QRegularExpression regexDefStart("\\b(?![l][o][o][p]\\b|\\b[l][a][y][e][r]\\b)([^\\s\\d;{}()][\\w]*)\\s*\\{");
+        QRegularExpression regexMacroStart("\\b(?![l][o][o][p]\\b|\\b[l][a][y][e][r]\\b)([^\\s\\d;{}()][\\w]*)\\s*\\{");
 
-        QRegularExpressionMatch defStartMatch = regexDefStart.match(result);
+        QRegularExpressionMatch matchMacroStart = regexMacroStart.match(result);
 
-        if (!defStartMatch.hasMatch()) {
+        if (!matchMacroStart.hasMatch()) {
             // All macro definitions found
             break;
         }
 
-        QString macroName = defStartMatch.captured(1);
-        int openBracePos = defStartMatch.capturedEnd(0) - 1;
+        QString macroName = matchMacroStart.captured(1);
+        int openBracePos = matchMacroStart.capturedEnd(0) - 1;
 
         int closeBracePos = findMatchingBrace(result, openBracePos);
 
@@ -287,11 +289,11 @@ QString AXInterpreter::generateAXMfile() {
         int contentLength = closeBracePos - contentStart;
         QString macroContent = result.mid(contentStart, contentLength);
 
-        int defStart = defStartMatch.capturedStart(0);
-        int defLength = (closeBracePos + 1) - defStart;
+        int macroStart = matchMacroStart.capturedStart(0);
+        int macroLength = (closeBracePos + 1) - macroStart;
 
         // Remove the macro definition
-        result.remove(defStart, defLength);
+        result.remove(macroStart, macroLength);
 
         // Replace the macro call with their content
         QRegularExpression regexCall("\\b" + QRegularExpression::escape(macroName) + "\\b\\s*;");
@@ -299,7 +301,7 @@ QString AXInterpreter::generateAXMfile() {
     }
 
     // Replace all the code with the contents of the Layer block
-    QRegularExpression regexLayerStart("\\b[l][a][y][e][r]\\b\\s*\\{");
+    const QRegularExpression regexLayerStart("\\b[l][a][y][e][r]\\b\\s*\\{");
     QRegularExpressionMatch layerStartMatch = regexLayerStart.match(result);
 
     if (result.count(regexLayerStart) > 1) {
@@ -331,7 +333,7 @@ QString AXInterpreter::generateAXMfile() {
     // Regex to find dots in non-digits
     // Match when a dot is followed by a non-digit
     // Capture both chars (0) and the last char (1)
-    QRegularExpression regexDot ("[\\.]([^\\d])");
+    const QRegularExpression regexDot ("[\\.]([^\\d])");
     result.replace(regexDot, "_\\1");
 
     // Replace "parameter" keyword with "variable"
@@ -351,7 +353,19 @@ QString AXInterpreter::generateAXMfile() {
     result.replace("}", "}\n");
 
     // Remove unresolved macros
-    result.remove(QRegularExpression("\n[^\\d\\s][\\w]*[;]"));
+    const QRegularExpression regexUnresolvedMacro("\\b(?![l][o][o][p]\\b|\\b[l][a][y][e][r]\\b)([^\\s\\d;{}()][\\w]*)\\s*\\;");
+
+    while (true) {
+        QRegularExpressionMatch matchUnresolvedMacro = regexUnresolvedMacro.match(result);
+        if (matchUnresolvedMacro.hasMatch()) {
+            returnVal += "Error: unresolved macro: \"" +matchUnresolvedMacro.captured(1)+ "\"\n";
+            result.remove(matchUnresolvedMacro.captured(0));
+        } else {
+            break;
+        }
+    }
+
+    result.remove(QRegularExpression(regexUnresolvedMacro));
 
     // Remove messages ("message")
     result.remove(QRegularExpression("\"[^\"]*\","));
@@ -362,7 +376,7 @@ QString AXInterpreter::generateAXMfile() {
     // Close the file
     axmFileHeader.close();
 
-    return "";
+    return returnVal;
 }
 
 
