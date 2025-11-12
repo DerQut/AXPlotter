@@ -147,3 +147,18 @@ void RecentFilesView::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
     this->updateButtonSize();
 }
+
+void RecentFilesView::setClassicTheme() {
+    ToggleViewHost::setClassicTheme();
+    this->scrollArea->setStyleSheet("");
+}
+
+void RecentFilesView::setDarkTheme() {
+    ToggleViewHost::setDarkTheme();
+    this->scrollArea->setStyleSheet("border: none;");
+}
+
+void RecentFilesView::setDefaultTheme() {
+    ToggleViewHost::setDefaultTheme();
+    this->scrollArea->setStyleSheet("border: none;");
+}

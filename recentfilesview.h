@@ -28,6 +28,9 @@ public slots:
     void updateButtons();
     void forceReadRecentFile(int fileID);
     void updateButtonSize();
+    void setDarkTheme();
+    void setDefaultTheme();
+    void setClassicTheme();
 
 protected:
     void resizeEvent(QResizeEvent* event) override;

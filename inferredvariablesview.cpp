@@ -15,3 +15,7 @@ InferredVariablesView::InferredVariablesView(ContentView* parent) :
     this->toggleButton->setText("Inferred variables");
 
 }
+
+InferredVariablesView::refresh() {
+
+}

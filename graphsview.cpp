@@ -13,6 +13,7 @@
 #include "graphsview.h"
 #include "contentview.h"
 #include "axinterpreter.h"
+#include "axdataseries.h"
 
 GraphsView::GraphsView(ContentView *parent) :
     QWidget(parent)
@@ -76,6 +77,7 @@ void GraphsView::updatePlots(QString directoryName) {
 
     // Clear the plots
     this->deletePlots();
+    this->contentView->inferredVariables.clear();
 
     // Read all .csv files
     QDir csvDir (directoryName);
@@ -146,6 +148,8 @@ void GraphsView::updatePlots(QString directoryName) {
         QCPCurve* curve = new QCPCurve(plot->xAxis, plot->yAxis);
         curve->addData(xData, yData);
 
+        contentView->inferredVariables.append(AXDataSeries(cleanFilename, xData, yData));
+
         plot->yAxis->rescale();
         plot->xAxis->rescale();
 
@@ -161,6 +165,8 @@ void GraphsView::updatePlots(QString directoryName) {
 
     this->xMinSlider->setRange(0, maxTimestep);
     this->xMinSlider->setValue(0);
+    this->contentView->refreshInferredVariables();
+
 }
 
 

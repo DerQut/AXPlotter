@@ -7,6 +7,8 @@
 #include <QString>
 #include <QList>
 
+#include "axdataseries.h"
+
 class SideBarView;
 class DetailView;
 class AXInterpreter;
@@ -23,6 +25,7 @@ public:
     QString scriptFile;
 
     QList<QString> recentFiles;
+    QList<AXDataSeries> inferredVariables;
 
 signals:
     void recentFilesChanged();
@@ -35,6 +38,7 @@ public slots:
     void saveScriptFileAs();
     void shiftRecentFiles();
     void askToCompile();
+    void refreshInferredVariables();
 };
 
 #endif // CONTENTVIEW_H

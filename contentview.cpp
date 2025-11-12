@@ -15,6 +15,8 @@
 #include "detailview.h"
 #include "editorview.h"
 #include "axinterpreter.h"
+#include "axdataseries.h"
+#include "inferredvariablesview.h"
 
 #include "themefile.h"
 
@@ -199,5 +201,9 @@ void ContentView::readScriptFile(QString newScriptFile) {
 
 void ContentView::askToCompile() {
     this->axinterpreter->startCompilation(this->scriptFile);
+}
+
+void ContentView::refreshInferredVariables() {
+    this->sideBarView->inferredVariablesView->refresh();
 }
 
