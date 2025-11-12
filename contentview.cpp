@@ -186,7 +186,7 @@ void ContentView::readScriptFile(QString newScriptFile) {
     }
 
     if (fileName.count(' ') > 0) {
-        messageBox.setText("File name \"" + fileName + "\" contains a ' ' character. Unable to read file.");
+        messageBox.setText("File name \"" + fileName + "\" contains a whitespace character. Unable to read file.");
         messageBox.exec();
         return;
     }
