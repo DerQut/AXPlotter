@@ -41,7 +41,7 @@ QString recursiveReplaceRead(QString fileName) {
             }
 
             // Check if the file has dwo or more dots
-            if (newFile.count(".") > 1) {
+            if (matchRead.captured(1).count(".") > 1) {
                 result += "$AXR_ERROR_START Filename " +newFile+ " Contains more than one '.' character $AXR_ERROR_END";
             }
 
