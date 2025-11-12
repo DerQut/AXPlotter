@@ -79,7 +79,7 @@ void SideBarView::setDefaultTheme()
 
 void SideBarView::setClassicTheme()
 {
-    background->setStyleSheet("background-color: qlineargradient( x1:0 y1:1, x2:0 y2:0, stop:0 #f5f5f5, stop:1 #f5f5f5);");
+    background->setStyleSheet("background-color: palette(window);");
     saveTheme("theme.cfg", CLASSIC);
 }
 
@@ -88,12 +88,19 @@ void SideBarView::setTheme(Theme theme) {
     switch (theme) {
     case CLASSIC:
         this->setClassicTheme();
+        this->recentFilesView->setClassicTheme();
+        this->inferredVariablesView->setClassicTheme();
         break;
     case DARK:
         this->setDarkTheme();
+        this->recentFilesView->setDarkTheme();
+        this->inferredVariablesView->setDarkTheme();
         break;
     default:
         this->setDefaultTheme();
+        this->recentFilesView->setDefaultTheme();
+        this->inferredVariablesView->setDefaultTheme();
+
     }
 }
 

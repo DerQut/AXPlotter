@@ -24,6 +24,7 @@ ContentView::ContentView(QWidget* parent) :
 {
     this->setContentsMargins(0, 0, 0, 0);
     QHBoxLayout* dummyLayout = new QHBoxLayout();
+    dummyLayout->setContentsMargins(0, 0, 0, 0);
 
     recentFiles << "" << "" << "" << "" << "";
 
@@ -35,6 +36,7 @@ ContentView::ContentView(QWidget* parent) :
     mainSplitter->setChildrenCollapsible(false);
 
     sideBarView = new SideBarView(this);
+    sideBarView->setContentsMargins(0, 0, 0, 0);
     sideBarView->setTheme(getTheme("theme.cfg"));
 
     detailView = new DetailView(this);
@@ -59,7 +61,6 @@ ContentView::ContentView(QWidget* parent) :
 void ContentView::setTheme(int idClicked) {
     this->sideBarView->setTheme((Theme) idClicked);
 }
-
 
 
 void ContentView::obtainScriptFile() {

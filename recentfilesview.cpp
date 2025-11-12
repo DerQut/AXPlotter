@@ -91,14 +91,6 @@ RecentFilesView::RecentFilesView(ContentView* parent) :
 
     qDebug() << scrollArea->styleSheet();
 
-    const QString scrollAreaStylesheet = QString(
-        "QScrollArea{"
-            "border: none;"
-        "}"
-    );
-
-    scrollArea->setStyleSheet(scrollAreaStylesheet);
-
     mainVStack->addWidget(scrollArea);
 
     this->toggleView->setLayout(mainVStack);
@@ -134,10 +126,10 @@ void RecentFilesView::updateButtonSize() {
         if (recentFileButtons[i]->text().count() > longest) {
             longest = recentFileButtons[i]->text().count();
         }
-        if (longest*7 > this->scrollArea->width()) {
+        if (longest*7 > this->scrollArea->width()-2) {
             scrollWidget->setFixedWidth(longest*7);
         } else {
-            scrollWidget->setFixedWidth(this->scrollArea->width());
+            scrollWidget->setFixedWidth(this->scrollArea->width()-2);
         }
     }
 }

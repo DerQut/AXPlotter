@@ -20,6 +20,9 @@ signals:
 
 public slots:
     void toggle();
+    void setDarkTheme();
+    void setDefaultTheme();
+    void setClassicTheme();
 
 };
 

@@ -19,30 +19,6 @@ ToggleViewHost::ToggleViewHost(ContentView* parent) :
     this->toggleButton = new QPushButton("Name", this);
     this->toggleButton->setObjectName("toggleButton");
 
-    const QString toggleButtonStylesheet = QString(
-        "QPushButton#toggleButton {"
-            "border: none;"
-            "color: palette(window-text);"
-            "text-align:left;"
-            "padding-left: 10px;"
-            "padding-right: 10px;"
-            "padding-top: 5px;"
-            "padding-bottom: 5px;"
-            "font: bold;"
-            "background-color: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #ffffff, stop:1 #c9d5fa);"
-            "border-top-left-radius: 4px;"
-            "border-top-right-radius: 4px;"
-        "}"
-        "QPushButton#toggleButton:focus {"
-            "outline: none;"
-        "}"
-        "QPushButton#toggleButton:pressed {"
-            "background-color: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #dedede, stop:1 #afb8d9);"
-        "}"
-    );
-
-
-    this->toggleButton->setStyleSheet(toggleButtonStylesheet);
     mainVStack->addWidget(toggleButton);
 
     connect(this->toggleButton, SIGNAL( clicked() ), this, SLOT( toggle() ));
@@ -63,4 +39,84 @@ void ToggleViewHost::toggle() {
     } else {
         this->toggleView->show();
     }
+}
+
+void ToggleViewHost::setDefaultTheme() {
+    const QString toggleButtonStylesheet = QString(
+        "QPushButton#toggleButton {"
+            "border: none;"
+            "color: black;"
+            "text-align:left;"
+            "padding-left: 10px;"
+            "padding-right: 10px;"
+            "padding-top: 5px;"
+            "padding-bottom: 5px;"
+            "font: bold;"
+            "background-color: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #ffffff, stop:1 #c9d5fa);"
+            "border-top-left-radius: 5px;"
+            "border-top-right-radius: 5px;"
+        "}"
+        "QPushButton#toggleButton:focus {"
+            "outline: none;"
+        "}"
+        "QPushButton#toggleButton:pressed {"
+            "background-color: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #dedede, stop:1 #afb8d9);"
+        "}"
+    );
+
+    this->toggleButton->setStyleSheet(toggleButtonStylesheet);
+}
+
+
+void ToggleViewHost::setClassicTheme() {
+    const QString toggleButtonStylesheet = QString(
+        "QPushButton#toggleButton {"
+            "border:none;"
+            "color: white;"
+            "text-align:left;"
+            "padding-left: 10px;"
+            "padding-right: 10px;"
+            "padding-top: 5px;"
+            "padding-bottom: 5px;"
+            "font: bold;"
+            "background-color: #0a2364;"
+        "}"
+        "QPushButton#toggleButton:focus {"
+            "outline: none;"
+        "}"
+        "QPushButton#toggleButton:pressed {"
+            "background-color: #001049;"
+        "}"
+    );
+
+    this->toggleButton->setStyleSheet(toggleButtonStylesheet);
+
+}
+
+
+void ToggleViewHost::setDarkTheme() {
+    const QString toggleButtonStylesheet = QString(
+        "QPushButton#toggleButton {"
+            "border: none;"
+            "color: white;"
+            "text-align:left;"
+            "padding-left: 10px;"
+            "padding-right: 10px;"
+            "padding-top: 5px;"
+            "padding-bottom: 5px;"
+            "font: bold;"
+            "background-color: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #4b4b4b, stop:1 #141414);"
+            "border-top-left-radius: 5px;"
+            "border-top-right-radius: 5px;"
+        "}"
+        "QPushButton#toggleButton:focus {"
+            "outline: none;"
+        "}"
+        "QPushButton#toggleButton:pressed {"
+            "background-color: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #323232, stop:1 #020202);"
+        "}"
+    );
+
+    this->toggleButton->setStyleSheet(toggleButtonStylesheet);
+
 }
