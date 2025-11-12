@@ -12,7 +12,7 @@ class InferredVariablesView : public ToggleViewHost
     Q_OBJECT
 public:
     explicit InferredVariablesView(ContentView* parent = 0);
-
+    void refreshVariables();
 
 signals:
 

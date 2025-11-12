@@ -15,7 +15,7 @@ QString recursiveReplaceRead(QString fileName) {
 
     // Try to open the file, return an empty string upon failure
     if (!(fileHeader.open(QIODevice::ReadOnly | QIODevice::Text))) {
-        return QString();
+        return "$AXR_ERROR_START File " +fileName+ " could not be opened $AXR_ERROR_END";
     }
 
     // Variable to store the read text
@@ -23,10 +23,6 @@ QString recursiveReplaceRead(QString fileName) {
 
     // Regular expression to check for "read" call
     QRegularExpression regexRead("^\\s*read\\s+(.+);$");
-
-    //Regular expression to check if a file extention is given
-    // At least one character, dot, at least one character
-    QRegularExpression regexExtention("(\\w+)[.](\\w+)");
 
     // Create a text stream for reading the script file
     QTextStream in (&fileHeader);
@@ -37,24 +33,23 @@ QString recursiveReplaceRead(QString fileName) {
         if (matchRead.hasMatch()) {
 
             // Inferred file name
-            QString newFile = QFileInfo(fileName).absolutePath() + QDir::separator();
+            QString newFile = QFileInfo(fileName).absolutePath() + QDir::separator() + matchRead.captured(1);
 
-            // Check if the captured file has an extention
-            QRegularExpressionMatch matchExtention = regexExtention.match(matchRead.captured(1));
-
-            if (matchExtention.hasMatch()) {
-                // if the file has an extention, use it
-                newFile += matchRead.captured(1) + "." + matchExtention.captured(2);
-            } else {
+            if (!matchRead.captured(1).count(".")) {
                 // if the file has no extention, use the default one (.epi)
-                newFile += matchRead.captured(1) + ".epi";
+                newFile += ".epi";
+            }
+
+            // Check if the file has dwo or more dots
+            if (newFile.count(".") > 1) {
+                result += "$AXR_ERROR_START Filename " +newFile+ " Contains more than one '.' character $AXR_ERROR_END";
             }
 
             // Check if the file is not trying to read itself
             if (newFile != fileName) {
                 line = recursiveReplaceRead(newFile);
             } else {
-                line = QString();
+                line = "$AXR_ERROR_START File " +newFile+ "Tried to read itself. $AXR_ERROR_END";
             }
         }
         result += line.trimmed() + "\n";

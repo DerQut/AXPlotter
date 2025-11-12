@@ -27,7 +27,7 @@ signals:
 public slots:
     void startCompilation(QString scriptFile);
     int recreateFolder();
-    int generateAXRfile();
+    QString generateAXRfile();
     int generateAXCfile();
     QString generateAXMfile();
 

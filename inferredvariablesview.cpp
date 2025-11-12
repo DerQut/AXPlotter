@@ -16,6 +16,6 @@ InferredVariablesView::InferredVariablesView(ContentView* parent) :
 
 }
 
-InferredVariablesView::refresh() {
+void InferredVariablesView::refreshVariables() {
 
 }

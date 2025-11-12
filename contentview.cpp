@@ -204,6 +204,6 @@ void ContentView::askToCompile() {
 }
 
 void ContentView::refreshInferredVariables() {
-    this->sideBarView->inferredVariablesView->refresh();
+    this->sideBarView->inferredVariablesView->refreshVariables();
 }
 

@@ -65,9 +65,23 @@ void AXInterpreter::startCompilation(QString scriptFile) {
     this->mainText->setText("Folder " + this->baseFolder.absolutePath() + " created!");
 
     // Create an .AXR file (READ commands replaced with contents of specified files)
+    QString axrResult = this->generateAXRfile();
+
     this->mainText->setText("Creating " + this->baseFolder.dirName() + ".axr...");
-    if (this->generateAXRfile()) {
-        this->mainText->setText("Failed to create " + this->baseFolder.dirName() + ".axr");
+    QRegularExpression regexAXRError ("\\$AXR_ERROR_START([^\\$]*)\\$AXR_ERROR_END");
+    QString error = "";
+    while (true) {
+        QRegularExpressionMatch matchAXRError = regexAXRError.match(axrResult);
+        if (matchAXRError.hasMatch()) {
+            error += matchAXRError.captured(1) + "\n";
+            axrResult.remove(matchAXRError.captured(0));
+        } else {
+            break;
+        }
+    }
+
+    if (!error.isEmpty()) {
+        this->mainText->setText(error);
         return;
     }
 
@@ -139,24 +153,25 @@ int AXInterpreter::recreateFolder() {
 }
 
 
-int AXInterpreter::generateAXRfile() {
+QString AXInterpreter::generateAXRfile() {
 
     // Create the .AXR file header
     QFile axrFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axr");
 
     // Create and open the .AXR file
     if (!(axrFileHeader.open(QIODevice::WriteOnly | QIODevice::Text))) {
-        return -1;
+        return "$AXR_ERROR_START Failed to create " +this->baseFolder.dirName()+ ".axr $AXR_ERROR_END";
     }
 
     // Write text to file
     QTextStream out (&axrFileHeader);
-    out << recursiveReplaceRead(this->scriptFile);
+    QString returnVal = recursiveReplaceRead(this->scriptFile);
+    out << returnVal;
 
     // Close the file
     axrFileHeader.close();
 
-    return 0;
+    return returnVal;
 }
 
 
