@@ -28,6 +28,7 @@ RecentFilesView::RecentFilesView(ContentView* parent) :
     // Creating a QScrollArea instance
     this->scrollArea = new QScrollArea();
     this->scrollArea->setContentsMargins(0,0,0,0);
+    this->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     this->scrollWidget = new QWidget();
     this->scrollWidget->setContentsMargins(0,0,0,0);
@@ -86,10 +87,7 @@ RecentFilesView::RecentFilesView(ContentView* parent) :
     }
 
     scrollWidget->setLayout(scrollLayout);
-    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea->setWidget(scrollWidget);
-
-    qDebug() << scrollArea->styleSheet();
 
     mainVStack->addWidget(scrollArea);
 

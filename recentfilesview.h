@@ -23,6 +23,8 @@ public:
     QScrollArea* scrollArea;
 
 signals:
+    void hidden();
+    void shown();
 
 public slots:
     void updateButtons();

@@ -9,6 +9,7 @@
 class ContentView;
 class EditorView;
 class GraphsView;
+class StackedGraphsView;
 
 class DetailView : public QWidget
 {
@@ -19,6 +20,7 @@ public:
     EditorView* editorView;
     GraphsView* graphsView;
     QTabWidget* tabView;
+    StackedGraphsView* stackedGraphsView;
 
 signals:
 

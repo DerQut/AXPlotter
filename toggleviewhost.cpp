@@ -36,8 +36,10 @@ void ToggleViewHost::toggle() {
 
     if (this->toggleView->isVisible()) {
         this->toggleView->hide();
+        emit hidden();
     } else {
         this->toggleView->show();
+        emit shown();
     }
 }
 

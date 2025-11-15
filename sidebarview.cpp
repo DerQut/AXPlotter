@@ -7,12 +7,14 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QStyle>
+#include <QDebug>
 
 #include "sidebarview.h"
 #include "contentview.h"
 #include "recentfilesview.h"
 #include "themefile.h"
 #include "inferredvariablesview.h"
+#include "toggleviewhost.h"
 
 SideBarView::SideBarView(ContentView *parent) :
     QWidget(parent)
@@ -49,8 +51,6 @@ SideBarView::SideBarView(ContentView *parent) :
     inferredVariablesView = new InferredVariablesView(this->contentView);
     mainVStack->addWidget(inferredVariablesView);
 
-    mainVStack->addStretch();
-
     QWidget* dummyZStackWidget = new QWidget();
     dummyZStackWidget->setLayout(mainVStack);
 
@@ -60,6 +60,16 @@ SideBarView::SideBarView(ContentView *parent) :
     this->setLayout(mainZStack);
 
     connect(fileButton, SIGNAL(released()), this->contentView, SLOT(obtainScriptFile()));
+
+    QObject::connect(inferredVariablesView, &ToggleViewHost::shown, this, [=]() {
+        if (mainVStack->count()) {
+            QLayoutItem* stretch = mainVStack->takeAt(mainVStack->count()-1);
+            delete stretch;
+        }
+    });
+    QObject::connect(inferredVariablesView, &ToggleViewHost::hidden, this, [=]() {
+        mainVStack->addStretch();
+    });
 }
 
 

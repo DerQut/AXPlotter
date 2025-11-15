@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     stackedgraphsview.cpp \
     inferredvariablesview.cpp \
     toggleviewhost.cpp \
-    axdataseries.cpp
+    axdataseries.cpp \
+    clearlayout.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -53,7 +54,8 @@ HEADERS  += mainwindow.h \
     stackedgraphsview.h \
     inferredvariablesview.h \
     toggleviewhost.h \
-    axdataseries.h
+    axdataseries.h \
+    clearlayout.h
 
 OTHER_FILES += \
     ../Documents/Kalibracja.txt

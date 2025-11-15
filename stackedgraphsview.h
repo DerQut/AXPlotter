@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "qcustomplot/qcustomplot.h"
+
 class ContentView;
 
 class StackedGraphsView : public QWidget
@@ -11,10 +13,12 @@ class StackedGraphsView : public QWidget
 public:
     explicit StackedGraphsView(ContentView* parent = 0);
     ContentView* contentView;
+    QCustomPlot* plot;
 
 signals:
 
 public slots:
+    void replot();
 
 };
 

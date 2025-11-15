@@ -6,6 +6,7 @@
 #include "contentview.h"
 #include "editorview.h"
 #include "graphsview.h"
+#include "stackedgraphsview.h"
 
 DetailView::DetailView(ContentView *parent) :
     QWidget(parent)
@@ -23,10 +24,14 @@ DetailView::DetailView(ContentView *parent) :
     // Creating the graphs tab
     graphsView = new GraphsView(this->contentView);
 
+    // ...
+    stackedGraphsView = new StackedGraphsView(this->contentView);
+
 
     // Adding the temp widgets to the QTabWidget instance
     tabView->addTab(editorView, "Edit");
-    tabView->addTab(graphsView, "Graph");
+    tabView->addTab(graphsView, "Graphs");
+    tabView->addTab(stackedGraphsView, "Stacked graph");
 
     // Creating a dummy layout to host the QTabWidget instance
     QVBoxLayout* dummyLayout = new QVBoxLayout(this);

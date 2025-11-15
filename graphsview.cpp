@@ -14,6 +14,7 @@
 #include "contentview.h"
 #include "axinterpreter.h"
 #include "axdataseries.h"
+#include "clearlayout.h"
 
 GraphsView::GraphsView(ContentView *parent) :
     QWidget(parent)
@@ -212,17 +213,3 @@ void GraphsView::xMinSliderCall() {
     this->updatePlotsRange();
 }
 
-void clearLayout(QLayout* layout) {
-    while (QLayoutItem* item = layout->takeAt(0)) {
-
-        if (QWidget* widget = item->widget()) {
-            widget->deleteLater();
-        }
-
-        if (QLayout* childLayout = item->layout()) {
-            clearLayout(childLayout);
-        }
-
-        delete item;
-    }
-}

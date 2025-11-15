@@ -3,13 +3,18 @@
 
 #include <QString>
 #include <QVector>
+#include <QColor>
 
 
 class AXDataSeries {
 public:
     explicit AXDataSeries(QString variableName, QVector<double> xData, QVector<double> yData);
 
+    void trySetMultiplier(QString newMultiplier);
+    void applyMultiplier();
+
     QString variableName;
+    QColor color;
 
     QVector<double> xData;
     QVector<double> yData;

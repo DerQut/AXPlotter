@@ -17,6 +17,7 @@
 #include "axinterpreter.h"
 #include "axdataseries.h"
 #include "inferredvariablesview.h"
+#include "stackedgraphsview.h"
 
 #include "themefile.h"
 
@@ -205,5 +206,6 @@ void ContentView::askToCompile() {
 
 void ContentView::refreshInferredVariables() {
     this->sideBarView->inferredVariablesView->refreshVariables();
+    this->detailView->stackedGraphsView->replot();
 }
 

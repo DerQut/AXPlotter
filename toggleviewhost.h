@@ -17,6 +17,8 @@ public:
     QPushButton* toggleButton;
 
 signals:
+    void hidden();
+    void shown();
 
 public slots:
     void toggle();
