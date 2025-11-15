@@ -195,7 +195,7 @@ void ContentView::readScriptFile(QString newScriptFile) {
     this->scriptFile = newScriptFile;
     this->sideBarView->setFileLabel(scriptFile);
     this->detailView->editorView->readRecipeFile(scriptFile);
-
+    this->detailView->tabView->setCurrentIndex(0);
 }
 
 

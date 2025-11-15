@@ -15,6 +15,8 @@
 #include "graphsview.h"
 #include "recursiveReplaceRead.h"
 #include "convertaxmtopy.h"
+#include "stackedgraphsview.h"
+#include "qcustomplot/qcustomplot.h"
 
 AXInterpreter::AXInterpreter(ContentView* parent) :
     QMainWindow(parent)
@@ -33,9 +35,6 @@ AXInterpreter::AXInterpreter(ContentView* parent) :
 
 
 void AXInterpreter::startCompilation(QString scriptFile) {
-
-    // Remove all plots
-    this->contentView->detailView->graphsView->deletePlots();
 
     // Show the popup window
     this->show();
@@ -116,6 +115,11 @@ void AXInterpreter::startCompilation(QString scriptFile) {
         // Done!
         this->mainText->setText("Done!");
     }
+
+    // Remove all plots
+    this->contentView->detailView->graphsView->deletePlots();
+    this->contentView->detailView->stackedGraphsView->plot->clearPlottables();
+    this->contentView->detailView->stackedGraphsView->plot->replot();
 
     this->contentView->detailView->graphsView->updatePlots(this->baseFolder.absolutePath());
     this->contentView->detailView->tabView->setCurrentIndex(1);
