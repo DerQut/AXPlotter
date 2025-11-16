@@ -116,13 +116,7 @@ void AXInterpreter::startCompilation(QString scriptFile) {
         this->mainText->setText("Done!");
     }
 
-    // Remove all plots
-    this->contentView->detailView->graphsView->deletePlots();
-    this->contentView->detailView->stackedGraphsView->plot->clearPlottables();
-    this->contentView->detailView->stackedGraphsView->plot->replot();
-
-    this->contentView->detailView->graphsView->updatePlots(this->baseFolder.absolutePath());
-    this->contentView->detailView->tabView->setCurrentIndex(1);
+    this->loadResults();
 }
 
 
@@ -505,6 +499,28 @@ QString AXInterpreter::launchPy() {
     QDir::setCurrent("C:/");
 
     return stdErrors;
+}
+
+
+void AXInterpreter::loadResultsFrom(QString dirName) {
+    this->baseFolder = QDir(dirName);
+
+    if (!this->baseFolder.exists()) {
+        qDebug() << "Result folder " << this->baseFolder.absolutePath() << " does not exist!";
+        return;
+    }
+
+    this->loadResults();
+}
+
+void AXInterpreter::loadResults() {
+    // Remove all plots
+    this->contentView->detailView->graphsView->deletePlots();
+    this->contentView->detailView->stackedGraphsView->plot->clearPlottables();
+    this->contentView->detailView->stackedGraphsView->plot->replot();
+
+    this->contentView->detailView->graphsView->updatePlots(this->baseFolder.absolutePath());
+    this->contentView->detailView->tabView->setCurrentIndex(1);
 }
 
 int findMatchingBrace(const QString& str, int startPos) {

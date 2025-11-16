@@ -210,8 +210,13 @@ void ContentView::refreshInferredVariables() {
 }
 
 
-void ContentView::askToOpenCSVDir() {}
+void ContentView::askToOpenCSVDir() {
+    QString dirName = QFileDialog::getExistingDirectory(this, "Select a result directory");
+    this->openCSVDir(dirName);
+}
 
 
-void ContentView::openCSVDir(QString dirName) {}
+void ContentView::openCSVDir(QString dirName) {
+    this->axinterpreter->loadResultsFrom(dirName);
+}
 

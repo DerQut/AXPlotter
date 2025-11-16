@@ -35,6 +35,9 @@ public slots:
 
     QString launchPy();
 
+    void loadResults();
+    void loadResultsFrom(QString dirName);
+
 };
 
 int findMatchingBrace(const QString& str, int startPos);
