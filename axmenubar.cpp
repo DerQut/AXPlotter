@@ -99,6 +99,6 @@ AXMBFileMenu::AXMBFileMenu(const QString &title, AXMenuBar* parent) :
     connect(fileSaveAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(saveScriptFile()));
     connect(fileSaveAsAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(saveScriptFileAs()));
 
-    connect(fileStartCompilation, SIGNAL(triggered()), this->axMenuBar->contentView->axinterpreter, SLOT(startCompilation()));
+    connect(fileStartCompilation, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(askToCompile()));
 }
 
