@@ -39,6 +39,8 @@ public slots:
     void shiftRecentFiles();
     void askToCompile();
     void refreshInferredVariables();
+    void askToOpenCSVDir();
+    void openCSVDir(QString dirName);
 };
 
 #endif // CONTENTVIEW_H

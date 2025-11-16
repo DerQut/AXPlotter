@@ -92,12 +92,16 @@ AXMBFileMenu::AXMBFileMenu(const QString &title, AXMenuBar* parent) :
     QAction* fileSaveAction = this->addAction("Save recipe file");
     QAction* fileSaveAsAction = this->addAction("Save recipe file as");
 
+    QAction* directoryOpenAction = this->addAction("Open .CSV directory");
+
     QAction* fileStartCompilation = this->addAction("Start compilation");
 
     // Connecting all the necessary signals
     connect(fileOpenAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(obtainScriptFile()));
     connect(fileSaveAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(saveScriptFile()));
     connect(fileSaveAsAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(saveScriptFileAs()));
+
+    connect(directoryOpenAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(askToOpenCSVDir()));
 
     connect(fileStartCompilation, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(askToCompile()));
 }

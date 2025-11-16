@@ -209,3 +209,9 @@ void ContentView::refreshInferredVariables() {
     this->detailView->stackedGraphsView->replot();
 }
 
+
+void ContentView::askToOpenCSVDir() {}
+
+
+void ContentView::openCSVDir(QString dirName) {}
+
