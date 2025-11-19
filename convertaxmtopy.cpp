@@ -41,6 +41,8 @@ QString convertAXMtoPy(QString axmLine) {
     QRegularExpression regexWithAssignment ("(.*)\\s+[wW][iI][tT][hH]\\s+(.*)");
     QRegularExpression regexWithInAssignment ("(.*)\\s+[wW][iI][tT][hH]\\s+(.*)\\s+[iI][nN]\\s+(.*)");
 
+    QRegularExpression regexFollow ("(.*)\\s+follow\\s+(.*)");
+
     QRegularExpression regexUntil ("\\buntil[\\ ]*(.*)");
 
     if (matchLoop.hasMatch()) {
@@ -116,6 +118,13 @@ QString convertAXMtoPy(QString axmLine) {
 
             result += "\nif not (" +condition+ "):";
             result += "\n    print(\"condition may never be met!\")";
+            continue;
+        }
+
+        // Check if the given positional argument creates a follower
+        QRegularExpressionMatch matchFollow = regexFollow.match(argument);
+        if (matchFollow.hasMatch()) {
+            result += "\n#follow will be here";
             continue;
         }
 
