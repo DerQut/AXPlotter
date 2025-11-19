@@ -29,6 +29,9 @@ ContentView::ContentView(QWidget* parent) :
     QHBoxLayout* dummyLayout = new QHBoxLayout();
     dummyLayout->setContentsMargins(0, 0, 0, 0);
 
+    this->xmlFile = "C:/users/crossover/Documents/Devices.xml";
+    this->doesUseXMLFile = true;
+
     recentFiles << "" << "" << "" << "" << "";
 
     axinterpreter = new AXInterpreter(this);
@@ -48,12 +51,13 @@ ContentView::ContentView(QWidget* parent) :
     mainSplitter->addWidget(sideBarView);
     mainSplitter->addWidget(detailView);
 
-    mainSplitter->setSizes(QList<int>() << 150 << 480-150);
+    mainSplitter->setSizes(QList<int>() << 200 << 480-200);
 
     dummyLayout->addWidget(mainSplitter);
     this->setLayout(dummyLayout);
 
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O), this, SLOT(obtainScriptFile()));
+    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_O + Qt::SHIFT), this, SLOT(askToOpenCSVDir()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(saveScriptFile()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S + Qt::SHIFT), this, SLOT(saveScriptFileAs()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(askToCompile()));

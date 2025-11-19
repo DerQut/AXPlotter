@@ -58,4 +58,7 @@ HEADERS  += mainwindow.h \
     clearlayout.h
 
 OTHER_FILES += \
-    ../Documents/Kalibracja.txt
+    ../Documents/Kalibracja.txt \
+    ../Documents/Devices.xml \
+    ../Documents/Kalibracja/Kalibracja.axr
+

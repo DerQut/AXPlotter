@@ -58,26 +58,76 @@ void InferredVariablesView::refreshVariables() {
             rowHost->setStyleSheet("background-color: #f8f8f8;");
         }
 
+        QPushButton* hideToggle = new QPushButton("✓", this);
+        rowHStack->addWidget(hideToggle);
+        hideToggle->setFixedWidth(hideToggle->height()>>1);
+        hideToggle->setStyleSheet("background: white;");
+
         QLabel* nameLabel = new QLabel(this->contentView->inferredVariables[i].variableName);
         nameLabel->setStyleSheet("color: black; padding: 5px;");
-        qDebug() << this->contentView->inferredVariables[i].variableName;
 
         rowHStack->addWidget(nameLabel);
         rowHStack->addStretch();
+
+        QPushButton* divideToggle = new QPushButton("×", this);
+
+        rowHStack->addWidget(divideToggle);
+        divideToggle->setFixedWidth(divideToggle->height() >> 1);
 
         QLineEdit* multiplierEdit = new QLineEdit("1", this);
         multiplierEdit->setFixedWidth(50);
         multiplierEdit->setContentsMargins(0,0,5,0);
         rowHStack->addWidget(multiplierEdit);
 
+        rowHost->setLayout(rowHStack);
+
+        this->scrollVStack->addWidget(rowHost);
+
+        QObject::connect(hideToggle, &QPushButton::pressed, this, [=](){
+            contentView->inferredVariables[i].isVisible = !contentView->inferredVariables[i].isVisible;
+            contentView->detailView->stackedGraphsView->replot();
+
+            if (contentView->inferredVariables[i].isVisible) {
+                hideToggle->setText("✓");
+                divideToggle->setStyleSheet("color: black;");
+                multiplierEdit->setStyleSheet("color: black;");
+                nameLabel->setStyleSheet("color: black; padding: 5px;");
+            } else {
+                hideToggle->setText("✗");
+                divideToggle->setStyleSheet("color: gray;");
+                multiplierEdit->setStyleSheet("color: gray;");
+                nameLabel->setStyleSheet("color: gray; padding: 5px;");
+            }
+        });
+
         QObject::connect(multiplierEdit, &QLineEdit::textChanged, this, [=](const QString &text) {
             contentView->inferredVariables[i].trySetMultiplier(text);
             contentView->detailView->stackedGraphsView->replot();
         });
 
-        rowHost->setLayout(rowHStack);
+        QObject::connect(divideToggle, &QPushButton::pressed, this, [=](){
+            contentView->inferredVariables[i].isDividing = ! contentView->inferredVariables[i].isDividing;
+            contentView->inferredVariables[i].applyMultiplier();
+            contentView->detailView->stackedGraphsView->replot();
 
-        this->scrollVStack->addWidget(rowHost);
+            if (contentView->inferredVariables[i].isDividing) {
+                divideToggle->setText("÷");
+            } else {
+                divideToggle->setText("×");
+            }
+        });
+
+        if (contentView->inferredVariables[i].isVisible) {
+            hideToggle->setText("✓");
+            divideToggle->setStyleSheet("color: black;");
+            multiplierEdit->setStyleSheet("color: black;");
+            nameLabel->setStyleSheet("color: black; padding: 5px;");
+        } else {
+            hideToggle->setText("✗");
+            divideToggle->setStyleSheet("color: gray;");
+            multiplierEdit->setStyleSheet("color: gray;");
+            nameLabel->setStyleSheet("color: gray; padding: 5px;");
+        }
     }
     this->scrollVStack->addStretch();
 }

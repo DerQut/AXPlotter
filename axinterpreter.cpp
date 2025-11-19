@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QProcess>
 #include <QThread>
+#include <QXmlStreamReader>
 
 #include "axinterpreter.h"
 #include "contentview.h"
@@ -17,6 +18,22 @@
 #include "convertaxmtopy.h"
 #include "stackedgraphsview.h"
 #include "qcustomplot/qcustomplot.h"
+
+// 1. Define a helper struct to hold data for a single device
+struct DeviceData {
+    QString code;      // The 'NAME' attribute (e.g., F18)
+    QString userName;  // Property 'UserName'
+    QString def;       // Property 'Default' or 'PhysDef'
+    QString min;       // Property 'PhysMin'
+    QString max;       // Property 'PhysMax'
+    QString category;  // Property 'Category'
+    bool hasReference; // If it references another device
+    QString referencedCode; // The code it references
+
+    // Constructor to set defaults
+    DeviceData() : def(""), min("0"), max("1"), hasReference(false) {}
+};
+
 
 AXInterpreter::AXInterpreter(ContentView* parent) :
     QMainWindow(parent)
@@ -152,7 +169,6 @@ int AXInterpreter::recreateFolder() {
 
 
 QString AXInterpreter::generateAXRfile() {
-
     // Create the .AXR file header
     QFile axrFileHeader(this->baseFolder.absolutePath() + QDir::separator() + this->baseFolder.dirName() + ".axr");
 
@@ -163,7 +179,126 @@ QString AXInterpreter::generateAXRfile() {
 
     // Write text to file
     QTextStream out (&axrFileHeader);
-    QString returnVal = recursiveReplaceRead(this->scriptFile);
+    QString returnVal = "";
+
+    if (this->contentView->doesUseXMLFile) {
+        QStringList deviceCodes;
+        QStringList deviceNewNames;
+
+        QRegularExpression regexOtherDevice ("^(\\D[\\d]+)$");
+        QStringList badCategories = {"Materials", "ALARM", "CALCULATIONS"};
+
+        for (int i = 0; i < 2; i++) {
+            QFile xmlFile(this->contentView->xmlFile);
+
+            if (!xmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                axrFileHeader.close();
+                return "$AXR_ERROR_START Failed to read " +this->contentView->xmlFile+ " $AXR_ERROR_END";
+            }
+
+            QXmlStreamReader xmlReader(&xmlFile);
+
+            bool isInsideDeviceBlock = false;
+
+            QString deviceCode = "";
+            QString deviceName = "";
+            QString deviceDef = "";
+            QString deviceMin = "0";
+            QString deviceMax = "1";
+
+            while (!xmlReader.atEnd()) {
+                xmlReader.readNext();
+
+                if (xmlReader.isStartElement()) {
+                    if (xmlReader.name().toString() == "DEVICE") {
+                        deviceCode = xmlReader.attributes().value("NAME").toString();
+
+                        if (deviceCodes.contains(deviceCode) || i == 0) {
+                            isInsideDeviceBlock = true;
+                            deviceName = "";
+                            deviceDef = "0";
+                            deviceMin = "";
+                            deviceMax = "";
+                        }
+
+                    } else if (isInsideDeviceBlock && xmlReader.name().toString() == "PROPERTY") {
+                        QString propName = xmlReader.attributes().value("NAME").toString().toLower();
+
+                        QString elementText = xmlReader.readElementText();
+
+                        if (!elementText.count()) {
+                            continue;
+                        }
+
+                        QRegularExpressionMatch matchOtherDevice = regexOtherDevice.match(elementText);
+
+                        if (propName == "category" && (badCategories.contains(elementText))) {
+                            // skip this device
+                            isInsideDeviceBlock = false;
+                            continue;
+
+                        } else if (propName == "username") {
+                            deviceName = elementText;
+
+                        } else if (propName == "default" || propName == "physdef") {
+                            deviceDef = elementText;
+
+                        } else if (propName == "physmin") {
+                            deviceMin = elementText;
+
+                        } else if (propName == "physmax") {
+                            deviceMax = elementText;
+
+                        } else if (matchOtherDevice.hasMatch()) {
+                            deviceCodes.append(matchOtherDevice.captured(1));
+
+                            QString newName = deviceName+ "." +propName.toLower() + "";
+                            deviceNewNames.append(newName);
+
+                        }
+
+                        if (i && deviceCodes.contains(deviceCode)) {
+                            int j = deviceCodes.indexOf(deviceCode);
+                            deviceName = deviceNewNames.at(j);
+                        }
+
+                    }
+
+                } else if (xmlReader.isEndElement() && xmlReader.name().toString() == "DEVICE") {
+                    isInsideDeviceBlock = false;
+
+                    if (!deviceName.isEmpty() && !deviceName.contains("@")) {
+                        returnVal += "\nvariable " + deviceName + " = " + deviceDef + ";\n";
+                        returnVal += "variable " + deviceName + "_AXDEFAULT = " + deviceDef + ";\n";
+
+                        if (!deviceMin.isEmpty())
+                            returnVal += "variable " + deviceName + "_AXMIN = " + deviceMin + ";\n";
+
+                        if (!deviceMax.isEmpty())
+                            returnVal += "variable " + deviceName + "_AXMAX = " + deviceMax + ";\n";
+                    }
+                }
+
+            }
+
+            xmlFile.close();
+        }
+    }
+
+    returnVal += recursiveReplaceRead(this->scriptFile);
+
+    QStringList iterableProps = {"push", "inject", "run"};
+    for (int i=0; i < iterableProps.count(); i++) {
+        QRegularExpression regexIterable ("\\." +iterableProps[i]+ "\\b");
+        while (true) {
+            QRegularExpressionMatch matchIterable = regexIterable.match(returnVal);
+            if (!matchIterable.hasMatch()) {
+                break;
+            }
+            returnVal.replace(regexIterable, "."+iterableProps[i]+"1");
+        }
+    }
+
     out << returnVal;
 
     // Close the file
@@ -278,7 +413,7 @@ QString AXInterpreter::generateAXMfile() {
 
         // Find the start of a macro definition ("macro_name {")
         // Excludes word "layer" and "loop"
-        QRegularExpression regexMacroStart("\\b(?![l][o][o][p]\\b|\\b[l][a][y][e][r]\\b)([^\\s\\d;{}()][\\w]*)\\s*\\{");
+        QRegularExpression regexMacroStart("\\b(?![l][o][o][p]\\b|\\b[l][a][y][e][r]\\b)([^\\s\\d\\.;{}()][\\w]*)\\s*\\{");
 
         QRegularExpressionMatch matchMacroStart = regexMacroStart.match(result);
 
@@ -364,9 +499,17 @@ QString AXInterpreter::generateAXMfile() {
     result.replace(" ;", ";");
     result.replace("{", "{\n");
     result.replace("}", "}\n");
+    result.replace(QRegularExpression("\n[\\ ]*"), "\n");
+
+    //remove "begin stat" and "end stat" calls
+    result.replace(QRegularExpression("\\bbegin stat[^\\;]*\\;"), ";");
+    result.replace(QRegularExpression("\\bend stat[^\\;]*\\;"), ";");
+
+    // Remove messages ("message")
+    result.remove(QRegularExpression("\"[^\"]*\","));
 
     // Remove unresolved macros
-    const QRegularExpression regexUnresolvedMacro("\\b(?![l][o][o][p]\\b|\\b[l][a][y][e][r]\\b)([^\\s\\d;{}()][\\w]*)\\s*\\;");
+    const QRegularExpression regexUnresolvedMacro("^(?![l][o][o][p]\\b|\\b[l][a][y][e][r]\\b)([^\\s\\d\\.;{}()][\\w]*)\\s*\\;");
 
     while (true) {
         QRegularExpressionMatch matchUnresolvedMacro = regexUnresolvedMacro.match(result);
@@ -379,9 +522,6 @@ QString AXInterpreter::generateAXMfile() {
     }
 
     result.remove(QRegularExpression(regexUnresolvedMacro));
-
-    // Remove messages ("message")
-    result.remove(QRegularExpression("\"[^\"]*\","));
 
     // Write to .AXM file
     out << result;
@@ -421,7 +561,7 @@ int AXInterpreter::generatePyFile() {
     result += "import sys\n";
     result += "from math import sin, cos, tan, exp, log, log10, sqrt\n\n";
     result += "ON = 1\n";
-    result += "OFF = 1\n";
+    result += "OFF = 0\n";
     result += "OPEN = 1\n";
     result += "CLOSE = 0\n\n";
     result += "def exp10(x):\n";

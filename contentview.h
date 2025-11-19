@@ -23,6 +23,9 @@ public:
     AXInterpreter* axinterpreter;
 
     QString scriptFile;
+    QString xmlFile;
+
+    bool doesUseXMLFile;
 
     QList<QString> recentFiles;
     QList<AXDataSeries> inferredVariables;

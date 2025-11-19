@@ -15,6 +15,8 @@
 #include "axinterpreter.h"
 #include "axdataseries.h"
 #include "clearlayout.h"
+#include "detailview.h"
+#include "stackedgraphsview.h"
 
 GraphsView::GraphsView(ContentView *parent) :
     QWidget(parent)
@@ -108,20 +110,6 @@ void GraphsView::updatePlots(QString directoryName) {
         cleanFilename.remove(QRegularExpression("[\\.][cC][sS][vV]"));
         cleanFilename.replace(QRegularExpression("\\_+"), " ");
 
-        QHBoxLayout* mainHStack = new QHBoxLayout();
-
-        QLabel* graphTitle = new QLabel(cleanFilename, this);
-        graphTitle->setAlignment(Qt::AlignCenter);
-        graphTitle->setWordWrap(true);
-        graphTitle->setFixedWidth(100);
-        mainHStack->addWidget(graphTitle);
-
-        QCustomPlot* plot = new QCustomPlot();
-        plot->setMinimumHeight(200);
-        mainHStack->addWidget(plot);
-
-        this->scrollVStack->addLayout(mainHStack);
-
         QVector<double> xData, yData;
         QFile csvFile (csvDir.absoluteFilePath(filename));
 
@@ -146,6 +134,36 @@ void GraphsView::updatePlots(QString directoryName) {
             csvFile.close();
         }
 
+        if (xData.count() < 3) {
+            continue;
+        }
+
+        if (cleanFilename.contains(" AXDEFAULT")) {
+            continue;
+        }
+
+        if (cleanFilename.contains(" AXMIN")) {
+            continue;
+        }
+
+        if (cleanFilename.contains(" AXMAX")) {
+            continue;
+        }
+
+        QHBoxLayout* mainHStack = new QHBoxLayout();
+
+        QLabel* graphTitle = new QLabel(cleanFilename, this);
+        graphTitle->setAlignment(Qt::AlignCenter);
+        graphTitle->setWordWrap(true);
+        graphTitle->setFixedWidth(100);
+        mainHStack->addWidget(graphTitle);
+
+        QCustomPlot* plot = new QCustomPlot();
+        plot->setMinimumHeight(200);
+        mainHStack->addWidget(plot);
+
+        this->scrollVStack->addLayout(mainHStack);
+
         QCPCurve* curve = new QCPCurve(plot->xAxis, plot->yAxis);
         curve->addData(xData, yData);
 
@@ -164,8 +182,15 @@ void GraphsView::updatePlots(QString directoryName) {
     this->xMaxSlider->setRange(0, maxTimestep);
     this->xMaxSlider->setValue(maxTimestep);
 
+    this->contentView->detailView->stackedGraphsView->xMaxSlider->setRange(0, maxTimestep);
+    this->contentView->detailView->stackedGraphsView->xMaxSlider->setValue(maxTimestep);
+
     this->xMinSlider->setRange(0, maxTimestep);
     this->xMinSlider->setValue(0);
+
+    this->contentView->detailView->stackedGraphsView->xMinSlider->setRange(0, maxTimestep);
+    this->contentView->detailView->stackedGraphsView->xMinSlider->setValue(0);
+
     this->contentView->refreshInferredVariables();
 
 }

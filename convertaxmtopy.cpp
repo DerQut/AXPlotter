@@ -41,6 +41,8 @@ QString convertAXMtoPy(QString axmLine) {
     QRegularExpression regexWithAssignment ("(.*)\\s+[wW][iI][tT][hH]\\s+(.*)");
     QRegularExpression regexWithInAssignment ("(.*)\\s+[wW][iI][tT][hH]\\s+(.*)\\s+[iI][nN]\\s+(.*)");
 
+    QRegularExpression regexUntil ("\\buntil[\\ ]*(.*)");
+
     if (matchLoop.hasMatch()) {
         // Generate a random string for loop iterator (allows for nested loops)
         QString chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
@@ -107,6 +109,16 @@ QString convertAXMtoPy(QString axmLine) {
     for (int i = 0; i < arguments.size(); i++) {
         QString argument = arguments[i].trimmed();
 
+        // Check if the argument matches the "until" check
+        QRegularExpressionMatch matchUntil = regexUntil.match(argument);
+        if (matchUntil.hasMatch()) {
+            QString condition = matchUntil.captured(1).trimmed();
+
+            result += "\nif not (" +condition+ "):";
+            result += "\n    print(\"condition may never be met!\")";
+            continue;
+        }
+
         // Check if the given positional argument matches a direct assignment (a = 8)
         QRegularExpressionMatch matchDirectAssignment = regexDirectAssignment.match(argument);
         if (matchDirectAssignment.hasMatch()) {
@@ -114,18 +126,19 @@ QString convertAXMtoPy(QString axmLine) {
             QString variableEndGoal = matchDirectAssignment.captured(2).trimmed();
 
             // Replace "default" keyword with a proper variable
-            variableEndGoal.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
-
-            result += "\n\ntry:";
-            result += "\n    " +variableName+ "_AXDEFAULT = " +variableName+ "_AXDEFAULT";
-            result += "\nexcept NameError:";
-            result += "\n    " +variableName+ "_AXDEFAULT = 0";
+            variableEndGoal.replace(QRegularExpression("\\bdefault\\b"), " " +variableName+ "_AXDEFAULT ");
 
             result += "\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
+            result += "\nfile.write(str(AX_GLOBAL_TIMESTEP) + ',' + str(" + variableName+ ") + '\\n')";
 
             result += "\ni = 0";
             result += "\nwhile i <= AX_STEP_LENGTH:";
             result += "\n    " + variableName + " = " + variableEndGoal;
+            result += "\n    try:";
+            result += "\n        " +variableName+ " = max(" +variableName+ ", " +variableName+ "_AXMIN)";
+            result += "\n        " +variableName+ " = min(" +variableName+ ", " +variableName+ "_AXMAX)";
+            result += "\n    except Exception:";
+            result += "\n        pass";
             result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" + variableName+ ") + '\\n')";
             result += "\n    i = i + 1";
             result += "\nfile.close()";
@@ -164,21 +177,17 @@ QString convertAXMtoPy(QString axmLine) {
             // Replace "default" keyword in variableEndTime with a proper variable (should not ever match)
             variableEndTime.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
 
-            result += "\n\ntry:";
-            result += "\n    " +variableName+ "_AXDEFAULT = " +variableName+ "_AXDEFAULT";
-            result += "\nexcept NameError:";
-            result += "\n    " +variableName+ "_AXDEFAULT = 0";
-
-            result += "\ntry:";
-            result += "\n    " +variableName+ "_AXCOPY = " +variableName;
-            result += "\nexcept NameError:";
-            result += "\n    " +variableName+ "_AXCOPY = " +variableName+ "_AXDEFAULT";
-            result += "\n    " +variableName+ " = " +variableName+ "_AXDEFAULT";
+            result += "\n" +variableName+ "_AXCOPY = " +variableName;
             result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
 
             result += "\ni = 0";
             result += "\nwhile i <= " +variableEndTime+ ":";
             result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / " +variableEndTime;
+            result += "\n    try:";
+            result += "\n        " +variableName+ " = max(" +variableName+ ", " +variableName+ "_AXMIN)";
+            result += "\n        " +variableName+ " = min(" +variableName+ ", " +variableName+ "_AXMAX)";
+            result += "\n    except Exception:";
+            result += "\n        pass";
             result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" +variableName+ ") + '\\n')";
             result += "\n    i = i + 1";
             result += "\nfile.close()";
@@ -212,6 +221,11 @@ QString convertAXMtoPy(QString axmLine) {
             result += "\nx = 0";
             result += "\nwhile x <= " +variableEndTime+ ":";
             result += "\n    " +variableName+ " = " +equation;
+            result += "\n    try:";
+            result += "\n        " +variableName+ " = max(" +variableName+ ", " +variableName+ "_AXMIN)";
+            result += "\n        " +variableName+ " = min(" +variableName+ ", " +variableName+ "_AXMAX)";
+            result += "\n    except Exception:";
+            result += "\n        pass";
             result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+x) + ',' + str(" +variableName+ ") + '\\n')";
             result += "\n    x = x + 1";
             result += "\nfile.close()";

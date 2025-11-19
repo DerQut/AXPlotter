@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QRegularExpression>
 
 #include "axdataseries.h"
 
@@ -8,6 +9,8 @@ AXDataSeries::AXDataSeries(QString variableName, QVector<double> xData, QVector<
     this->yData = yData;
     this->multipliedYData = yData;
     this->multiplier = 1.0;
+    this->isDividing = false;
+    this->isVisible = false;
 
     int r, g, b;
     r = 80 + qrand() % 120;
@@ -28,7 +31,11 @@ void AXDataSeries::trySetMultiplier(QString newMultiplier) {
 }
 
 void AXDataSeries::applyMultiplier() {
-    for (std::uint_fast64_t i=0; i < this->yData.count(); i++) {
-        multipliedYData[i] = yData[i] * multiplier;
+    for (int i=0; i < this->yData.count(); i++) {
+        if (this->isDividing && !(this->multiplier == 0.0)) {
+            multipliedYData[i] = yData[i] / multiplier;
+        } else if (!this->isDividing) {
+            multipliedYData[i] = yData[i] * multiplier;
+        }
     }
 }

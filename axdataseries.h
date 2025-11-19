@@ -13,6 +13,9 @@ public:
     void trySetMultiplier(QString newMultiplier);
     void applyMultiplier();
 
+    void setAsDigital();
+    void setAsPhysicalDevice(double physMin, double physMax);
+
     QString variableName;
     QColor color;
 
@@ -21,6 +24,9 @@ public:
     QVector<double> multipliedYData;
 
     double multiplier;
+
+    bool isVisible;
+    bool isDividing;
 
 };
 
