@@ -639,6 +639,16 @@ int AXInterpreter::generatePyFile() {
     result += "    def __rmul__(self, other):\n";
     result += "        return self.__mul__(other)\n\n";
 
+    result += "    def __pow__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue ** other.currentValue\n";
+    result += "        return self.currentValue ** other\n\n";
+
+    result += "    def __rpow__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return other.currentValue ** self.currentValue\n";
+    result += "        return other ** self.currentValue\n\n";
+
     result += "    def __truediv__(self, other):\n";
     result += "        if isinstance(other, AXVariable):\n";
     result += "            return self.currentValue / other.currentValue\n";
