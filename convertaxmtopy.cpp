@@ -113,6 +113,7 @@ QString convertAXMtoPy(QString axmLine) {
     }
 
     QString preResult = QString();
+    QString conditions = QString();
 
     // List containing all time step lengths to prepare a single while loop
     QStringList timesteps;
@@ -126,14 +127,17 @@ QString convertAXMtoPy(QString axmLine) {
         if (matchUntil.hasMatch()) {
             QString condition = matchUntil.captured(1).trimmed();
 
-            preResult += "\n    if not (" +condition+ "):";
-            preResult += "\n        print(\"condition may never be met!\")";
+            conditions += "\nif not (" +condition+ "):";
+            conditions += "\n    sys.stderr.write('Warning: condition \"" + condition+ "\" may never be met. Continuing.')";
             continue;
         }
 
         // Check if the given positional argument creates a follower
         QRegularExpressionMatch matchFollow = regexFollow.match(argument);
         if (matchFollow.hasMatch()) {
+
+            result += "\n" +matchFollow.captured(1)+ ".setCurrentValue(" +matchFollow.captured(1)+ ".currentValue)";
+
             preResult += "\n    if x <= AX_STEP_LENGTH:";
             preResult += "\n        " +matchFollow.captured(1)+ ".followLambda = lambda: " + matchFollow.captured(2);
             preResult += "\n        " +matchFollow.captured(1)+ + ".calculateFollower()";
@@ -189,8 +193,8 @@ QString convertAXMtoPy(QString axmLine) {
             result += "\n" +variableName+ ".endValue = " +variableEndGoal;
             result += "\n" +variableName+ ".setCurrentValue(" +variableName+ ".currentValue)";
 
-            preResult += "\n    if AX_STEP_LENGTH == 0:";
-            preResult += "\n        sys.stderr.write(\"No timestep given for linear ramp. Affected variable: " +variableName+ ". Exiting.\")";
+            preResult += "\n    if " +variableEndTime+ " == 0:";
+            preResult += "\n        sys.stderr.write(\"Error: no timestep given for linear ramp. Affected variable: " +variableName+ ". Exiting.\")";
             preResult += "\n        sys.exit()";
 
             result += "\n" +variableName+ "_AXCOPY = " +variableName+ ".currentValue";
@@ -235,9 +239,13 @@ QString convertAXMtoPy(QString axmLine) {
     result += "\nx=0";
     result += "\nwhile x <= max(AXTIMESTEPS):";
     result += preResult;
-    result += "\n    if x < AX_STEP_LENGTH:";
-    result += "\n        AX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + 1";
-    result += "\n    x=x+1";
+    result += "\n    AX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + 1";
+    result += "\n    x=x+1\n";
+
+    // Force AX_GLOBAL_TIMESTEP to be increased by the specified timestep for the whole step
+    result += "\nAX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + AXTIMESTEPS[0] - max(AXTIMESTEPS)\n";
+
+    result += conditions;
 
     //result += "\n\nAX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + AX_STEP_LENGTH";
     return result;
