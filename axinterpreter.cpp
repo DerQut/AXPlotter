@@ -187,6 +187,7 @@ QString AXInterpreter::generateAXRfile() {
 
         QRegularExpression regexOtherDevice ("^(\\D[\\d]+)$");
         QStringList badCategories = {"Materials", "ALARM", "CALCULATIONS"};
+        QStringList alreadyWrittenNames;
 
         for (int i = 0; i < 2; i++) {
             QFile xmlFile(this->contentView->xmlFile);
@@ -252,7 +253,7 @@ QString AXInterpreter::generateAXRfile() {
                         } else if (matchOtherDevice.hasMatch()) {
                             deviceCodes.append(matchOtherDevice.captured(1));
 
-                            QString newName = deviceName+ "." +propName.toLower() + "";
+                            QString newName = deviceName+ "_" +propName.toLower();
                             deviceNewNames.append(newName);
 
                         }
@@ -268,14 +269,21 @@ QString AXInterpreter::generateAXRfile() {
                     isInsideDeviceBlock = false;
 
                     if (!deviceName.isEmpty() && !deviceName.contains("@")) {
-                        returnVal += "\nvariable " + deviceName + " = " + deviceDef + ";\n";
-                        returnVal += "variable " + deviceName + "_AXDEFAULT = " + deviceDef + ";\n";
 
-                        if (!deviceMin.isEmpty())
-                            returnVal += "variable " + deviceName + "_AXMIN = " + deviceMin + ";\n";
+                        deviceName.replace(QRegularExpression("\\."), "_");
 
-                        if (!deviceMax.isEmpty())
-                            returnVal += "variable " + deviceName + "_AXMAX = " + deviceMax + ";\n";
+                        if (!alreadyWrittenNames.contains(deviceName)) {
+                            returnVal += "\nvariable " + deviceName + " = " + deviceDef + ";\n";
+                            returnVal += "#$" + deviceName + ".physDef = " + deviceDef + "#;\n";
+
+                            if (!deviceMin.isEmpty())
+                                returnVal += "#$" + deviceName + ".physMin = " + deviceMin + "#;\n";
+
+                            if (!deviceMax.isEmpty())
+                                returnVal += "#$" + deviceName + ".physMax = " + deviceMax + "#;\n";
+                        }
+
+                        alreadyWrittenNames << deviceName;
                     }
                 }
 
@@ -289,13 +297,13 @@ QString AXInterpreter::generateAXRfile() {
 
     QStringList iterableProps = {"push", "inject", "run"};
     for (int i=0; i < iterableProps.count(); i++) {
-        QRegularExpression regexIterable ("\\." +iterableProps[i]+ "\\b");
+        QRegularExpression regexIterable ("[\\.\\_]" +iterableProps[i]+ "\\b");
         while (true) {
             QRegularExpressionMatch matchIterable = regexIterable.match(returnVal);
             if (!matchIterable.hasMatch()) {
                 break;
             }
-            returnVal.replace(regexIterable, "."+iterableProps[i]+"1");
+            returnVal.replace(regexIterable, "_"+iterableProps[i]+"1");
         }
     }
 
@@ -335,14 +343,17 @@ int AXInterpreter::generateAXCfile() {
     // Regex to find comments (from '#' to the end of the line)
     // (Match if has at least 0 chars that are not '#' followed by a '#' and at least 0 of any other char)
     // Also capture everything proceeding the '#' char
-    QRegularExpression regexComment("^([^#]*)#.*$");
+    QRegularExpression regexComment ("^([^#]*)#.*$");
+
+    QRegularExpression regexPythonCall ("^#\\$.*\\#;$");
 
     // Read the .AXR file
     while (!(in.atEnd())) {
         QString line = in.readLine();
         QRegularExpressionMatch matchComment = regexComment.match(line);
+        QRegularExpressionMatch matchPythonCall = regexPythonCall.match(line);
 
-        if (matchComment.hasMatch()) {
+        if (matchComment.hasMatch() && !matchPythonCall.hasMatch()) {
             line = matchComment.captured(1);
         }
         // Remove whitespaces from beginning and the end of the line, remove multiple whitespaces
@@ -478,11 +489,34 @@ QString AXInterpreter::generateAXMfile() {
         return "Syntax error: Layer block not found";
     }
 
+    // Regenerate whitespaces
+    result = result.simplified();
+    result.replace("; ", ";\n");
+    result.replace(" ;", ";");
+    result.replace("{", "{\n");
+    result.replace("}", "}\n");
+    result.replace(QRegularExpression("\n[\\ ]*"), "\n");
+
+    const QStringList resultSplit = result.split("\n");
+    const QRegularExpression regexPythonCall ("^\\s*#\\$(.*)\\#;\\s*$");
+
     // Regex to find dots in non-digits
     // Match when a dot is followed by a non-digit
     // Capture both chars (0) and the last char (1)
     const QRegularExpression regexDot ("[\\.]([^\\d])");
-    result.replace(regexDot, "_\\1");
+
+    result = "";
+
+    for (int i = 0; i < resultSplit.count(); i++) {
+
+        QString line = resultSplit.at(i);
+        QRegularExpressionMatch matchPythonCall = regexPythonCall.match(line);
+
+        if (!matchPythonCall.hasMatch()) {
+            line.replace(regexDot, "_\\1");
+        }
+        result += line + "\n";
+    }
 
     // Replace "parameter" keyword with "variable"
     result.replace(QRegularExpression("\\bparameter\\b"), " variable ");
@@ -492,14 +526,6 @@ QString AXInterpreter::generateAXMfile() {
     result.replace(QRegularExpression("\\bclose\\b"), "CLOSE");
     result.replace(QRegularExpression("\\bon\\b"), "ON");
     result.replace(QRegularExpression("\\boff\\b"), "OFF");
-
-    // Regenerate whitespaces
-    result = result.simplified();
-    result.replace("; ", ";\n");
-    result.replace(" ;", ";");
-    result.replace("{", "{\n");
-    result.replace("}", "}\n");
-    result.replace(QRegularExpression("\n[\\ ]*"), "\n");
 
     //remove "begin stat" and "end stat" calls
     result.replace(QRegularExpression("\\bbegin stat[^\\;]*\\;"), ";");
@@ -559,14 +585,135 @@ int AXInterpreter::generatePyFile() {
 
     // Add a default header to always be created
     result += "import sys\n";
+    result += "import types\n";
     result += "from math import sin, cos, tan, exp, log, log10, sqrt\n\n";
+
+    result += "AX_GLOBAL_TIMESTEP = 0\n\n";
+
+    result += "class AXVariable:\n";
+    result += "    all=[]\n";
+    result += "    def __init__(self, name):\n";
+    result += "        self.name = name\n";
+    result += "        self.physMin = 0\n";
+    result += "        self.physMax = 0\n";
+    result += "        self.physDef = 0\n\n";
+
+    result += "        self.usesMin = False\n";
+    result += "        self.usesMax = False\n\n";
+
+    result += "        self.currentValue = 0\n";
+    result += "        self.endValue = 0\n\n";
+
+    result += "        self.followLambda = None\n";
+    result += "        AXVariable.all.append(self)\n\n";
+
+    result += "    def __int__(self):\n";
+    result += "        return int(self.currentValue)\n\n";
+
+    result += "    def __float__(self):\n";
+    result += "        return float(self.currentValue)\n\n";
+
+    result += "    def __add__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue + other.currentValue\n";
+    result += "        return self.currentValue + other\n\n";
+
+    result += "    def __radd__(self, other):\n";
+    result += "        return self.__add__(other)\n\n";
+
+    result += "    def __sub__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue - other.currentValue\n";
+    result += "        return self.currentValue - other\n\n";
+
+    result += "    def __rsub__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return other.currentValue - self.currentValue\n";
+    result += "        return other - self.currentValue\n\n";
+
+    result += "    def __mul__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue * other.currentValue\n";
+    result += "        return self.currentValue * other\n\n";
+
+    result += "    def __rmul__(self, other):\n";
+    result += "        return self.__mul__(other)\n\n";
+
+    result += "    def __truediv__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue / other.currentValue\n";
+    result += "        return self.currentValue / other\n\n";
+
+    result += "    def __rtruediv__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return other.currentValue / self.currentValue\n";
+    result += "        return other / self.currentValue\n\n";
+
+    result += "    def __lt__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue < other.currentValue\n";
+    result += "        return self.currentValue < other\n\n";
+
+    result += "    def __le__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue <= other.currentValue\n";
+    result += "        return self.currentValue <= other\n\n";
+
+    result += "    def __gt__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue > other.currentValue\n";
+    result += "        return self.currentValue > other\n\n";
+
+    result += "    def __ge__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue >= other.currentValue\n";
+    result += "        return self.currentValue >= other\n\n";
+
+    result += "    def __eq__(self, other):\n";
+    result += "        if isinstance(other, AXVariable):\n";
+    result += "            return self.currentValue == other.currentValue\n";
+    result += "        return self.currentValue == other\n\n";
+
+    result += "    def setPhysMin(self, physMin):\n";
+    result += "        self.physMin = physMin\n";
+    result += "        self.usesMin = True\n\n";
+
+    result += "    def setPhysMax(self, physMax):\n";
+    result += "        self.physMax = physMax\n";
+    result += "        self.usesMax = True\n\n";
+
+    result += "    def setCurrentValue(self, value, forcedByFollower=False):\n";
+    result += "        global AX_GLOBAL_TIMESTEP\n\n";
+
+    result += "        self.currentValue = float(value)\n\n";
+
+    result += "        if self.usesMin and self.currentValue < self.physMin:\n";
+    result += "            self.currentValue = self.physMin\n\n";
+
+    result += "        if self.usesMax and self.currentValue > self.physMax:\n";
+    result += "            self.currentValue = self.physMax\n\n";
+
+    result += "        file = open(self.name+\".csv\", \"a+\")\n";
+    result += "        file.write(str(AX_GLOBAL_TIMESTEP) + ',' + str(self.currentValue) + '\\n')\n\n";
+
+    result += "        if not forcedByFollower:\n";
+    result += "            self.followLambda = None\n\n";
+
+    result += "            for axvar in AXVariable.all:\n";
+    result += "                axvar.calculateFollower()\n\n";
+
+    result += "    def calculateFollower(self):\n";
+    result += "        if (isinstance(self.followLambda, types.FunctionType) and self.followLambda.__name__ == \"<lambda>\"):\n";
+    result += "            self.setCurrentValue(self.followLambda(), True)\n";
+    result += "            self.endValue = self.currentValue\n\n";
+
     result += "ON = 1\n";
     result += "OFF = 0\n";
     result += "OPEN = 1\n";
     result += "CLOSE = 0\n\n";
+
     result += "def exp10(x):\n";
     result += "    return 10**x\n\n";
-    result += "AX_GLOBAL_TIMESTEP = 0\n\n";
 
     // Regular expressions for finding beginnings and endings of loops
     QRegularExpression regexLoopStart (".*\\#AXLOOPSTART\\$.*");

@@ -11,16 +11,20 @@ QString convertAXMtoPy(QString axmLine) {
     // Value to be returned
     QString result = QString();
 
+    // Uncomment allowed python code
+    QRegularExpression regexPythonCall ("^#\\$(.*)\\#;$");
+    QRegularExpressionMatch matchPythonCall = regexPythonCall.match(axmLine);
+    if (matchPythonCall.hasMatch()) {
+        result += "\n" + matchPythonCall.captured(1);
+        return result;
+    }
+
     // Regex to find "variable" calls
     QRegularExpression regexVariable ("\\s*[vV][aA][rR][iI][aA][bB][lL][eE]\\s+(.+)\\s*=\\s*(.+)\\s*;");
     QRegularExpressionMatch matchVariable = regexVariable.match(axmLine);
-
     if (matchVariable.hasMatch()) {
-        result = (matchVariable.captured(1).trimmed() + " = " +  matchVariable.captured(2));
-        result += "\nfile = open(\"" +matchVariable.captured(1).trimmed()+ ".csv\", \"a+\")";
-        result += "\nfile.write('0,' + str(" +matchVariable.captured(1).trimmed()+ ") + '\\n')";
-        result += "\nfile.close()\n";
-
+        result += "\n" + matchVariable.captured(1).trimmed() + " = AXVariable(\"" +matchVariable.captured(1).trimmed()+ "\")";
+        result += "\n" + matchVariable.captured(1).trimmed() + ".setCurrentValue(" + matchVariable.captured(2) + ")\n";
         return result;
     }
 
@@ -108,6 +112,12 @@ QString convertAXMtoPy(QString axmLine) {
         arguments = axmLine.split(",");
     }
 
+    QString preResult = QString();
+
+    // List containing all time step lengths to prepare a single while loop
+    QStringList timesteps;
+    timesteps << timestepLength;
+
     for (int i = 0; i < arguments.size(); i++) {
         QString argument = arguments[i].trimmed();
 
@@ -116,15 +126,17 @@ QString convertAXMtoPy(QString axmLine) {
         if (matchUntil.hasMatch()) {
             QString condition = matchUntil.captured(1).trimmed();
 
-            result += "\nif not (" +condition+ "):";
-            result += "\n    print(\"condition may never be met!\")";
+            preResult += "\n    if not (" +condition+ "):";
+            preResult += "\n        print(\"condition may never be met!\")";
             continue;
         }
 
         // Check if the given positional argument creates a follower
         QRegularExpressionMatch matchFollow = regexFollow.match(argument);
         if (matchFollow.hasMatch()) {
-            result += "\n#follow will be here";
+            preResult += "\n    if x <= AX_STEP_LENGTH:";
+            preResult += "\n        " +matchFollow.captured(1)+ ".followLambda = lambda: " + matchFollow.captured(2);
+            preResult += "\n        " +matchFollow.captured(1)+ + ".calculateFollower()";
             continue;
         }
 
@@ -135,22 +147,13 @@ QString convertAXMtoPy(QString axmLine) {
             QString variableEndGoal = matchDirectAssignment.captured(2).trimmed();
 
             // Replace "default" keyword with a proper variable
-            variableEndGoal.replace(QRegularExpression("\\bdefault\\b"), " " +variableName+ "_AXDEFAULT ");
+            variableEndGoal.replace(QRegularExpression("\\bdefault\\b"), " " +variableName+ ".physDef ");
 
-            result += "\nfile = open(\"" + variableName.trimmed() + ".csv\", \"a+\")";
-            result += "\nfile.write(str(AX_GLOBAL_TIMESTEP) + ',' + str(" + variableName+ ") + '\\n')";
+            result += "\n" +variableName+ ".endValue = " +variableEndGoal;
+            result += "\n" +variableName+ ".setCurrentValue(" +variableName+ ".currentValue)";
 
-            result += "\ni = 0";
-            result += "\nwhile i <= AX_STEP_LENGTH:";
-            result += "\n    " + variableName + " = " + variableEndGoal;
-            result += "\n    try:";
-            result += "\n        " +variableName+ " = max(" +variableName+ ", " +variableName+ "_AXMIN)";
-            result += "\n        " +variableName+ " = min(" +variableName+ ", " +variableName+ "_AXMAX)";
-            result += "\n    except Exception:";
-            result += "\n        pass";
-            result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" + variableName+ ") + '\\n')";
-            result += "\n    i = i + 1";
-            result += "\nfile.close()";
+            preResult += "\n    if x <= AX_STEP_LENGTH:";
+            preResult += "\n        " + variableName + ".setCurrentValue(" + variableEndGoal + ")";
             continue;
         }
 
@@ -170,36 +173,30 @@ QString convertAXMtoPy(QString axmLine) {
                 variableName = matchToAssignmentIn.captured(1).trimmed();
                 variableEndGoal = matchToAssignmentIn.captured(2).trimmed();
                 variableEndTime = matchToAssignmentIn.captured(3).trimmed();
+                timesteps << variableEndTime;
             } else {
                 variableName = matchToAssignmentDefault.captured(1).trimmed();
                 variableEndGoal = matchToAssignmentDefault.captured(2).trimmed();
                 variableEndTime = "AX_STEP_LENGTH";
-
-                result += "\nif AX_STEP_LENGTH == 0:";
-                result += "\n    sys.stderr.write(\"No timestep given for linear ramp. Affected variable: " +variableName+ ". Exiting.\")";
-                result += "\n    sys.exit()";
             }
 
             // Replace "default" keyword in variableEndGoal with a proper variable
-            variableEndGoal.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
+            variableEndGoal.replace(QRegularExpression("\\bdefault\\b"), " " +variableName+ ".physDef ");
 
             // Replace "default" keyword in variableEndTime with a proper variable (should not ever match)
-            variableEndTime.replace(QRegularExpression("\\b[dD][eE][fF][aA][uU][lL][tT]"), " " +variableName+ "_AXDEFAULT ");
+            variableEndTime.replace(QRegularExpression("\\bdefault\\b"), " " +variableName+ ".physDef ");
 
-            result += "\n" +variableName+ "_AXCOPY = " +variableName;
-            result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
+            result += "\n" +variableName+ ".endValue = " +variableEndGoal;
+            result += "\n" +variableName+ ".setCurrentValue(" +variableName+ ".currentValue)";
 
-            result += "\ni = 0";
-            result += "\nwhile i <= " +variableEndTime+ ":";
-            result += "\n    " +variableName+ " = " +variableName+ "_AXCOPY + i * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / " +variableEndTime;
-            result += "\n    try:";
-            result += "\n        " +variableName+ " = max(" +variableName+ ", " +variableName+ "_AXMIN)";
-            result += "\n        " +variableName+ " = min(" +variableName+ ", " +variableName+ "_AXMAX)";
-            result += "\n    except Exception:";
-            result += "\n        pass";
-            result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+i) + ',' + str(" +variableName+ ") + '\\n')";
-            result += "\n    i = i + 1";
-            result += "\nfile.close()";
+            preResult += "\n    if AX_STEP_LENGTH == 0:";
+            preResult += "\n        sys.stderr.write(\"No timestep given for linear ramp. Affected variable: " +variableName+ ". Exiting.\")";
+            preResult += "\n        sys.exit()";
+
+            result += "\n" +variableName+ "_AXCOPY = " +variableName+ ".currentValue";
+
+            preResult += "\n    if x <= " +variableEndTime+ ":";
+            preResult += "\n        " +variableName+ ".setCurrentValue(" +variableName+ "_AXCOPY + x * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / " +variableEndTime + ")";
             continue;
         }
 
@@ -219,31 +216,29 @@ QString convertAXMtoPy(QString axmLine) {
                 variableName = matchWithInAssignment.captured(1).trimmed();
                 equation = matchWithInAssignment.captured(2).trimmed();
                 variableEndTime = matchWithInAssignment.captured(3);
+                timesteps << variableEndTime;
             } else {
                 variableName = matchWithAssignment.captured(1).trimmed();
                 equation = matchWithAssignment.captured(2).trimmed();
                 variableEndTime = "AX_STEP_LENGTH";
             }
 
-            result += "\nfile = open(\"" +variableName.trimmed()+ ".csv\", \"a+\")";
+            result += "\n" +variableName+ ".setCurrentValue(" +variableName+ ".currentValue)";
 
-            result += "\nx = 0";
-            result += "\nwhile x <= " +variableEndTime+ ":";
-            result += "\n    " +variableName+ " = " +equation;
-            result += "\n    try:";
-            result += "\n        " +variableName+ " = max(" +variableName+ ", " +variableName+ "_AXMIN)";
-            result += "\n        " +variableName+ " = min(" +variableName+ ", " +variableName+ "_AXMAX)";
-            result += "\n    except Exception:";
-            result += "\n        pass";
-            result += "\n    file.write(str(AX_GLOBAL_TIMESTEP+x) + ',' + str(" +variableName+ ") + '\\n')";
-            result += "\n    x = x + 1";
-            result += "\nfile.close()";
-
+            preResult += "\n    if x <= " +variableEndTime+ ":";
+            preResult += "\n        " +variableName+ ".setCurrentValue(" +equation+ ")";
             continue;
         }
 
     }
+    result += "\nAXTIMESTEPS = [" +timesteps.join(',')+ "]";
+    result += "\nx=0";
+    result += "\nwhile x <= max(AXTIMESTEPS):";
+    result += preResult;
+    result += "\n    if x < AX_STEP_LENGTH:";
+    result += "\n        AX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + 1";
+    result += "\n    x=x+1";
 
-    result += "\n\nAX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + AX_STEP_LENGTH";
+    //result += "\n\nAX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + AX_STEP_LENGTH";
     return result;
 }
