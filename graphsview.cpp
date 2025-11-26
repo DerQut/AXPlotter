@@ -94,11 +94,6 @@ void GraphsView::updatePlots(QString directoryName) {
 
     // Read the max timestep value
     double maxTimestep = 0.0;
-    QFile timestepFile(directoryName + QDir::separator()+ "timestep.txt");
-    if (timestepFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream timeIn(&timestepFile);
-        maxTimestep = timeIn.readLine().toDouble();
-    }
 
     // Add the graphs
 
@@ -124,10 +119,8 @@ void GraphsView::updatePlots(QString directoryName) {
                     xData.append(splitLine[0].toDouble());
                     yData.append(splitLine[1].toDouble());
 
-                    // Duplicate the same Y value for the end of the run
-                    if (in.atEnd() && splitLine[0].toDouble() < maxTimestep) {
-                        xData.append(maxTimestep);
-                        yData.append(splitLine[1].toDouble());
+                    if (maxTimestep < splitLine[0].toDouble()) {
+                        maxTimestep = splitLine[0].toDouble();
                     }
                 }
             }

@@ -19,21 +19,6 @@
 #include "stackedgraphsview.h"
 #include "qcustomplot/qcustomplot.h"
 
-// 1. Define a helper struct to hold data for a single device
-struct DeviceData {
-    QString code;      // The 'NAME' attribute (e.g., F18)
-    QString userName;  // Property 'UserName'
-    QString def;       // Property 'Default' or 'PhysDef'
-    QString min;       // Property 'PhysMin'
-    QString max;       // Property 'PhysMax'
-    QString category;  // Property 'Category'
-    bool hasReference; // If it references another device
-    QString referencedCode; // The code it references
-
-    // Constructor to set defaults
-    DeviceData() : def(""), min("0"), max("1"), hasReference(false) {}
-};
-
 
 AXInterpreter::AXInterpreter(ContentView* parent) :
     QMainWindow(parent)
