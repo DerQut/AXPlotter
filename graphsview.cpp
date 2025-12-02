@@ -125,15 +125,18 @@ void GraphsView::updatePlots(QString directoryName) {
                 }
             }
             csvFile.close();
+            contentView->inferredVariables.append(AXDataSeries(cleanFilename, xData, yData));
         }
+    }
 
-        if (xData.count() < 3) {
-            continue;
-        }
+    for (int i = 0; i < this->contentView->inferredVariables.count(); i++) {
+
+        this->contentView->inferredVariables[i].xData.append(maxTimestep);
+        this->contentView->inferredVariables[i].yData.append(this->contentView->inferredVariables.at(i).yData.last());
 
         QHBoxLayout* mainHStack = new QHBoxLayout();
 
-        QLabel* graphTitle = new QLabel(cleanFilename, this);
+        QLabel* graphTitle = new QLabel(contentView->inferredVariables.at(i).variableName, this);
         graphTitle->setAlignment(Qt::AlignCenter);
         graphTitle->setWordWrap(true);
         graphTitle->setFixedWidth(100);
@@ -146,9 +149,7 @@ void GraphsView::updatePlots(QString directoryName) {
         this->scrollVStack->addLayout(mainHStack);
 
         QCPCurve* curve = new QCPCurve(plot->xAxis, plot->yAxis);
-        curve->addData(xData, yData);
-
-        contentView->inferredVariables.append(AXDataSeries(cleanFilename, xData, yData));
+        curve->addData(contentView->inferredVariables.at(i).xData, contentView->inferredVariables.at(i).yData);
 
         plot->yAxis->rescale();
         plot->xAxis->rescale();
