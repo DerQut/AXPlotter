@@ -2,6 +2,9 @@
 #define STACKEDGRAPHSVIEW_H
 
 #include <QWidget>
+#include <QMouseEvent>
+#include <QColorDialog>
+#include <QColor>
 
 #include "qcustomplot/qcustomplot.h"
 
@@ -21,6 +24,9 @@ public:
     QLabel* xMinLabel;
     QLabel* xMaxLabel;
 
+    QColorDialog* colorDialog;
+    int currentPlotToColor;
+
 signals:
 
 public slots:
@@ -31,6 +37,10 @@ public slots:
     void updatePlotsRange();
     void xMinSliderCall();
     void xMaxSliderCall();
+
+    void legendClickHandler(QCPLegend* legend, QCPAbstractLegendItem* item, QMouseEvent* event);
+
+    void setColor(QColor color);
 
 };
 

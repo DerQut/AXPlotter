@@ -1,6 +1,8 @@
 #include <QVBoxLayout>
 #include <QColor>
 #include <QTime>
+#include <QDebug>
+#include <QColorDialog>
 
 #include "stackedgraphsview.h"
 #include "axdataseries.h"
@@ -62,14 +64,24 @@ StackedGraphsView::StackedGraphsView(ContentView* parent) :
 
     this->replot();
 
+    this->colorDialog = new QColorDialog(this);
+    this->colorDialog->hide();
+
+    this->currentPlotToColor = -1;
+
     connect(this->xMinSlider, SIGNAL(valueChanged(int)), this, SLOT(xMinSliderCall()));
     connect(this->xMaxSlider, SIGNAL(valueChanged(int)), this, SLOT(xMaxSliderCall()));
+
+    connect(this->plot, SIGNAL(legendClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)), this, SLOT(legendClickHandler(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)));
+
+    connect( this->colorDialog, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)) );
 }
 
 
 void StackedGraphsView::replot() {
 
     plot->clearPlottables();
+    this->currentPlotToColor = -1;
 
     for (std::int64_t i = 0; i < this->contentView->inferredVariables.count(); i++) {
 
@@ -140,4 +152,39 @@ void StackedGraphsView::xMinSliderCall() {
         xMaxSlider->setValue(xMinSlider->value());
     }
     this->updatePlotsRange();
+}
+
+
+void StackedGraphsView::legendClickHandler(QCPLegend *legend, QCPAbstractLegendItem *item, QMouseEvent *event) {
+    if (!legend) {return;}
+    if (!item)   {return;}
+    if (!event)  {return;}
+
+    if (!event->button() == Qt::RightButton) {return;}
+
+    auto* plotItem = qobject_cast<QCPPlottableLegendItem*>(item);
+    if (!plotItem) {return;}
+    QCPAbstractPlottable* plottable = plotItem->plottable();
+    qDebug() << plottable->name();
+
+    for (int i = 0; i < this->contentView->inferredVariables.count(); i++) {
+        if (this->contentView->inferredVariables[i].variableName == plottable->name()) {
+
+            this->colorDialog->setCurrentColor(this->contentView->inferredVariables[i].color);
+            this->colorDialog->setWindowTitle("Select color for \"" +plottable->name()+ "\"");
+
+            this->colorDialog->show();
+            this->currentPlotToColor = i;
+            return;
+        }
+    }
+}
+
+void StackedGraphsView::setColor(QColor color) {
+    if (this->currentPlotToColor == -1) {return;}
+    if (this->currentPlotToColor >= contentView->inferredVariables.count()) {return;}
+
+    contentView->inferredVariables[currentPlotToColor].color = color;
+    this->colorDialog->hide();
+    this->replot();
 }
