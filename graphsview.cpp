@@ -131,18 +131,6 @@ void GraphsView::updatePlots(QString directoryName) {
             continue;
         }
 
-        if (cleanFilename.contains(" AXDEFAULT")) {
-            continue;
-        }
-
-        if (cleanFilename.contains(" AXMIN")) {
-            continue;
-        }
-
-        if (cleanFilename.contains(" AXMAX")) {
-            continue;
-        }
-
         QHBoxLayout* mainHStack = new QHBoxLayout();
 
         QLabel* graphTitle = new QLabel(cleanFilename, this);
