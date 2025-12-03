@@ -125,7 +125,9 @@ void GraphsView::updatePlots(QString directoryName) {
                 }
             }
             csvFile.close();
-            contentView->inferredVariables.append(AXDataSeries(cleanFilename, xData, yData));
+            if (xData.count() > 1) {
+                contentView->inferredVariables.append(AXDataSeries(cleanFilename, xData, yData));
+            }
         }
     }
 
