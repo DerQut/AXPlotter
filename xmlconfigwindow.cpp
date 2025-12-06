@@ -15,15 +15,19 @@ XMLConfigWindow::XMLConfigWindow(ContentView* parent) :
     QMainWindow(parent)
 {
     this->contentView = parent;
+    this->setWindowTitle("Devices XML config");
 
     QWidget* dummyWidget = new QWidget(this);
 
     QVBoxLayout* mainVStack = new QVBoxLayout(dummyWidget);
+    mainVStack->setSpacing(0);
 
-    QCheckBox* useXMLCheckBox = new QCheckBox("Use an AIXACT Software .XML file for inferring variables", this);
-    mainVStack->addWidget(useXMLCheckBox);
+    QLabel* fileLabel = new QLabel("Devices XML file path:", this);
+    fileLabel->setContentsMargins(0,0,0,0);
+    mainVStack->addWidget(fileLabel);
 
     QHBoxLayout* fileHStack = new QHBoxLayout();
+    fileHStack->setContentsMargins(0,0,0,0);
 
     fileDisplay = new QLineEdit(this->contentView->xmlFile, this);
     fileDisplay->setDisabled(true);
@@ -34,10 +38,14 @@ XMLConfigWindow::XMLConfigWindow(ContentView* parent) :
     fileHStack->addWidget(fileButton);
 
     mainVStack->addLayout(fileHStack);
+    mainVStack->addStretch();
+
+    QCheckBox* useXMLCheckBox = new QCheckBox("Use an AIXACT Software .XML file for inferring device names", this);
+    mainVStack->addWidget(useXMLCheckBox);
 
     this->setCentralWidget(dummyWidget);
 
-    this->hide();
+    this->show();
 
     useXMLCheckBox->setChecked(contentView->doesUseXMLFile);
 
