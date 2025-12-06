@@ -32,6 +32,8 @@ AXInterpreter::AXInterpreter(ContentView* parent) :
 
     this->setWindowTitle("AX Interpreter");
 
+    this->mainText->setContentsMargins(10, 10, 10, 10);
+
 }
 
 

@@ -27,15 +27,17 @@ public:
 
     bool doesUseXMLFile;
 
-    QList<QString> recentFiles;
+    QStringList recentFiles;
     QList<AXDataSeries> inferredVariables;
 
 signals:
     void recentFilesChanged();
+    void xmlFileObtained(QString fileName);
 
 public slots:
     void setTheme(int idClicked);
     void obtainScriptFile();
+    void obtainXMLFile();
     void readScriptFile(QString newScriptFile);
     void saveScriptFile();
     void saveScriptFileAs();
@@ -44,6 +46,7 @@ public slots:
     void refreshInferredVariables();
     void askToOpenCSVDir();
     void openCSVDir(QString dirName);
+    void saveXMLConfig();
 };
 
 #endif // CONTENTVIEW_H

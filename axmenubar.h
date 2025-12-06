@@ -10,6 +10,7 @@
 #include <QRadioButton>
 
 class ContentView;
+class XMLConfigWindow;
 
 
 class AXMenuBar : public QMenuBar
@@ -18,6 +19,7 @@ class AXMenuBar : public QMenuBar
 public:
     explicit AXMenuBar(ContentView* parent = 0);
     ContentView* contentView;
+    XMLConfigWindow* xmlConfigWindow;
 
 private:
 

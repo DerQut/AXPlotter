@@ -13,11 +13,13 @@
 #include "sidebarview.h"
 #include "themefile.h"
 #include "axinterpreter.h"
+#include "xmlconfigwindow.h"
 
 AXMenuBar::AXMenuBar(ContentView* parent) :
     QMenuBar(parent)
 {
     contentView = parent;
+    xmlConfigWindow = new XMLConfigWindow(contentView);
 
     // Creating QMenu instances
     QMenu* fileMenu = new AXMBFileMenu("&File", this);
@@ -64,6 +66,7 @@ AXMBViewMenu::AXMBViewMenu(const QString &title, AXMenuBar* parent) :
     // Creating a QVBoxLayout instance to host the buttons inside the theme sub-menu
     QVBoxLayout* themeVStack = new QVBoxLayout(this);
     themeVStack->setSpacing(0);
+    themeVStack->setContentsMargins(2, 1, 1, 2);
     themeVStack->addWidget(defaultThemeButton);
     themeVStack->addWidget(darkThemeButton);
     themeVStack->addWidget(classicThemeButton);
@@ -94,6 +97,8 @@ AXMBFileMenu::AXMBFileMenu(const QString &title, AXMenuBar* parent) :
 
     QAction* directoryOpenAction = this->addAction("Open .CSV directory");
 
+    QAction* xmlConfigAction = this->addAction("Devices.xml config");
+
     QAction* fileStartCompilation = this->addAction("Start compilation");
 
     // Connecting all the necessary signals
@@ -104,5 +109,6 @@ AXMBFileMenu::AXMBFileMenu(const QString &title, AXMenuBar* parent) :
     connect(directoryOpenAction, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(askToOpenCSVDir()));
 
     connect(fileStartCompilation, SIGNAL(triggered()), this->axMenuBar->contentView, SLOT(askToCompile()));
+    connect(xmlConfigAction, SIGNAL(triggered()), this->axMenuBar->xmlConfigWindow, SLOT(show()));
 }
 

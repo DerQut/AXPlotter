@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     inferredvariablesview.cpp \
     toggleviewhost.cpp \
     axdataseries.cpp \
-    clearlayout.cpp
+    clearlayout.cpp \
+    xmlconfigwindow.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -55,7 +56,8 @@ HEADERS  += mainwindow.h \
     inferredvariablesview.h \
     toggleviewhost.h \
     axdataseries.h \
-    clearlayout.h
+    clearlayout.h \
+    xmlconfigwindow.h
 
 OTHER_FILES += \
     ../Documents/Kalibracja.txt \

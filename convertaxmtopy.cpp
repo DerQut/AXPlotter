@@ -8,7 +8,7 @@
 
 QString convertAXMtoPy(QString axmLine) {
 
-    // Value to be returned
+    // Value to be returned1
     QString result = QString();
 
     // Uncomment allowed python code

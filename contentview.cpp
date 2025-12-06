@@ -29,10 +29,54 @@ ContentView::ContentView(QWidget* parent) :
     QHBoxLayout* dummyLayout = new QHBoxLayout();
     dummyLayout->setContentsMargins(0, 0, 0, 0);
 
-    this->xmlFile = "C:/users/crossover/Documents/Devices.xml";
-    this->doesUseXMLFile = true;
+    this->xmlFile = "";
+    this->doesUseXMLFile = false;
 
-    recentFiles << "" << "" << "" << "" << "";
+    QFile xmlConfig ("xmlconfig.cfg");
+    if (!QFile::exists("xmlconfig.cfg")) {
+        if (xmlConfig.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&xmlConfig);
+            out << "\n0";
+            xmlConfig.close();
+        }
+    } else {
+        if (xmlConfig.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream in(&xmlConfig);
+            int i = 0;
+            while (!in.atEnd()) {
+                QString line = in.readLine().trimmed();
+                if (i == 0) {
+                    this->xmlFile = line;
+                } else if (i == 1) {
+                    this->doesUseXMLFile = line.toInt() != 0;
+                }
+                i++;
+            }
+            xmlConfig.close();
+        }
+    }
+
+
+    QFile recents ("recents.cfg");
+    if (!QFile::exists("recents.cfg")) {
+        if (recents.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&recents);
+            out << "\n\n\n\n";
+            recents.close();
+        }
+    } else {
+        if (recents.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream in(&recents);
+            while (!in.atEnd()) {
+                this->recentFiles << in.readLine();
+            }
+            recents.close();
+        }
+    }
+
+    while (this->recentFiles.count() < 5) {
+        this->recentFiles << "";
+    }
 
     axinterpreter = new AXInterpreter(this);
 
@@ -77,6 +121,18 @@ void ContentView::obtainScriptFile() {
     this->readScriptFile(newScriptFile);
 
     this->shiftRecentFiles();
+}
+
+void ContentView::obtainXMLFile() {
+    QString newXMLFile = QFileDialog::getOpenFileName(this, tr("Select .XML file"));
+
+    qDebug() << newXMLFile;
+
+    if (!newXMLFile.count()) { return; }
+
+    this->xmlFile = newXMLFile;
+    emit this->xmlFileObtained(this->xmlFile);
+    this->saveXMLConfig();
 }
 
 
@@ -165,6 +221,13 @@ void ContentView::shiftRecentFiles() {
         recentFiles.prepend(scriptFile);
     }
 
+    QFile recents ("recents.cfg");
+    if (recents.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out (&recents);
+        out << this->recentFiles.join("\n");
+        recents.close();
+    }
+
     emit this->recentFilesChanged();
 }
 
@@ -222,5 +285,14 @@ void ContentView::askToOpenCSVDir() {
 
 void ContentView::openCSVDir(QString dirName) {
     this->axinterpreter->loadResultsFrom(dirName);
+}
+
+void ContentView::saveXMLConfig() {
+    QFile xmlConfig ("xmlconfig.cfg");
+    if (xmlConfig.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out (&xmlConfig);
+        out << this->xmlFile << "\n" << QString::number(int (this->doesUseXMLFile));
+        xmlConfig.close();
+    }
 }
 
