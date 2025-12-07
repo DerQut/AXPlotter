@@ -45,7 +45,7 @@ XMLConfigWindow::XMLConfigWindow(ContentView* parent) :
 
     this->setCentralWidget(dummyWidget);
 
-    this->show();
+    this->hide();
 
     useXMLCheckBox->setChecked(contentView->doesUseXMLFile);
 

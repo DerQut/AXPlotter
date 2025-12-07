@@ -5,18 +5,23 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QTextStream>
+#include <QStringList>
 
 #include "recursiveReplaceRead.h"
 
-QString recursiveReplaceRead(QString fileName) {
+QString recursiveReplaceRead(QString fileName, QStringList* previousFileNames) {
 
     // Create a file header
     QFile fileHeader(fileName);
+
+    if (previousFileNames->contains(fileName)) { return ""; }
 
     // Try to open the file, return an empty string upon failure
     if (!(fileHeader.open(QIODevice::ReadOnly | QIODevice::Text))) {
         return "$AXR_ERROR_START File " +fileName+ " could not be opened $AXR_ERROR_END";
     }
+
+    previousFileNames->append(fileName);
 
     // Variable to store the read text
     QString result = QString();
@@ -46,10 +51,10 @@ QString recursiveReplaceRead(QString fileName) {
             }
 
             // Check if the file is not trying to read itself
-            if (newFile != fileName) {
-                line = recursiveReplaceRead(newFile);
+            if (newFile != fileName && !previousFileNames->contains(newFile)) {
+                line = recursiveReplaceRead(newFile, previousFileNames);
             } else {
-                line = "$AXR_ERROR_START File " +newFile+ "Tried to read itself. $AXR_ERROR_END";
+                line = "$AXR_ERROR_START File " +newFile+ " attempted a circular read. $AXR_ERROR_END";
             }
         }
         result += line.trimmed() + "\n";

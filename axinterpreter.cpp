@@ -198,7 +198,7 @@ QString AXInterpreter::generateAXRfile() {
                 xmlReader.readNext();
 
                 if (xmlReader.isStartElement()) {
-                    if (xmlReader.name().toString() == "DEVICE") {
+                    if (xmlReader.name().toString() == "DEVICE" | xmlReader.name().toString() == "NODE") {
                         deviceCode = xmlReader.attributes().value("NAME").toString();
 
                         if (deviceCodes.contains(deviceCode) || i == 0) {
@@ -252,7 +252,7 @@ QString AXInterpreter::generateAXRfile() {
 
                     }
 
-                } else if (xmlReader.isEndElement() && xmlReader.name().toString() == "DEVICE") {
+                } else if (xmlReader.isEndElement() && (xmlReader.name().toString() == "DEVICE" | xmlReader.name().toString() == "NODE")) {
                     isInsideDeviceBlock = false;
 
                     if (!deviceName.isEmpty() && !deviceName.contains("@")) {
@@ -280,7 +280,10 @@ QString AXInterpreter::generateAXRfile() {
         }
     }
 
-    returnVal += recursiveReplaceRead(this->scriptFile);
+    QStringList* fileNames = new QStringList();
+
+    returnVal += recursiveReplaceRead(this->scriptFile, fileNames);
+    delete fileNames;
 
     QStringList iterableProps = {"push", "inject", "run"};
     for (int i=0; i < iterableProps.count(); i++) {
