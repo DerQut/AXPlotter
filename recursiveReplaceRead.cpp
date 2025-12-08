@@ -47,14 +47,14 @@ QString recursiveReplaceRead(QString fileName, QStringList* previousFileNames) {
 
             // Check if the file has dwo or more dots
             if (matchRead.captured(1).count(".") > 1) {
-                result += "$AXR_ERROR_START Filename " +newFile+ " Contains more than one '.' character $AXR_ERROR_END";
+                result += "$AXR_ERROR_START Filename " +newFile+ " Contains more than one '.' character. Aborting .AXR generation. $AXR_ERROR_END";
             }
 
             // Check if the file is not trying to read itself
             if (newFile != fileName && !previousFileNames->contains(newFile)) {
                 line = recursiveReplaceRead(newFile, previousFileNames);
             } else {
-                line = "$AXR_ERROR_START File " +newFile+ " attempted a circular read. $AXR_ERROR_END";
+                line = "$AXR_ERROR_START File " +newFile+ " attempted a circular read. Aborting .AXR generation. $AXR_ERROR_END";
             }
         }
         result += line.trimmed() + "\n";

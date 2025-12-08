@@ -264,10 +264,10 @@ QString AXInterpreter::generateAXRfile() {
                             returnVal += "#$" + deviceName + ".physDef = " + deviceDef + "#;\n";
 
                             if (!deviceMin.isEmpty())
-                                returnVal += "#$" + deviceName + ".physMin = " + deviceMin + "#;\n";
+                                returnVal += "#$" + deviceName + ".setPhysMin(" + deviceMin + ")#;\n";
 
                             if (!deviceMax.isEmpty())
-                                returnVal += "#$" + deviceName + ".physMax = " + deviceMax + "#;\n";
+                                returnVal += "#$" + deviceName + ".setPhysMax(" + deviceMax + ")#;\n";
                         }
 
                         alreadyWrittenNames << deviceName;
