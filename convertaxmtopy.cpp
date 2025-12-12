@@ -8,7 +8,7 @@
 
 QString convertAXMtoPy(QString axmLine) {
 
-    // Value to be returned1
+    // Value to be returned
     QString result = QString();
 
     // Uncomment allowed python code
@@ -20,7 +20,7 @@ QString convertAXMtoPy(QString axmLine) {
     }
 
     // Regex to find "variable" calls
-    QRegularExpression regexVariable ("\\s*[vV][aA][rR][iI][aA][bB][lL][eE]\\s+(.+)\\s*=\\s*(.+)\\s*;");
+    QRegularExpression regexVariable ("\\s*variable\\s+(.+)\\s*=\\s*(.+)\\s*;");
     QRegularExpressionMatch matchVariable = regexVariable.match(axmLine);
     if (matchVariable.hasMatch()) {
         result += "\n" + matchVariable.captured(1).trimmed() + " = AXVariable(\"" +matchVariable.captured(1).trimmed()+ "\")";
@@ -239,11 +239,14 @@ QString convertAXMtoPy(QString axmLine) {
     result += "\nx=0";
     result += "\nwhile x <= max(AXTIMESTEPS):";
     result += preResult;
-    result += "\n    AX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + 1";
     result += "\n    x=x+1\n";
+    result += "\n    AX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + 1";
+
+
+
 
     // Force AX_GLOBAL_TIMESTEP to be increased by the specified timestep for the whole step
-    result += "\nAX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + AXTIMESTEPS[0] - max(AXTIMESTEPS)\n";
+    result += "\nAX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + AXTIMESTEPS[0] - max(AXTIMESTEPS) - 1\n";
 
     result += conditions;
 

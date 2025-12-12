@@ -1,9 +1,11 @@
-#include <QDebug>
-#include <QRegularExpression>
-
 #include "axdataseries.h"
 
-AXDataSeries::AXDataSeries(QString variableName, QVector<double> xData, QVector<double> yData) {
+AXDataSeries::AXDataSeries(
+        QString variableName,
+        QVector<double> xData,
+        QVector<double> yData
+    )
+{
     this->variableName = variableName;
     this->xData = xData;
     this->yData = yData;

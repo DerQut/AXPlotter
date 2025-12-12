@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QString>
+#include <QStringList>
 #include <QDir>
 #include <QLabel>
 
@@ -33,7 +34,7 @@ public slots:
 
     int generatePyFile();
 
-    QString launchPy();
+    QStringList launchPy();
 
     void loadResults();
     void loadResultsFrom(QString dirName);

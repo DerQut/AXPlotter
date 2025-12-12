@@ -134,7 +134,8 @@ void GraphsView::updatePlots(QString directoryName) {
     for (int i = 0; i < this->contentView->inferredVariables.count(); i++) {
 
         this->contentView->inferredVariables[i].xData.append(maxTimestep);
-        this->contentView->inferredVariables[i].yData.append(this->contentView->inferredVariables.at(i).yData.last());
+        this->contentView->inferredVariables[i].yData.append(this->contentView->inferredVariables[i].yData.last());
+        this->contentView->inferredVariables[i].multipliedYData.append(this->contentView->inferredVariables[i].yData.last());
 
         QHBoxLayout* mainHStack = new QHBoxLayout();
 

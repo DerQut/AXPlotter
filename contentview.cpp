@@ -221,14 +221,14 @@ void ContentView::shiftRecentFiles() {
         recentFiles.prepend(scriptFile);
     }
 
+    emit this->recentFilesChanged();
+
     QFile recents ("recents.cfg");
     if (recents.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out (&recents);
         out << this->recentFiles.join("\n");
         recents.close();
     }
-
-    emit this->recentFilesChanged();
 }
 
 

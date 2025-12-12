@@ -112,13 +112,25 @@ void AXInterpreter::startCompilation(QString scriptFile) {
 
     // Create .CSV files for plotting
     this->mainText->setText("Running main.py");
-    QString stdErrors = this->launchPy();
-    if (stdErrors != "") {
-        this->mainText->setText("Error encountered when running the generated script:\n" + stdErrors);
+
+    // Launch the .py file and read stdout and stderr
+    QStringList processOutput = this->launchPy();
+    QString stdOut = processOutput[0];
+    QString stdErr = processOutput[1];
+
+    QString text = "";
+
+    if (stdErr.count()) {
+        text += "Errors encountered when running the generated script: \n" + stdErr + "\n";
     } else {
-        // Done!
-        this->mainText->setText("Done!");
+        text += "Done!\n";
     }
+
+    if (stdOut.count()) {
+        text += "\nGenerated output: \n" + stdOut;
+    }
+
+    this->mainText->setText(text);
 
     this->loadResults();
 }
@@ -198,7 +210,7 @@ QString AXInterpreter::generateAXRfile() {
                 xmlReader.readNext();
 
                 if (xmlReader.isStartElement()) {
-                    if (xmlReader.name().toString() == "DEVICE" | xmlReader.name().toString() == "NODE") {
+                    if (xmlReader.name().toString() == "DEVICE" || xmlReader.name().toString() == "NODE") {
                         deviceCode = xmlReader.attributes().value("NAME").toString();
 
                         if (deviceCodes.contains(deviceCode) || i == 0) {
@@ -252,7 +264,7 @@ QString AXInterpreter::generateAXRfile() {
 
                     }
 
-                } else if (xmlReader.isEndElement() && (xmlReader.name().toString() == "DEVICE" | xmlReader.name().toString() == "NODE")) {
+                } else if (xmlReader.isEndElement() && (xmlReader.name().toString() == "DEVICE" || xmlReader.name().toString() == "NODE")) {
                     isInsideDeviceBlock = false;
 
                     if (!deviceName.isEmpty() && !deviceName.contains("@")) {
@@ -335,7 +347,7 @@ int AXInterpreter::generateAXCfile() {
     // Also capture everything proceeding the '#' char
     QRegularExpression regexComment ("^([^#]*)#.*$");
 
-    QRegularExpression regexPythonCall ("^#\\$.*\\#;$");
+    QRegularExpression regexPythonCall ("^\\s*\\#\\$.*\\#;$");
 
     // Read the .AXR file
     while (!(in.atEnd())) {
@@ -346,8 +358,11 @@ int AXInterpreter::generateAXCfile() {
         if (matchComment.hasMatch() && !matchPythonCall.hasMatch()) {
             line = matchComment.captured(1);
         }
-        // Remove whitespaces from beginning and the end of the line, remove multiple whitespaces
-        line = line.simplified();
+        // Remove whitespaces from beginning and the end of the line, remove multiplied whitespaces
+        // Do not remove from python calls - it will break the indents!!!!!!!!
+        if (matchPythonCall.hasMatch()) {
+            line = line.simplified();
+        }
 
         // Skip empty lines
         if (line != QString()) {
@@ -428,7 +443,7 @@ QString AXInterpreter::generateAXMfile() {
 
         int closeBracePos = findMatchingBrace(result, openBracePos);
 
-        if (closeBracePos == -1) {
+        if (closeBracePos < 0) {
             axmFileHeader.close();
             return "Syntax error: Unmatched brace for block: " +macroName;
         }
@@ -463,7 +478,7 @@ QString AXInterpreter::generateAXMfile() {
         int layerOpenBrace = layerStartMatch.capturedEnd(0) - 1;
         int layerCloseBrace = findMatchingBrace(result, layerOpenBrace);
 
-        if (layerCloseBrace != -1) {
+        if (layerCloseBrace > 0) {
             int contentStart = layerOpenBrace + 1;
             int contentLength = layerCloseBrace - contentStart;
             QString layerContent = result.mid(contentStart, contentLength);
@@ -767,7 +782,10 @@ int AXInterpreter::generatePyFile() {
 }
 
 
-QString AXInterpreter::launchPy() {
+QStringList AXInterpreter::launchPy() {
+
+    QString previousDir = QDir::currentPath();
+
     QDir::setCurrent(this->baseFolder.absolutePath());
     QProcess pyProcess;
     pyProcess.setProgram("cmd.exe");
@@ -783,9 +801,12 @@ QString AXInterpreter::launchPy() {
 
     pyProcess.kill();
 
-    QDir::setCurrent("C:/");
+    QStringList returnVal;
+    returnVal << stdOutput << stdErrors;
 
-    return stdErrors;
+    QDir::setCurrent(previousDir);
+
+    return returnVal;
 }
 
 
@@ -811,9 +832,14 @@ void AXInterpreter::loadResults() {
 }
 
 int findMatchingBrace(const QString& str, int startPos) {
-    if (startPos < 0 || startPos >= str.length() || str[startPos] != '{') {
+    if (startPos < 0 || startPos >= str.length()) {
         // Invalid starting position
         return -1;
+    }
+
+    if (str[startPos] != '{') {
+        // Did not start at an opening brace
+        return -2;
     }
 
     int depth = 1;
@@ -830,5 +856,5 @@ int findMatchingBrace(const QString& str, int startPos) {
         }
     }
     // Matching brace not found
-    return -1;
+    return -3;
 }
