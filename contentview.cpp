@@ -224,10 +224,12 @@ void ContentView::shiftRecentFiles() {
     emit this->recentFilesChanged();
 
     QFile recents ("recents.cfg");
+    qDebug() << "save attempt";
     if (recents.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out (&recents);
         out << this->recentFiles.join("\n");
         recents.close();
+        qDebug() << "save done";
     }
 }
 
@@ -243,6 +245,9 @@ void ContentView::readScriptFile(QString newScriptFile) {
 
     if (!QFileInfo::exists(newScriptFile)) {
         messageBox.setText("File name \"" + fileName + "\" does not exist.");
+        this->recentFiles.removeAll(fileInfo.absoluteFilePath());
+        this->recentFiles[recentFiles.count()-1] = "";
+        emit this->recentFilesChanged();
         messageBox.exec();
         return;
     }

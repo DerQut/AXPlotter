@@ -9,6 +9,7 @@
 #include <QScrollArea>
 #include <QButtonGroup>
 #include <QDebug>
+#include <QFile>
 
 #include "recentfilesview.h"
 #include "contentview.h"
@@ -113,6 +114,15 @@ void RecentFilesView::updateButtons() {
         }
 
         this->updateButtonSize();
+    }
+
+    QFile recents ("recents.cfg");
+    qDebug() << "save attempt";
+    if (recents.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out (&recents);
+        out << this->contentView->recentFiles.join("\n");
+        recents.close();
+        qDebug() << "save done";
     }
 }
 
