@@ -116,11 +116,21 @@ void GraphsView::updatePlots(QString directoryName) {
                 QStringList splitLine = line.split(',');
 
                 if (splitLine.size() > 1) {
-                    xData.append(splitLine[0].toDouble());
-                    yData.append(splitLine[1].toDouble());
+                    double xVar = splitLine[0].toDouble();
+                    double yVar = splitLine[1].toDouble();
 
-                    if (maxTimestep < splitLine[0].toDouble()) {
-                        maxTimestep = splitLine[0].toDouble();
+                    if (xData.count() && yData.count()) {
+                        while (xData.last() > xVar) {
+                            xData.removeLast();
+                            yData.removeLast();
+                        }
+                    }
+
+                    xData.append(xVar);
+                    yData.append(yVar);
+
+                    if (maxTimestep < xVar) {
+                        maxTimestep = xVar;
                     }
                 }
             }
