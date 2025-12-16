@@ -12,7 +12,7 @@ QString convertAXMtoPy(QString axmLine) {
     QString result = QString();
 
     // Uncomment allowed python code
-    QRegularExpression regexPythonCall ("^#\\$(.*)\\#;$");
+    QRegularExpression regexPythonCall ("#\\$(.*)#;");
     QRegularExpressionMatch matchPythonCall = regexPythonCall.match(axmLine);
     if (matchPythonCall.hasMatch()) {
         result += "\n" + matchPythonCall.captured(1);
@@ -23,7 +23,11 @@ QString convertAXMtoPy(QString axmLine) {
     QRegularExpression regexVariable ("\\s*variable\\s+(.+)\\s*=\\s*(.+)\\s*;");
     QRegularExpressionMatch matchVariable = regexVariable.match(axmLine);
     if (matchVariable.hasMatch()) {
-        result += "\n" + matchVariable.captured(1).trimmed() + " = AXVariable(\"" +matchVariable.captured(1).trimmed()+ "\")";
+        result += "\n" + matchVariable.captured(1).trimmed()
+                + " = AXVariable(\""
+                + matchVariable.captured(1).trimmed()
+                + "\")";
+
         result += "\n" + matchVariable.captured(1).trimmed() + ".setCurrentValue(" + matchVariable.captured(2) + ")\n";
         return result;
     }
@@ -39,7 +43,7 @@ QString convertAXMtoPy(QString axmLine) {
     QRegularExpression regexToAssignmentDefault ("^(.+)\\s+[tT][oO]\\s+(.*)$");
     QRegularExpression regexToAssignmentIn ("^(.+)\\s+[tT][oO]\\s+(.*)\\s+[iI][nN](.*)$");
 
-    QRegularExpression regexLoop ("^[lL][oO][oO][pP]\\s+(.*)\\s*{$");
+    QRegularExpression regexLoop ("^loop\\s+(.*)\\s*{$");
     QRegularExpressionMatch matchLoop = regexLoop.match(axmLine.trimmed());
 
     QRegularExpression regexWithAssignment ("(.*)\\s+[wW][iI][tT][hH]\\s+(.*)");
@@ -119,12 +123,16 @@ QString convertAXMtoPy(QString axmLine) {
     QStringList timesteps;
     timesteps << timestepLength;
 
+    // Bool for detecting a "bad" conditional step (no given timestep, no given until)
+    bool isBadConditional = true;
+
     for (int i = 0; i < arguments.size(); i++) {
         QString argument = arguments[i].trimmed();
 
         // Check if the argument matches the "until" check
         QRegularExpressionMatch matchUntil = regexUntil.match(argument);
         if (matchUntil.hasMatch()) {
+            isBadConditional = false;
             QString condition = matchUntil.captured(1).trimmed();
 
             conditions += "\nif not (" +condition+ "):";
@@ -137,10 +145,7 @@ QString convertAXMtoPy(QString axmLine) {
         if (matchFollow.hasMatch()) {
 
             result += "\n" +matchFollow.captured(1)+ ".setCurrentValue(" +matchFollow.captured(1)+ ".currentValue)";
-
-            preResult += "\n    if x <= AX_STEP_LENGTH:";
-            preResult += "\n        " +matchFollow.captured(1)+ ".followLambda = lambda: " + matchFollow.captured(2);
-            preResult += "\n        " +matchFollow.captured(1)+ + ".calculateFollower()";
+            result += "\n" +matchFollow.captured(1)+ ".followLambda = lambda: " + matchFollow.captured(2);
             continue;
         }
 
@@ -190,17 +195,15 @@ QString convertAXMtoPy(QString axmLine) {
             // Replace "default" keyword in variableEndTime with a proper variable (should not ever match)
             variableEndTime.replace(QRegularExpression("\\bdefault\\b"), " " +variableName+ ".physDef ");
 
-            result += "\n" +variableName+ ".endValue = " +variableEndGoal;
             result += "\n" +variableName+ ".setCurrentValue(" +variableName+ ".currentValue)";
-
-            preResult += "\n    if " +variableEndTime+ " == 0:";
-            preResult += "\n        sys.stderr.write(\"Error: no timestep given for linear ramp. Affected variable: " +variableName+ ". Exiting.\")";
-            preResult += "\n        sys.exit()";
 
             result += "\n" +variableName+ "_AXCOPY = " +variableName+ ".currentValue";
 
             preResult += "\n    if x <= " +variableEndTime+ ":";
-            preResult += "\n        " +variableName+ ".setCurrentValue(" +variableName+ "_AXCOPY + x * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / " +variableEndTime + ")";
+            preResult += "\n        if " +variableEndTime+ " != 0:";
+            preResult += "\n            " +variableName+ ".setCurrentValue(" +variableName+ "_AXCOPY + x * (" +variableEndGoal+ " - " +variableName+ "_AXCOPY) / " +variableEndTime + ")";
+            preResult += "\n        else:";
+            preResult += "\n            " +variableName+ ".setCurrentValue(" +variableEndGoal+ ")";
             continue;
         }
 
@@ -249,6 +252,14 @@ QString convertAXMtoPy(QString axmLine) {
     result += "\nAX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + AXTIMESTEPS[0] - max(AXTIMESTEPS) - 1\n";
 
     result += conditions;
+
+    if (isBadConditional && !matchTimeStepDefault.hasMatch()) {
+        result += "\nsys.stderr.write('Warning: no timestep and no \"until\" condition given for recipe step \"" +axmLine+ "\". Continuing.\\n')";
+    }
+
+    if (matchTimeStepDefault.hasMatch() && !isBadConditional) {
+        result += "\nsys.stderr.write('Warning: Both a timestep and an \"until\" condition given for recipe step \"" +axmLine+ "\". Continuing.\\n')";
+    }
 
     //result += "\n\nAX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + AX_STEP_LENGTH";
     return result;

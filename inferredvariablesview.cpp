@@ -106,7 +106,7 @@ void InferredVariablesView::refreshVariables() {
         });
 
         QObject::connect(divideToggle, &QPushButton::pressed, this, [=](){
-            contentView->inferredVariables[i].isDividing = ! contentView->inferredVariables[i].isDividing;
+            contentView->inferredVariables[i].isDividing = !contentView->inferredVariables[i].isDividing;
             contentView->inferredVariables[i].applyMultiplier();
             contentView->detailView->stackedGraphsView->replot();
 
