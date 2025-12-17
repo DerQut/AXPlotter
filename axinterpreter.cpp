@@ -186,6 +186,15 @@ QString AXInterpreter::generateAXRfile() {
 
         QRegularExpression regexOtherDevice ("^(\\D[\\d]+)$");
         QStringList badCategories = {"Materials", "ALARM", "CALCULATIONS"};
+
+        QRegularExpression regexStartElement ("^\\s*\\<(?:(?:DEVICE)|(?:NODE))\\s+NAME=\\s*\"(.*)\"\\>\\s*$");
+        QRegularExpression regexEndElement ("^\\s*\\<\\/(?:(?:DEVICE)|(?:NODE))\\>\\s*$");
+        QRegularExpression regexProperty ("^\\s*\\<PROPERTY\\s+NAME\\s*=\\s*\"([^\\<\\>]*)\"\\>([^\\<\\>]*)\\<\\/PROPERTY\\>\\s*$");
+
+        QRegularExpressionMatch matchStartElement;
+        QRegularExpressionMatch matchEndElement;
+        QRegularExpressionMatch matchProperty;
+
         QStringList alreadyWrittenNames;
 
         for (int i = 0; i < 2; i++) {
@@ -196,7 +205,8 @@ QString AXInterpreter::generateAXRfile() {
                 return "$AXR_ERROR_START Failed to read " +this->contentView->xmlFile+ " $AXR_ERROR_END";
             }
 
-            QXmlStreamReader xmlReader(&xmlFile);
+            QTextStream in (&xmlFile);
+            QString line;
 
             bool isInsideDeviceBlock = false;
 
@@ -206,68 +216,74 @@ QString AXInterpreter::generateAXRfile() {
             QString deviceMin = "0";
             QString deviceMax = "1";
 
-            while (!xmlReader.atEnd()) {
-                xmlReader.readNext();
+            while (!in.atEnd()) {
+                line = in.readLine();
 
-                if (xmlReader.isStartElement()) {
-                    if (xmlReader.name().toString() == "DEVICE" || xmlReader.name().toString() == "NODE") {
-                        deviceCode = xmlReader.attributes().value("NAME").toString();
+                matchStartElement = regexStartElement.match(line);
+                matchEndElement = regexEndElement.match(line);
+                matchProperty = regexProperty.match(line);
 
-                        if (deviceCodes.contains(deviceCode) || i == 0) {
-                            isInsideDeviceBlock = true;
-                            deviceName = "";
-                            deviceDef = "0";
-                            deviceMin = "";
-                            deviceMax = "";
-                        }
 
-                    } else if (isInsideDeviceBlock && xmlReader.name().toString() == "PROPERTY") {
-                        QString propName = xmlReader.attributes().value("NAME").toString().toLower();
+                if (matchStartElement.hasMatch()) {
+                    deviceCode = matchStartElement.captured(1);
 
-                        QString elementText = xmlReader.readElementText();
+                    if (deviceCodes.contains(deviceCode) || i == 0) {
+                        isInsideDeviceBlock = true;
+                        deviceName = "";
+                        deviceDef = "0";
+                        deviceMin = "";
+                        deviceMax = "";
+                    }
 
-                        if (!elementText.count()) {
-                            continue;
-                        }
+                } else if (isInsideDeviceBlock && matchProperty.hasMatch()) {
+                    QString propName = matchProperty.captured(1).toLower();
 
-                        QRegularExpressionMatch matchOtherDevice = regexOtherDevice.match(elementText);
+                    QString elementText = matchProperty.captured(2);
 
-                        if (propName == "category" && (badCategories.contains(elementText))) {
-                            // skip this device
-                            isInsideDeviceBlock = false;
-                            continue;
+                    if (!elementText.count()) {
+                        continue;
+                    }
 
-                        } else if (propName == "username") {
-                            deviceName = elementText;
+                    QRegularExpressionMatch matchOtherDevice = regexOtherDevice.match(elementText);
 
-                        } else if (propName == "default" || propName == "physdef") {
-                            deviceDef = elementText;
+                    if (propName == "category" && (badCategories.contains(elementText))) {
+                        // skip this device
+                        isInsideDeviceBlock = false;
+                        continue;
 
-                        } else if (propName == "physmin") {
-                            deviceMin = elementText;
+                    } else if (propName == "username") {
+                        deviceName = elementText;
 
-                        } else if (propName == "physmax") {
-                            deviceMax = elementText;
+                    } else if (propName == "default" || propName == "physdef") {
+                        deviceDef = elementText;
 
-                        } else if (matchOtherDevice.hasMatch()) {
-                            deviceCodes.append(matchOtherDevice.captured(1));
+                    } else if (propName == "physmin") {
+                        deviceMin = elementText;
 
-                            QString newName = deviceName+ "_" +propName.toLower();
-                            deviceNewNames.append(newName);
+                    } else if (propName == "physmax") {
+                        deviceMax = elementText;
 
-                        }
+                    } else if (matchOtherDevice.hasMatch()) {
+                        deviceCodes.append(matchOtherDevice.captured(1));
 
-                        if (i && deviceCodes.contains(deviceCode)) {
-                            int j = deviceCodes.indexOf(deviceCode);
-                            deviceName = deviceNewNames.at(j);
-                        }
+                        QString newName = deviceName+ "_" +propName.toLower();
+                        deviceNewNames.append(newName);
 
                     }
 
-                } else if (xmlReader.isEndElement() && (xmlReader.name().toString() == "DEVICE" || xmlReader.name().toString() == "NODE")) {
+                    if (i && deviceCodes.contains(deviceCode)) {
+                        int j = deviceCodes.indexOf(deviceCode);
+                        deviceName = deviceNewNames.at(j);
+                    }
+
+
+                } else if (matchEndElement.hasMatch()) {
                     isInsideDeviceBlock = false;
 
                     if (!deviceName.isEmpty() && !deviceName.contains("@")) {
+                        if (deviceCode == "F63") {
+                            qDebug() << deviceName;
+                        }
 
                         deviceName.replace(QRegularExpression("\\."), "_");
 
