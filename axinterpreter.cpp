@@ -266,12 +266,7 @@ QString AXInterpreter::generateAXRfile() {
 
                     } else if (matchOtherDevice.hasMatch()) {
                         deviceCodes.append(matchOtherDevice.captured(1));
-
                         deviceNewNamesQueue << propName.toLower();
-
-                        //QString newName = deviceName+ "_" +propName.toLower();
-                        //deviceNewNames.append(newName);
-
                     }
 
                     if (i && deviceCodes.contains(deviceCode)) {
