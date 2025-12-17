@@ -33,11 +33,8 @@ QString convertAXMtoPy(QString axmLine) {
     }
 
     // Regex to find defult timesteps: 1 "message" a=8, b=10;
-    QRegularExpression regexTimeStepDefault ("^\\s*(\\d+(?:[\\:]\\d+)*)\\s+(.*);");
+    QRegularExpression regexTimeStepDefault ("^\\s*((?:\\[.*\\])|(?:\\d+(?:[\\:]\\d+)*))\\s+(.*);");
     QRegularExpressionMatch matchTimeStepDefault = regexTimeStepDefault.match(axmLine);
-
-    QRegularExpression regexTimeStepBracketed ("^\\s*\\[(.*)\\]\\s+(.*);");
-    QRegularExpressionMatch matchTimeStepBracketed = regexTimeStepBracketed.match(axmLine);
 
     QRegularExpression regexDirectAssignment ("(.+)\\s*=\\s*(.+)");
     QRegularExpression regexToAssignmentDefault ("^(.+)\\s+[tT][oO]\\s+(.*)$");
@@ -77,28 +74,32 @@ QString convertAXMtoPy(QString axmLine) {
     if (matchTimeStepDefault.hasMatch()) {
         timestepLength = matchTimeStepDefault.captured(1);
 
-        QStringList timestepList = timestepLength.split(":");
+        if (timestepLength.contains('[')) {
+            timestepLength.remove('[');
+            timestepLength.remove(']');
+        } else {
 
-        // Determine time step length
-        int calculatedTimestep = 0;
-        int calculatedPart = 0;
-        bool convertionSuccesful;
+            QStringList timestepList = timestepLength.split(":");
 
-        for (int i=0; i<timestepList.count(); i++) {
-            // iterate backwards (first seconds, then minutes, then hours, then a unit that does not exist but let's pretend it does)
-            calculatedPart = timestepList.at(timestepList.count()-i-1).toInt(&convertionSuccesful);
-            if (convertionSuccesful) {
-                for (int j=0; j<i; j++) {
-                    // Convert minutes and hours into seconds
-                    calculatedPart = calculatedPart * 60;
+            // Determine time step length
+            int calculatedTimestep = 0;
+            int calculatedPart = 0;
+            bool convertionSuccesful;
+
+            for (int i=0; i<timestepList.count(); i++) {
+                // iterate backwards (first seconds, then minutes, then hours, then a unit that does not exist but let's pretend it does)
+                calculatedPart = timestepList.at(timestepList.count()-i-1).toInt(&convertionSuccesful);
+                if (convertionSuccesful) {
+                    for (int j=0; j<i; j++) {
+                        // Convert minutes and hours into seconds
+                        calculatedPart = calculatedPart * 60;
+                    }
+                    calculatedTimestep += calculatedPart;
                 }
-                calculatedTimestep += calculatedPart;
             }
+            timestepLength = QString::number(calculatedTimestep);
         }
-        timestepLength = QString::number(calculatedTimestep);
 
-    } else if (matchTimeStepBracketed.hasMatch()) {
-        timestepLength = matchTimeStepBracketed.captured(1);
     }
 
     // if neither regex match, then no timestep is given (conditional step, "until"), so the timestep remains at 0
@@ -109,8 +110,6 @@ QString convertAXMtoPy(QString axmLine) {
 
     if (matchTimeStepDefault.hasMatch()) {
         arguments = matchTimeStepDefault.captured(2).split(",");
-    } else if (matchTimeStepBracketed.hasMatch()) {
-        arguments = matchTimeStepBracketed.captured(2).split(",");
     } else {
         axmLine.remove(QRegularExpression(";"));
         arguments = axmLine.split(",");
@@ -136,7 +135,7 @@ QString convertAXMtoPy(QString axmLine) {
             QString condition = matchUntil.captured(1).trimmed();
 
             conditions += "\nif not (" +condition+ "):";
-            conditions += "\n    sys.stderr.write('Warning: condition \"" + condition+ "\" may never be met. Continuing.')";
+            conditions += "\n    sys.stderr.write('\\nWarning: condition \"" + condition+ "\" may never be met. Continuing.')";
             continue;
         }
 
@@ -254,13 +253,14 @@ QString convertAXMtoPy(QString axmLine) {
     result += conditions;
 
     if (isBadConditional && !matchTimeStepDefault.hasMatch()) {
-        result += "\nsys.stderr.write('Warning: no timestep and no \"until\" condition given for recipe step \"" +axmLine+ "\". Continuing.\\n')";
+        result += "\nsys.stderr.write('\\nWarning: no timestep and no \"until\" condition given for recipe step \"" +axmLine+ "\" (Step id: '+ str(AX_STEPCOUNT) +'). Continuing.')";
     }
 
     if (matchTimeStepDefault.hasMatch() && !isBadConditional) {
-        result += "\nsys.stderr.write('Warning: Both a timestep and an \"until\" condition given for recipe step \"" +axmLine+ "\". Continuing.\\n')";
+        result += "\nsys.stderr.write('\\nWarning: Both a timestep and an \"until\" condition given for recipe step \"" +axmLine+ "\" (Step id: '+ str(AX_STEPCOUNT) +'). Continuing.')";
     }
 
-    //result += "\n\nAX_GLOBAL_TIMESTEP = AX_GLOBAL_TIMESTEP + AX_STEP_LENGTH";
+    result += "\nAX_STEPCOUNT = AX_STEPCOUNT + 1\n";
+
     return result;
 }

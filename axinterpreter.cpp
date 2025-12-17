@@ -610,6 +610,7 @@ int AXInterpreter::generatePyFile() {
     result += "from math import sin, cos, tan, exp, log, log10, sqrt\n\n";
 
     result += "AX_GLOBAL_TIMESTEP = 0\n\n";
+    result += "AX_STEPCOUNT = 0\n";
 
     result += "class AXVariable:\n";
     result += "    all=[]\n";
