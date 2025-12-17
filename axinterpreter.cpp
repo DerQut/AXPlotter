@@ -183,6 +183,7 @@ QString AXInterpreter::generateAXRfile() {
     if (this->contentView->doesUseXMLFile) {
         QStringList deviceCodes;
         QStringList deviceNewNames;
+        QStringList deviceNewNamesQueue;
 
         QRegularExpression regexOtherDevice ("^(\\D[\\d]+)$");
         QStringList badCategories = {"Materials", "ALARM", "CALCULATIONS"};
@@ -266,8 +267,10 @@ QString AXInterpreter::generateAXRfile() {
                     } else if (matchOtherDevice.hasMatch()) {
                         deviceCodes.append(matchOtherDevice.captured(1));
 
-                        QString newName = deviceName+ "_" +propName.toLower();
-                        deviceNewNames.append(newName);
+                        deviceNewNamesQueue << propName.toLower();
+
+                        //QString newName = deviceName+ "_" +propName.toLower();
+                        //deviceNewNames.append(newName);
 
                     }
 
@@ -281,11 +284,13 @@ QString AXInterpreter::generateAXRfile() {
                     isInsideDeviceBlock = false;
 
                     if (!deviceName.isEmpty() && !deviceName.contains("@")) {
-                        if (deviceCode == "F63") {
-                            qDebug() << deviceName;
-                        }
 
                         deviceName.replace(QRegularExpression("\\."), "_");
+
+                        while (!deviceNewNamesQueue.empty()) {
+                            deviceNewNames << deviceName+ "_" +deviceNewNamesQueue[0];
+                            deviceNewNamesQueue.removeFirst();
+                        }
 
                         if (!alreadyWrittenNames.contains(deviceName)) {
                             returnVal += "\nvariable " + deviceName + " = " + deviceDef + ";\n";
@@ -296,9 +301,9 @@ QString AXInterpreter::generateAXRfile() {
 
                             if (!deviceMax.isEmpty())
                                 returnVal += "#$" + deviceName + ".setPhysMax(" + deviceMax + ")#;\n";
-                        }
 
-                        alreadyWrittenNames << deviceName;
+                            alreadyWrittenNames << deviceName;
+                        }
                     }
                 }
 
