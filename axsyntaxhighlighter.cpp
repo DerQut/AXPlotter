@@ -35,7 +35,11 @@ AXSyntaxHighlighter::AXSyntaxHighlighter(QTextDocument *parent) :
         // Python keywords
         QStringLiteral("\\btry\\b"),
         QStringLiteral("\\bexcept\\b"),
-        QStringLiteral("\\bwhile\\b")
+        QStringLiteral("\\bif\\b"),
+        QStringLiteral("\\belse\\b"),
+        QStringLiteral("\\belif\\b"),
+        QStringLiteral("\\bwhile\\b"),
+        QStringLiteral("\\bclass\\b")
     };
 
     for (const QString &pattern : keywordPatterns) {

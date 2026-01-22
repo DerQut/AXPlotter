@@ -739,6 +739,23 @@ int AXInterpreter::generatePyFile() {
     result += "            self.setCurrentValue(self.followLambda(), True)\n";
     result += "            self.endValue = self.currentValue\n\n";
 
+    result += "    def reformatFile(self):\n";
+    result += "        global AX_GLOBAL_TIMESTEP\n";
+    result += "        file = open(self.name+\".csv\", \"r\")\n";
+    result += "        lines = reversed(file.readlines())\n";
+    result += "        file.close()\n";
+    result += "        maxTimeStep = AX_GLOBAL_TIMESTEP*2048\n\n";
+    result += "        formated = []\n";
+    result += "        for line in lines:\n";
+    result += "            parts = line.split(',')\n";
+    result += "            if int(parts[0]) <= maxTimeStep:\n";
+    result += "                maxTimeStep = int(parts[0])\n";
+    result += "                formated = [line] + formated\n";
+    result += "        file = open(self.name+\".csv\", \"w+\")\n";
+    result += "        for line in formated:\n";
+    result += "            file.write(line)\n";
+    result += "        file.close()\n\n";
+
     result += "ON = 1\n";
     result += "OFF = 0\n";
     result += "OPEN = 1\n";
@@ -787,6 +804,9 @@ int AXInterpreter::generatePyFile() {
     result += "\nfile = open(\"timestep.txt\", \"w+\")";
     result += "\nfile.write(str(AX_GLOBAL_TIMESTEP))";
     result += "\nfile.close()";
+
+    result += "\nfor axvar in AXVariable.all:";
+    result += "\n    axvar.reformatFile()";
 
     // Write to .py file
     out << result;
