@@ -626,6 +626,9 @@ int AXInterpreter::generatePyFile() {
     result += "        self.currentValue = 0\n";
     result += "        self.endValue = 0\n\n";
 
+    result += "        self.isReadOnly = False\n";
+    result += "        self.printedReadOnlyErrs = []\n\n";
+
     result += "        self.followLambda = None\n";
     result += "        AXVariable.all.append(self)\n\n";
 
@@ -714,8 +717,16 @@ int AXInterpreter::generatePyFile() {
     result += "        self.physMax = physMax\n";
     result += "        self.usesMax = True\n\n";
 
+    result += "    def setAsReadOnly(self):\n";
+    result += "        self.isReadOnly = True\n\n";
+
     result += "    def setCurrentValue(self, value, forcedByFollower=False):\n";
-    result += "        global AX_GLOBAL_TIMESTEP\n\n";
+    result += "        global AX_GLOBAL_TIMESTEP\n";
+    result += "        global AX_STEPCOUNT\n\n";
+
+    result += "        if self.isReadOnly and not AX_STEPCOUNT in self.printedReadOnlyErrs:\n";
+    result += "            sys.stderr.write(\"\\nWarning: Read-only variable \" + self.name + \" was modified! (Step id: \"+ str(AX_STEPCOUNT) +\")\")\n";
+    result += "            self.printedReadOnlyErrs.append(AX_STEPCOUNT)\n\n";
 
     result += "        self.currentValue = float(value)\n\n";
 
