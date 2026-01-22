@@ -11,6 +11,7 @@
 
 class ContentView;
 class XMLConfigWindow;
+class HelpWindow;
 
 
 class AXMenuBar : public QMenuBar
@@ -20,6 +21,7 @@ public:
     explicit AXMenuBar(ContentView* parent = 0);
     ContentView* contentView;
     XMLConfigWindow* xmlConfigWindow;
+    HelpWindow* helpWindow;
 
 private:
 

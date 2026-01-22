@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     toggleviewhost.cpp \
     axdataseries.cpp \
     clearlayout.cpp \
-    xmlconfigwindow.cpp
+    xmlconfigwindow.cpp \
+    helpwindow.cpp
 
 HEADERS  += mainwindow.h \
     themefile.h \
@@ -57,7 +58,8 @@ HEADERS  += mainwindow.h \
     toggleviewhost.h \
     axdataseries.h \
     clearlayout.h \
-    xmlconfigwindow.h
+    xmlconfigwindow.h \
+    helpwindow.h
 
 OTHER_FILES += \
     ../Documents/Kalibracja.txt \

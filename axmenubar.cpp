@@ -14,12 +14,14 @@
 #include "themefile.h"
 #include "axinterpreter.h"
 #include "xmlconfigwindow.h"
+#include "helpwindow.h"
 
 AXMenuBar::AXMenuBar(ContentView* parent) :
     QMenuBar(parent)
 {
     contentView = parent;
     xmlConfigWindow = new XMLConfigWindow(contentView);
+    helpWindow = new HelpWindow(contentView);
 
     // Creating QMenu instances
     QMenu* fileMenu = new AXMBFileMenu("&File", this);
@@ -31,8 +33,8 @@ AXMenuBar::AXMenuBar(ContentView* parent) :
     AXMBViewMenu* viewMenu = new AXMBViewMenu("&View", this);
     this->addMenu(viewMenu);
 
-    QMenu* helpMenu = new QMenu("&Help", this);
-    this->addMenu(helpMenu);
+    QAction* helpAction = this->addAction("&Help");
+    connect(helpAction, SIGNAL(triggered()), this->helpWindow, SLOT(show()));
 }
 
 
