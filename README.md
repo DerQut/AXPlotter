@@ -1,6 +1,6 @@
 # AXPlotter
 
-This program can be used as simulation software for AIXACT Software MOVPE recipe scrips for AIXTRON CCS laboratory equipment. It features a text editor and graph views for visualising simulated time series.
+This program can be used as simulation software for AIXACT Software MOVPE recipe scrips for AIXTRON CCS laboratory equipment. It features a text editor and graph views for visualising simulated time series. It was developed for Microsoft Windows XP 32-bit.
 
 ## Dependencies
 
