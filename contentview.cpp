@@ -145,7 +145,7 @@ void ContentView::saveScriptFile() {
     if (scriptFile == "") { saveScriptFileAs(); }
 
     // Missing file extention fallback
-    if (scriptFile.count(".") != 1) {
+    if (!scriptFile.count(".")) {
         scriptFile.append(".txt");
     }
 
@@ -166,7 +166,7 @@ void ContentView::saveScriptFile() {
         return;
     }
 
-    // Saving Theme to file
+    // Saving to file
     file << (this->detailView->editorView->textEdit->document()->toPlainText().toStdString().c_str());
     file.close();
 

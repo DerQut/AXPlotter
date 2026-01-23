@@ -144,6 +144,9 @@ void RecentFilesView::updateButtonSize() {
 
 
 void RecentFilesView::forceReadRecentFile(int fileID) {
+    if (contentView->scriptFile.count()) {
+        contentView->saveScriptFile();
+    }
     contentView->readScriptFile( contentView->recentFiles[fileID] );
 
     // Shift the clicked file to the first position of this->contentView->recentFiles
