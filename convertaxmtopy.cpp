@@ -19,6 +19,13 @@ QString convertAXMtoPy(QString axmLine) {
         return result;
     }
 
+    // Remove groups
+    QRegularExpression regexGroup ("^\\s*[^\\s\\;\\=]+\\s*\\=\\s*[^\\s\\;\\=]+\\s+[^\\s\\;\\=]+");
+    QRegularExpressionMatch matchGroup = regexGroup.match(axmLine);
+    if (matchGroup.hasMatch()) {
+        return result;
+    }
+
     // Regex to find "variable" calls
     QRegularExpression regexVariable ("\\s*variable\\s+(.+)\\s*=\\s*(.+)\\s*;");
     QRegularExpressionMatch matchVariable = regexVariable.match(axmLine);
@@ -33,7 +40,7 @@ QString convertAXMtoPy(QString axmLine) {
     }
 
     // Regex to find defult timesteps: 1 "message" a=8, b=10;
-    QRegularExpression regexTimeStepDefault ("^\\s*((?:\\[.*\\])|(?:\\d+(?:[\\:]\\d+)*))\\s+(.*);");
+    QRegularExpression regexTimeStepDefault ("^\\s*((?:\\[.*\\])|(?:\\d+(?:[\\:]\\d+)*))(?:\\s+(.*))?;");
     QRegularExpressionMatch matchTimeStepDefault = regexTimeStepDefault.match(axmLine);
 
     QRegularExpression regexDirectAssignment ("(.+)\\s*=\\s*(.+)");

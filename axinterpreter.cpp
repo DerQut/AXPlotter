@@ -759,8 +759,8 @@ int AXInterpreter::generatePyFile() {
     result += "        formated = []\n";
     result += "        for line in lines:\n";
     result += "            parts = line.split(',')\n";
-    result += "            if int(parts[0]) <= maxTimeStep:\n";
-    result += "                maxTimeStep = int(parts[0])\n";
+    result += "            if float(parts[0]) <= maxTimeStep:\n";
+    result += "                maxTimeStep = float(parts[0])\n";
     result += "                formated = [line] + formated\n";
     result += "        file = open(self.name+\".csv\", \"w+\")\n";
     result += "        for line in formated:\n";
