@@ -19,15 +19,10 @@ HelpWindow::HelpWindow(ContentView* parent) :
     scrollArea->setWidgetResizable(true);
 
     QLabel* label = new QLabel(
-        "<h1>AXPlotter v0.9.9</h1>"
+        "<h1>AXPlotter v1.0.0</h1>"
         "<hr>"
         "<p>AXPlotter is a Windows XP program designed to simulate time series of variable and device values based on AIXACT Software recipe scripts.</p>"
         "<p>The program was developed by Marcel Chołodecki, a BSc at the Wrocław University of Science and Technology for the Faculty of Electronics, Photonics and Microsystems as a part of the author's engineering thesis.</p>"
-        "<h2>Current issues</h2>"
-        "<ul>"
-        "<li>\"begin stat\" and \"end stat\" not fully \"implemented\" (in this case implementation means ignoring. Commenting out \"begin stat\" and \"end stat\" calls is highly recommended)</li>"
-        "<li>Device groups do not work (and possibly never will. Commenting them out is highly recommended)</li>"
-        "</ul>"
 
         "<h2>Script syntax</h2>"
         "<p>The  text below is a simplified summary of basic functionality supported by AIXACT Software. For a detailed overview, it is recommened to use the official documentation supplied by the manufacturer.</p>"
