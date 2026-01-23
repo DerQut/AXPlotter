@@ -118,6 +118,10 @@ void GraphsView::updatePlots(QString directoryName) {
                 if (splitLine.size() > 1) {
                     xData.append(splitLine[0].toDouble());
                     yData.append(splitLine[1].toDouble());
+
+                    if (splitLine[0].toDouble() > maxTimestep) {
+                        maxTimestep = splitLine[0].toDouble();
+                    }
                 }
             }
 

@@ -117,6 +117,18 @@ HelpWindow::HelpWindow(ContentView* parent) :
         "<p>In the example above, a message is written to standard output (print) and standard error (sys.stderr.write()) if, at the end of the process step, the given variable exceeds the given threshold. Both stdout and stderr are supported and displayed at the end of the run.</p>"
         "<p>When writing python code that requires indents, like \"if\", \"while\" etc., it is required to include the indentations in the comment block (four spaces after the <span style=\"color:red\">#$</span> string).</p>"
         "<p>Additionally, python code requires dot characters to be replaced with underscore character in variable/device names, since the program reformats AIXACT Software calls to not include dot characters in non-digits."
+
+        "<hr>"
+        "<h2>Text Editor</h2>"
+        "<p></p>"
+
+        "<hr>"
+        "<h2>Graph views</h2>"
+        "<p>After a finished simulation, the program will display all generated .CSV files in the \"Graphs view\" and \"Stacked graph\" views. The former one displays all time series as separate plots, the latter merges them onto a single graph. The left panel allows modifications to be made on the stacked graph by showing/hiding series (the ✓/× buttons) and applying multipliers to them. Multipliers allow displaying of series with drastically different y-value ranges. Applying a multiplier does not modify the original data.</p>"
+
+        "<p>Both graph views have an option to modify the x range of displayed data using the sliders located at the bottom of the screen. The slider values are independent of each other between views.</p>"
+
+        "<p>It is possible to load .CSV files directly into AXPlotter without starting a simulation, by selecting a directory containing .CSV files in File→Open .CSV directory (or via Ctrl+Shift+O).</p>"
     );
     label->setWordWrap(true);
 
