@@ -120,7 +120,9 @@ HelpWindow::HelpWindow(ContentView* parent) :
 
         "<hr>"
         "<h2>Text Editor</h2>"
-        "<p></p>"
+        "<p>The text editor allows to view and edit recipe files. Files can be opened in File→Open recipe file (Ctrl+O). If the opened file cannot be read (the editor displays only \"??\"), it is recommended to open the recipe file in Notepad, copy its contents, paste into AXPlotter and click File→Save recipe file (Ctrl+S). This issue stems from formatting a mismatch. Files saved in AXPlotter can still be read normally in Notepad and other programs. </p>"
+
+        "<p>The editor uses syntax highlighting for ease of use.</p>"
 
         "<hr>"
         "<h2>Graph views</h2>"

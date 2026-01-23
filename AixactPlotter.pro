@@ -6,11 +6,11 @@
 
 QT      += core gui
 CONFIG  += c++11
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -O3
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = AixactPlotter
+TARGET = AXPlotter
 TEMPLATE = app
 
 
