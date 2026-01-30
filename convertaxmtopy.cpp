@@ -40,7 +40,7 @@ QString convertAXMtoPy(QString axmLine) {
     }
 
     // Regex to find defult timesteps: 1 "message" a=8, b=10;
-    QRegularExpression regexTimeStepDefault ("^\\s*((?:\\[.*\\])|(?:\\d+(?:[\\:]\\d+)*))(?:\\s+(.*))?;");
+    QRegularExpression regexTimeStepDefault ("^\\s*((?:\\[.*\\])|(?:\\d+(?:[\\:]\\d+)*))(?:\\s*(.*))?;");
     QRegularExpressionMatch matchTimeStepDefault = regexTimeStepDefault.match(axmLine);
 
     QRegularExpression regexDirectAssignment ("(.+)\\s*=\\s*(.+)");
@@ -163,6 +163,8 @@ QString convertAXMtoPy(QString axmLine) {
 
             // Replace "default" keyword with a proper variable
             variableEndGoal.replace(QRegularExpression("\\bdefault\\b"), " " +variableName+ ".physDef ");
+            variableEndGoal.replace(QRegularExpression("\\bmax\\b"), " " +variableName+ ".physMax ");
+            variableEndGoal.replace(QRegularExpression("\\bmin\\b"), " " +variableName+ ".physMin ");
 
             result += "\n" +variableName+ ".endValue = " +variableEndGoal;
             result += "\n" +variableName+ ".setCurrentValue(" +variableName+ ".currentValue)";
@@ -197,9 +199,13 @@ QString convertAXMtoPy(QString axmLine) {
 
             // Replace "default" keyword in variableEndGoal with a proper variable
             variableEndGoal.replace(QRegularExpression("\\bdefault\\b"), " " +variableName+ ".physDef ");
+            variableEndGoal.replace(QRegularExpression("\\bmax\\b"), " " +variableName+ ".physMax ");
+            variableEndGoal.replace(QRegularExpression("\\bmin\\b"), " " +variableName+ ".physMin ");
 
             // Replace "default" keyword in variableEndTime with a proper variable (should not ever match)
             variableEndTime.replace(QRegularExpression("\\bdefault\\b"), " " +variableName+ ".physDef ");
+            variableEndTime.replace(QRegularExpression("\\bmax\\b"), " " +variableName+ ".physMax ");
+            variableEndTime.replace(QRegularExpression("\\bmin\\b"), " " +variableName+ ".physMin ");
 
             result += "\n" +variableName+ ".setCurrentValue(" +variableName+ ".currentValue)";
 

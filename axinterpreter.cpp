@@ -553,7 +553,7 @@ QString AXInterpreter::generateAXMfile() {
     result.replace(QRegularExpression("\\bend stat[^\\;]*\\;"), ";");
 
     // Remove messages ("message")
-    result.remove(QRegularExpression("\"[^\"]*\","));
+    result.remove(QRegularExpression("\"[^\"]*\""));
 
     // Remove unresolved macros
     const QRegularExpression regexUnresolvedMacro("^(?![l][o][o][p]\\b|\\b[l][a][y][e][r]\\b)([^\\s\\d\\.;{}()][\\w]*)\\s*\\;");

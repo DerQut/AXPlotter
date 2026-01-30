@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QScrollArea>
+#include <QTextStream>
 
 #include "editorview.h"
 #include "detailview.h"
@@ -39,13 +40,13 @@ EditorView::EditorView(DetailView *parent) :
 
 void EditorView::readRecipeFile(QString path) {
 
-    QFile file(path);
-
-    if (file.open(QFile::ReadOnly | QFile::Text)) {
-        textEdit->setPlainText(file.readAll());
+    QFile file (path);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in (&file);
+        this->textEdit->setPlainText(in.readAll());
         file.close();
     } else {
-        qDebug() << "Reading of file \"" << path << "\" failed";
-        return;
+        qDebug() << "File \"" << path << "\" cannot be read!";
     }
+
 }

@@ -66,3 +66,5 @@ OTHER_FILES += \
     ../Documents/Devices.xml \
     ../Documents/Kalibracja/Kalibracja.axr
 
+RC_ICONS = AXPlotter.ico
+

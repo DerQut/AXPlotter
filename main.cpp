@@ -8,6 +8,7 @@
 #include <QPalette>
 #include <QMenuBar>
 #include <QDebug>
+#include <QIcon>
 
 
 // Created by Marcel Cholodecki on 2024.12.24
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
     QApplication mainApp(argc, argv);
     MainWindow* mainWindow = new MainWindow();
     mainWindow->setWindowTitle("AX Plotter");
+    mainWindow->setWindowIcon(QIcon("AXPlotter.ico"));
 
     ContentView* contentView = new ContentView();
     mainWindow->setCentralWidget(contentView);

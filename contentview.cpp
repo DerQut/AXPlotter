@@ -192,18 +192,6 @@ void ContentView::saveScriptFileAs() {
         return;
     }
 
-    if (fileName.count('.') > 1) {
-        messageBox.setText("File name \"" + fileName + "\" contains more than one '.' character. Unable to save file.");
-        messageBox.exec();
-        return;
-    }
-
-    if (fileName.count(' ') > 0) {
-        messageBox.setText("File name \"" + fileName + "\" contains a '  ' character. Unable to save file.");
-        messageBox.exec();
-        return;
-    }
-
     this->saveScriptFile();
 
     this->sideBarView->setFileLabel(scriptFile);
@@ -239,18 +227,6 @@ void ContentView::readScriptFile(QString newScriptFile) {
         this->recentFiles.removeAll(fileInfo.absoluteFilePath());
         this->recentFiles[recentFiles.count()-1] = "";
         emit this->recentFilesChanged();
-        messageBox.exec();
-        return;
-    }
-
-    if (fileName.count('.') > 1) {
-        messageBox.setText("File name \"" + fileName + "\" contains more than one '.' character. Unable to read file.");
-        messageBox.exec();
-        return;
-    }
-
-    if (fileName.count(' ') > 0) {
-        messageBox.setText("File name \"" + fileName + "\" contains a whitespace character. Unable to read file.");
         messageBox.exec();
         return;
     }
