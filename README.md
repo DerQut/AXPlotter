@@ -1,6 +1,7 @@
-(Proper readme to be done)
+# AXPlotter
 
-AXPlotter
+This program can be used as simulation software for AIXACT Software MOVPE recipe scrips for AIXTRON CCS laboratory equipment. It features a text editor and graph views for visualising simulated time series. It was developed for Microsoft Windows XP 32-bit.
 
-Instalacja 
-Wymaga Qt5 5.2.1 oraz dodania folderu bin do zmiennej środowiskowej PATH
+## Dependencies
+
+The program depends on Python 3.4.4 and Qt5.2.1. It is required to add Qt's bin folder to the system PATH.
